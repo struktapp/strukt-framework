@@ -1,0 +1,32 @@
+{
+
+    "name": "strukt/framework",
+    "description": "Strukt Framework",
+    "license": "MIT",
+    "authors": [
+
+        {
+            "name": "Moderator",
+            "email": "pitsolu@gmail.com"
+        }
+    ],
+    "require": {
+
+        "php": ">=5.6.2",
+        "strukt/rest": "dev-master",
+        "strukt/generator": "dev-master",
+        "strukt/console": "dev-master", 
+        "strukt/fs":"dev-master",
+        "strukt/commons":"dev-master"
+    },
+    "suggest":{
+
+        "filp/whoops":"when running debug mode whoops prints cool errors",
+        "monolog/monolog":"*"
+    },
+    "autoload": {
+
+        "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
+    },
+    "bin":["bin/config"]
+}

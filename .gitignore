@@ -1,0 +1,11 @@
+vendor
+app/
+public
+fixtures/src/Payroll/HumanResourceModule
+fixtures/src/Payroll/PaymentModule
+composer.lock
+lib/App/Loader.php
+index.php
+test.php
+php_errors.log
+cfg/

@@ -1,0 +1,13 @@
+#!/usr/bin/php
+<?php
+
+require "bootstrap.php";
+
+Strukt\Console::useRootDir(__DIR__);
+Strukt\Console::useAppDir("app");
+// Strukt\Console::useAppDir("fixtures");
+// Strukt\Console::useStaticDir("public/static");
+
+// $console = new Strukt\Console(array("loadNativeCmds"=>false));
+$console = new Strukt\Console();
+exit($console->run($_SERVER["argv"]));

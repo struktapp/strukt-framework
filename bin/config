@@ -1,0 +1,216 @@
+#!/usr/bin/env php
+<?php
+
+// require "bootstrap.php";
+
+$autoloadFiles = array(__DIR__ . '/../vendor/autoload.php',
+                       __DIR__ . '/../../../autoload.php');
+
+foreach($autoloadFiles as $autoloadFile)
+    if(file_exists($autoloadFile))
+        require_once $autoloadFile;
+
+Strukt\Fs::mkdir("cfg/setup");
+Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Controller");
+Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Form");
+Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Model");
+Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Router");
+Strukt\Fs::mkdir("cfg/sgfFiles/lib/App");
+
+Strukt\Fs::touchWrite("cfg/setup/module.ini",
+'[folders]
+folder["ctr"] = "Controller"
+folder["rtr"] = "Router"
+folder["mdl"] = "Model"
+folder["frm"] = "Form"
+folder["tes"] = "Tests"
+; folder["fix"] = "Fixture"
+; folder["rep"] = "Repository"
+; folder["sdr"] = "Seeder"');
+
+Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Controller/User.sgf",
+"@ns:__APP__\AuthModule\Controller
+@class:User
+@inherit:\App\Data\Controller
+
+@method:getAll
+@body:return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
+
+@method:doAuthentication@param:username|password
+@body
+\$user = self::get(\"core\")->getNew(\"au.mdl.User\", array(\$username, \$password));
+
+		return \$user->getUsername() == \"admin\" && \$user->getPassword() == sha1(\"p@55w0rd\");
+@body
+");
+
+Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Form/User.sgf",
+"@ns:__APP__\AuthModule\Form
+@class:User
+@inherit:\App\Form\Data
+
+@method:protected>validation
+@body
+\$factory = \$this->getValidationFactory();
+
+		\$this->setMessage(\"username\", \$factory->newValidator()
+				->setVal(\$this->getParam(\"password\"))
+				->isNotEmpty());
+
+		\$this->setMessage(\"password\", \$factory->newValidator()
+				->setVal(\$this->getParam(\"password\"))
+				->isNotEmpty());
+@body
+");
+
+Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Model/User.sgf",
+"@ns:__APP__\AuthModule\Model
+@class:User
+
+@param:private>id
+
+@param:private>username
+
+@param:private>password
+
+@method:__construct@param:username|password
+@body
+	\$this->username = \$username;
+		\$this->password = sha1(\$password);
+@body
+
+@method:getId
+@body:return \$this->id;
+
+@method:setId@param:id
+@body:\$this->id = \$id;
+
+@method:getUsername
+@body:return \$this->username;
+
+@method:setUsername@param:username
+@body:\$this->username = \$username;
+
+@method:getPassword
+@body:return \$this->password;
+
+@method:setPassword@param:password
+@body:\$this->password = sha1(\$password);
+");
+
+Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Router/Auth.sgf",
+"@ns:__APP__\AuthModule\Router
+@class:Auth
+@inherit:\App\Data\Router
+
+@method:login
+@body
+\$username = self::param(\"username\");
+		\$password = self::param(\"password\");
+
+		\$userForm = self::get(\"core\")->getNew(\"au.frm.User\");
+		\$messages = \$userForm->validate();
+
+		if(\$messages[\"is_valid\"])
+		    if(self::get(\"core\")->get(\"au.ctr.User\")->doAuthentication(\$username, \$password))
+		       return self::json(array(
+
+		            \"success\"=>true, 
+		            \"message\"=>\"User successfully authenticated.\"
+		        ));
+		    else 
+		        return self::json(array(
+
+		            \"success\"=>false,
+		            \"message\"=>\"Failed to authenticate user!\"
+		        ));
+		else
+		    return self::json(array(
+
+		        \"success\"=>false,
+		        \"message\"=>\"Invalid input!\"
+		    ));
+@body
+@descr:@Route:/login
+@descr:@Method:POST
+");
+
+Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf",
+"@ns:__APP__\AuthModule\Router
+@class:Index
+@inherit:\App\Data\Router
+
+@method:welcome
+@body:return \"</b>Strukt Works!<b>\";
+@descr:@Route:/
+@descr:@Method:GET
+
+@method:helloWorld
+@body:return self::htmlfile(\"index.html\");
+@descr:@Route:/hello/world
+@descr:@Method:GET
+
+@method:helloTo@param:name
+@body:return sprintf(\"<b>Hello %s!</b>\", \$name);
+@descr:@Route:/hello/{name:alpha}
+@descr:@Method:GET
+
+@method:getAllUsers
+@body:return self::get(\"core\")->get(\"au.ctr.User\")->getAll();
+@descr:@Route:/users/all
+@descr:@Permission:user_all
+@descr:@Method:GET
+
+@method:testException
+@body:throw new \Exception(\"Whoops!\");
+@descr:@Route:/test
+@descr:@Method:GET
+");
+
+Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/_AuthModule.sgf",
+"@ns:__APP__\AuthModule
+@class:__APP__AuthModule
+@inherit:\App\Module
+
+@param:protected>alias=\"Au\"
+");
+
+Strukt\Fs::touchWrite("cfg/sgfFiles/lib/App/Loader.sgf",
+"@ns:App
+@class:Loader
+@descr
+	Application Loader Class
+
+	WARNING: THIS FILE IS AUTO-GENERATED. 
+			   DO NOT ADD ANYTHING BECAUSE 
+			   IT WILL BE OVERWRITTEN
+
+	@author Moderator <pitsolu@gmail.com>
+@descr
+
+@param:private>app#Strukt\Application
+
+@method:__construct
+@body
+\$this->app = new \Strukt\Application();
+		%s
+
+		\$r = \Strukt\Framework\Registry::getInstance();
+		\$r->set(\"nr\", \$this->app->getNameRegistry());
+		\$r->set(\"core\", new \Strukt\Framework\Module\Core());
+@body
+@descr
+	
+	Constructor
+	
+	Initialize Strukt Framework
+@descr
+
+@method:getApp#Strukt\Application
+@body
+\$loader = new self;
+
+		return \$loader->app;
+@body
+@descr:Getter for Strukt Application
+");
