@@ -1,6 +1,11 @@
 Strukt Framework
 ================
 
+[![Latest Stable Version](https://poser.pugx.org/strukt/framework/v/stable)](https://packagist.org/packages/strukt/framework)
+[![Total Downloads](https://poser.pugx.org/strukt/framework/downloads)](https://packagist.org/packages/strukt/framework)
+[![Latest Unstable Version](https://poser.pugx.org/strukt/framework/v/unstable)](https://packagist.org/packages/strukt/framework)
+[![License](https://poser.pugx.org/strukt/framework/license)](https://packagist.org/packages/strukt/framework)
+
 Framework Unification Utilities:
 
 * Application Registry
