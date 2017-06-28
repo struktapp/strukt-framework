@@ -1,5 +1,7 @@
 <?php
 
+error_reporting(E_ALL & ~E_DEPRECATED);
+
 // $sibling_dir = array();
 // $upper_dir = str_replace(basename(__DIR__), "", __DIR__);
 // foreach(scandir("../") as $folder)
