@@ -7,21 +7,5 @@ Strukt Framework
 [![Latest Unstable Version](https://poser.pugx.org/strukt/framework/v/unstable)](https://packagist.org/packages/strukt/framework)
 [![License](https://poser.pugx.org/strukt/framework/license)](https://packagist.org/packages/strukt/framework)
 
-Framework Unification Utilities:
-
-* Application Registry
-* Application Runner
-* Native Session
-* Core Framework Module Facet Loader 
-* Base Classes For Module Facet Entities
-    - Controller
-    - Router 
-    - Transformer 
-    - Form + Validation
-    - Module
-* Console Runner & Commands:
-    - Application Generator
-    - Application Module Loader Generator
-    - Module Generator
-    - Router Generator  
+Unification of strukt components ([strukt-rest](https://github.com/pitsolu/strukt-rest), [strukt-commons](https://github.com/pitsolu/strukt-commons), [strukt-generator](https://github.com/pitsolu/strukt-generator), [strukt-fs](https://github.com/pitsolu/strukt-fs), [strukt-console](https://github.com/pitsolu/strukt-console)) for overall [strukt-strukt](https://github.com/pitsolu/strukt-strukt) project. Rarely should anyone use this on its own.
 
