@@ -24,6 +24,27 @@ abstract class Data{
 	private $rawVals;
 
 	/**
+	* Flag to check if is test mode
+	*
+	* @return array
+	*/
+	private $isTestMode = false;
+
+	/**
+	* Constructor
+	*
+	* @param $rawVals Array of values
+	*/
+	public function __construct(array $rawVals=null){
+
+		if(!is_null($rawVals)){
+
+			$this->rawVals = $rawVals;
+			$this->isTestMode = true;
+		}
+	}
+
+	/**
 	* Getter for validator factory
 	*
 	* @return App\Form\Validation\Factory
@@ -36,15 +57,18 @@ abstract class Data{
 	/**
 	* Getter for request parameters
 	*
-	* @param string $val
+	* @param string $key
 	*
 	* @throws \Exception
 	* @return string
 	*/
-	protected function getParam($val){
+	protected function getParam($key){
+
+		if($this->isTestMode)
+			return $this->rawVals[$key];
 
 		if(class_exists("Strukt\Rest\Request"))
-			return \Strukt\Rest\Request::getParam($val);
+			return \Strukt\Rest\Request::getParam($key);
 	
 		throw new \Exception("Unable to locate [Strukt\Rest\Request]!");
 	}
@@ -91,6 +115,8 @@ abstract class Data{
 	* @return array
 	*/
 	public function validate(){
+
+		// print_r($this->rawVals);
 
 		$this->validation();
 

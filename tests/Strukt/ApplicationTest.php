@@ -8,7 +8,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase{
 
 		$this->assertEquals($authModule->getAlias(), "Au");
 		$this->assertEquals($authModule->getNamespace(), "Payroll\AuthModule\PayrollAuthModule");
-		$this->assertEquals($authModule->getBaseDir(), realpath(".")."/fixtures/root/app/src/Payroll/AuthModule");
+		$this->assertEquals($authModule->getBaseDir(), realpath(".")."/app/src/Payroll/AuthModule");
 
 		return $authModule;
 	}
@@ -46,29 +46,33 @@ class ApplicationTest extends PHPUnit_Framework_TestCase{
 	*/
 	public function testModuleCoreStaticClass($app){
 
-		\Strukt\Framework\Registry::getInstance()->set("nr", $app->getNameRegistry());
+		$r = \Strukt\Framework\Registry::getInstance();
+		$r->set("nr", $app->getNameRegistry());
+		$r->set("core", new Strukt\Framework\Module\Core());
 
-		$core = new Strukt\Framework\Module\Core();
+		$userController = $r->get("core")->get("au.ctr.User");
 
-		$userController = $core->get("au.ctr.User");
+		// print_r($userController->doAuthentication("admin","p@55w0rd"));
 
-		$this->assertEquals($userController->authenticate("admin","p@55w0rd"), array(
+		$this->assertTrue($userController->doAuthentication("admin","p@55w0rd"), array(
 
 			"admin",
 			"p@55w0rd"
 		));
 
-		$this->assertFalse($userController->isAuthd());
+		// $this->assertFalse($userController->isAuthd());
 
-		return $core;
+		// return $core;
 	}
 
 	/**
 	* @depends testModuleCoreStaticClass
 	*/
-	public function testModuleCoreNewClass($core){
+	public function testModuleCoreNewClass(/*$core*/){
 
-		$userModel = $core->getNew("au.mdl.User", array("admin", "p@55w0rd"));
+		$r = \Strukt\Framework\Registry::getInstance();
+
+		$userModel = $r->get("core")->getNew("au.mdl.User", array("admin", "p@55w0rd"));
 
 		$this->assertEquals("admin", $userModel->getUsername());
 		$this->assertEquals(sha1("p@55w0rd"), $userModel->getPassword());
