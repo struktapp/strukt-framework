@@ -145,12 +145,14 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 					"APP_FOLDER",
 					"APP_ROOT_FOLDER",
-					"// "
+					"// ",
+					"//"
 
 				), array(
 
 					$appName, 
 					$appDir,
+					"",
 					""
 
 				), $bootstrapContents);
