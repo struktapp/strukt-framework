@@ -80,12 +80,15 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				"cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf"
 			);
 
-			foreach($files as $file)
-				if(!\Strukt\Fs::isFile($file))
-					throw new \Exception(sprintf("File [%s] was not found!", $file));	
+			// foreach($files as $file)
+				// if(!\Strukt\Fs::isFile($file))
+					// throw new \Exception(sprintf("File [%s] was not found!", $file));	
 
 			foreach($files as $file){
 
+				if(!\Strukt\Fs::isFile($file))
+					continue;
+				
 				$sgfFile = \Strukt\Fs::cat($file);
 
 				$parser = new \Strukt\Generator\Parser(str_replace("__APP__", $appName, $sgfFile));
