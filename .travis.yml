@@ -6,7 +6,7 @@ php:
 before_script:
   - composer self-update
   - composer install --prefer-source --no-interaction --dev
-  - composer exec config
+  - composer exec config-standard
   - php console generate:app Payroll
 
 script: phpunit
