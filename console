@@ -9,5 +9,5 @@ Strukt\Console::useAppDir("app");
 // Strukt\Console::useStaticDir("public/static");
 
 // $console = new Strukt\Console(array("loadNativeCmds"=>false));
-$console = new Strukt\Console();
+$console = new Strukt\Console(array("labelStruktSect"=>true));
 exit($console->run($_SERVER["argv"]));

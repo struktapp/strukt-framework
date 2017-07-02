@@ -47,7 +47,8 @@ class Console extends \Strukt\Console\Application{
 			$config = array(
 
 				"appName"=>"Strukt Console",
-				"loadNativeCmds"=>true
+				"loadNativeCmds"=>true,
+				"labelStruktSect"=>false
 			);
 		}
 		else{
@@ -59,9 +60,15 @@ class Console extends \Strukt\Console\Application{
 
 			if(!in_array("loadNativeCmds", $configKeys))
 				$config["loadNativeCmds"] = true;
+
+			if(!in_array("labelStruktSect", $configKeys))
+				$config["labelStruktSect"] = false;
 		}
 
 		parent::__construct($config["appName"]);
+
+		if($config["labelStruktSect"])
+			$this->addCmdSect("Strukt");
 
 		if($config["loadNativeCmds"]){
 
