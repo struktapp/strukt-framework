@@ -48,7 +48,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 		\Strukt\Fs::mkdir($authModDir);
 
-		$moduleIniFile = sprintf("%s/cfg/setup/module.ini", $rootDir);
+		$moduleIniFile = sprintf("%s/cfg/module.ini", $rootDir);
 
 		$moduleIniFileExists = \Strukt\Fs::isFile($moduleIniFile);
 
@@ -61,8 +61,8 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 					\Strukt\Fs::mkdir(sprintf("%s/%s", $authModDir, $folder));
 
 			$appBase="app/src/";
-			$configAppBase="cfg/sgfFiles/app/src/";
-			$configModuleRoot="cfg/sgfFiles/app/src/App/AuthModule/";
+			$configAppBase="tpl/sgf/app/src/";
+			$configModuleRoot="tpl/sgf/app/src/App/AuthModule/";
 
 			$appModuleRoot = str_replace(array($configAppBase, "App"), 
 												array($appBase, $appName), 
@@ -70,15 +70,17 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 			\Strukt\Fs::mkdir($appModuleRoot);
 
-			$files = array(
+			// $files = array(
 
-				"cfg/sgfFiles/app/src/App/AuthModule/Model/User.sgf",
-				"cfg/sgfFiles/app/src/App/AuthModule/_AuthModule.sgf",
-				"cfg/sgfFiles/app/src/App/AuthModule/Controller/User.sgf",
-				"cfg/sgfFiles/app/src/App/AuthModule/Form/User.sgf",
-				"cfg/sgfFiles/app/src/App/AuthModule/Router/Auth.sgf",
-				"cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf"
-			);
+			// 	"cfg/sgfFiles/app/src/App/AuthModule/Model/User.sgf",
+			// 	"cfg/sgfFiles/app/src/App/AuthModule/_AuthModule.sgf",
+			// 	"cfg/sgfFiles/app/src/App/AuthModule/Controller/User.sgf",
+			// 	"cfg/sgfFiles/app/src/App/AuthModule/Form/User.sgf",
+			// 	"cfg/sgfFiles/app/src/App/AuthModule/Router/Auth.sgf",
+			// 	"cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf"
+			// );
+
+			$files = \Strukt\Fs::lsfr("tpl/sgf/app");
 
 			// foreach($files as $file)
 				// if(!\Strukt\Fs::isFile($file))
@@ -139,30 +141,35 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 					\Strukt\Fs::mkdir($staticDir);	
 			}
 
-			$bootstrapDir = sprintf("%s/bootstrap.php", $rootDir);
-			$bootstrapContents = \Strukt\Fs::cat($bootstrapDir);
-			$newBootstrapContents = str_replace(array(
+			$appIni = \Strukt\Fs::cat("cfg/app.ini");
+			$newAppIni = str_replace("__APP__", $appName, $appIni);
+			\Strukt\Fs::overwrite("cfg/app.ini", $newAppIni);
 
-					"APP_FOLDER",
-					"APP_ROOT_FOLDER",
-					"// ",
-					"//"
 
-				), array(
+			// $bootstrapDir = sprintf("%s/bootstrap.php", $rootDir);
+			// $bootstrapContents = \Strukt\Fs::cat($bootstrapDir);
+			// $newBootstrapContents = str_replace(array(
 
-					$appName, 
-					$appDir,
-					"",
-					""
+			// 		"APP_FOLDER",
+			// 		"APP_ROOT_FOLDER",
+			// 		"// ",
+			// 		"//"
 
-				), $bootstrapContents);
+			// 	), array(
 
-			\Strukt\Fs::overwrite($bootstrapDir, $newBootstrapContents);
+			// 		$appName, 
+			// 		$appDir,
+			// 		"",
+			// 		""
+
+			// 	), $bootstrapContents);
+
+			// \Strukt\Fs::overwrite($bootstrapDir, $newBootstrapContents);
 			
 			$out->add("Application genarated successfully.\n");
 		}
 		
 		if(!$moduleIniFileExists)
-			$out->add("Failed to find [cfg/setup/module.ini] file!\n");
+			$out->add("Failed to find [cfg/module.ini] file!\n");
 	}
 }

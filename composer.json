@@ -32,5 +32,5 @@
 
         "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
     },
-    "bin":["bin/config-standard", "bin/config-doctrorm"]
+    "bin":["bin/config-basic", "bin/config-do"]
 }

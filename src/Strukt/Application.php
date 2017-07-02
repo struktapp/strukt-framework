@@ -76,15 +76,15 @@ class Application{
 		if(!Fs::isPath($rootDir))
 			throw new \Exception(sprintf("Root dir [%s] does not exist!", $rootDir));
 
-		$modIniFile = sprintf("%s/cfg/setup/module.ini", $rootDir);
+		$modIniFile = sprintf("%s/cfg/module.ini", $rootDir);
 
 		if(!Fs::isFile($modIniFile))
-			throw new \Exception("Could not find [cfg/setup/module.ini] file!");
+			throw new \Exception("Could not find [cfg/module.ini] file!");
 
 		$modSettings = parse_ini_file($modIniFile);
 
 		if(!in_array("folder", array_keys($modSettings)))
-			throw new \Exception("Module Ini file [cfg/setup/module.ini] must specify [alias=>folder] list!");
+			throw new \Exception("Module Ini file [cfg/module.ini] must specify [alias=>folder] list!");
 
 		foreach($modSettings["folder"] as $key=>$fldr){
 

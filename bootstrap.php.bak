@@ -8,9 +8,11 @@ error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
 // 	if(!preg_match("/\./", $folder))
 // 		$sibling_dir[] = sprintf("%s%s/src", $upper_dir, $folder);
 
+$appCfg = parse_ini_file("cfg/app.ini");
+
 $loader = require 'vendor/autoload.php';
 // $loader->add('Strukt', $sibling_dir);
 $loader->add('App', __DIR__.'/lib/');
-$loader->add('Payroll', __DIR__.'/app/src/');
+$loader->add($appCfg["app-name"], __DIR__.'/app/src/');
 
 \Strukt\Framework\Registry::getInstance()->set("_dir", __DIR__);

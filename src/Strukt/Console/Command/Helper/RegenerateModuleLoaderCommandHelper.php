@@ -52,7 +52,7 @@ class RegenerateModuleLoaderCommandHelper{
 			foreach($mods as $mod)
 				$register[] = sprintf("\$this->app->register(new \%s\%s\%s%s());", $name, $mod, $name, $mod);
 
-		$sgfFile = "cfg/sgfFiles/lib/App/Loader.sgf";
+		$sgfFile = "tpl/sgf/lib/App/Loader.sgf";
 		if(!\Strukt\Fs::isFile($sgfFile))
 			throw new \Exception(sprintf("File [%s] was not found!", $sgfFile));
 			

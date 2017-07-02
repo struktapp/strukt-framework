@@ -75,7 +75,7 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 		\Strukt\Fs::mkdir($authMod);
 
-		$modIniFile = sprintf("%s/cfg/setup/module.ini", $rootDir);
+		$modIniFile = sprintf("%s/cfg/module.ini", $rootDir);
 
 		$modIniFileExists = \Strukt\Fs::isFile($modIniFile);
 
@@ -107,6 +107,6 @@ class ModuleGenerator extends \Strukt\Console\Command{
 		}
 		
 		if(!$modIniFileExists)
-			$out->add("Failed to find [cfg/setup/module.ini] file!\n");
+			$out->add("Failed to find [cfg/module.ini] file!\n");
 	}
 }

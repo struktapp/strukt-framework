@@ -10,14 +10,15 @@ foreach($autoloadFiles as $autoloadFile)
     if(file_exists($autoloadFile))
         require_once $autoloadFile;
 
-Strukt\Fs::mkdir("cfg/setup");
-Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Controller");
-Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Form");
-Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Model");
-Strukt\Fs::mkdir("cfg/sgfFiles/app/src/App/AuthModule/Router");
-Strukt\Fs::mkdir("cfg/sgfFiles/lib/App");
+Strukt\Fs::mkdir("cfg");
+Strukt\Fs::mkdir("tpl/sgf/database/schema/Schema/Migration");
+Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
+Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
+Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Model");
+Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
+Strukt\Fs::mkdir("tpl/sgf/lib/App");
 
-Strukt\Fs::touchWrite("cfg/setup/module.ini",
+Strukt\Fs::touchWrite("cfg/module.ini",
 '[folders]
 folder["ctr"] = "Controller"
 folder["rtr"] = "Router"
@@ -28,7 +29,19 @@ folder["tes"] = "Tests"
 ; folder["rep"] = "Repository"
 ; folder["sdr"] = "Seeder"');
 
-Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Controller/User.sgf",
+Strukt\Fs::touchWrite("cfg/db.ini",
+"dbname = payroll
+user = root
+password = root*
+host = localhost
+driver = pdo_pgsql
+");
+
+Strukt\Fs::touchWrite("cfg/app.ini",
+"app-name = __APP__
+");
+
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 "@ns:__APP__\AuthModule\Controller
 @class:User
 @inherit:\App\Data\Controller
@@ -37,14 +50,10 @@ Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Controller/User.sgf",
 @body:return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
 
 @method:doAuthentication@param:username|password
-@body
-\$user = self::get(\"core\")->getNew(\"au.mdl.User\", array(\$username, \$password));
-
-		return \$user->getUsername() == \"admin\" && \$user->getPassword() == sha1(\"p@55w0rd\");
-@body
+@body:return \"AuthModule\Controller\User::doAuthentication Not Yet Implemented!\";
 ");
 
-Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Form/User.sgf",
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 "@ns:__APP__\AuthModule\Form
 @class:User
 @inherit:\App\Form\Data
@@ -63,42 +72,7 @@ Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Form/User.sgf",
 @body
 ");
 
-Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Model/User.sgf",
-"@ns:__APP__\AuthModule\Model
-@class:User
-
-@param:private>id
-
-@param:private>username
-
-@param:private>password
-
-@method:__construct@param:username|password
-@body
-	\$this->username = \$username;
-		\$this->password = sha1(\$password);
-@body
-
-@method:getId
-@body:return \$this->id;
-
-@method:setId@param:id
-@body:\$this->id = \$id;
-
-@method:getUsername
-@body:return \$this->username;
-
-@method:setUsername@param:username
-@body:\$this->username = \$username;
-
-@method:getPassword
-@body:return \$this->password;
-
-@method:setPassword@param:password
-@body:\$this->password = sha1(\$password);
-");
-
-Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Router/Auth.sgf",
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 "@ns:__APP__\AuthModule\Router
 @class:Auth
 @inherit:\App\Data\Router
@@ -135,7 +109,7 @@ Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Router/Auth.sgf",
 @descr:@Method:POST
 ");
 
-Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf",
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 "@ns:__APP__\AuthModule\Router
 @class:Index
 @inherit:\App\Data\Router
@@ -167,7 +141,7 @@ Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf",
 @descr:@Method:GET
 ");
 
-Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/_AuthModule.sgf",
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",
 "@ns:__APP__\AuthModule
 @class:__APP__AuthModule
 @inherit:\App\Module
@@ -175,7 +149,7 @@ Strukt\Fs::touchWrite("cfg/sgfFiles/app/src/App/AuthModule/_AuthModule.sgf",
 @param:protected>alias=\"Au\"
 ");
 
-Strukt\Fs::touchWrite("cfg/sgfFiles/lib/App/Loader.sgf",
+Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 "@ns:App
 @class:Loader
 @descr
@@ -213,4 +187,19 @@ Strukt\Fs::touchWrite("cfg/sgfFiles/lib/App/Loader.sgf",
 		return \$loader->app;
 @body
 @descr:Getter for Strukt Application
+");
+
+Strukt\Fs::touchWrite("tpl/sgf/database/schema/Schema/Migration/Version_.sgf",
+"@ns:Schema\Migration
+@import:Doctrine\DBAL\Migrations\AbstractMigration
+@import:Doctrine\DBAL\Schema\Schema
+@class:Version__VER__
+@inherit:AbstractMigration
+@descr:Auto-generated Migration: Please modify to your needs!
+
+@method:public>up@param:schema#Schema
+@body:// this up() migration is auto-generated, please modify it to your needs
+
+@method:public>down@param:schema#Schema
+@body:// this up() migration is auto-generated, please modify it to your needs
 ");
