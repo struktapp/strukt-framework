@@ -2,6 +2,14 @@
 
 class ValidationTest extends PHPUnit_Framework_TestCase{
 
+	public function setUp(){
+
+		$appCfg = parse_ini_file("cfg/app.ini");
+
+		$this->appName = $appCfg["app-name"];
+		$this->authModuleUserNs = sprintf("%s\AuthModule\Form\User", $this->appName);
+	}
+
 	public function testSuccessfulValidation(){
 
 		$role = array(
@@ -18,8 +26,12 @@ class ValidationTest extends PHPUnit_Framework_TestCase{
 			"role"=>$role["sadmin"]
 		);
 
-		$form = new Payroll\AuthModule\Form\User($vals);
+		$refCls = new ReflectionClass($this->authModuleUserNs);
+		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($vals));
 		$validation = $form->validate();
+
+		// $form = new Payroll\AuthModule\Form\User($vals);
+		// $validation = $form->validate();
 
 		// print_r($validation);
 
@@ -43,8 +55,12 @@ class ValidationTest extends PHPUnit_Framework_TestCase{
 			"role"=>$role["sadmin"]
 		);
 
-		$form = new Payroll\AuthModule\Form\User($vals);
+		$refCls = new ReflectionClass($this->authModuleUserNs);
+		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($vals));
 		$validation = $form->validate();
+
+		// $form = new Payroll\AuthModule\Form\User($vals);
+		// $validation = $form->validate();
 
 		// print_r($validation);
 

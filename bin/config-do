@@ -50,7 +50,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 @body:return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
 
 @method:doAuthentication@param:username|password
-@body:return \"AuthModule\Controller\User::doAuthentication Not Yet Implemented!\";
+@body:return true;
 ");
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
