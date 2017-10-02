@@ -9,7 +9,7 @@ use Strukt\Rest\Router;
 use Strukt\Rest\Dispatcher;
 use Strukt\Core\Map;
 use Strukt\Core\Collection;
-use Strukt\Framework\Registry;
+use Strukt\Core\Registry;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 
 

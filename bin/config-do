@@ -169,7 +169,7 @@ Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 \$this->app = new \Strukt\Application();
 		%s
 
-		\$r = \Strukt\Framework\Registry::getInstance();
+		\$r = \Strukt\Core\Registry::getInstance();
 		\$r->set(\"nr\", \$this->app->getNameRegistry());
 		\$r->set(\"core\", new \Strukt\Framework\Module\Core());
 @body

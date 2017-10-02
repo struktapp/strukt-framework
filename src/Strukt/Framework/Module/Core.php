@@ -3,7 +3,7 @@
 namespace Strukt\Framework\Module;
 
 use Strukt\Core\Collection;
-use Strukt\Framework\Registry;
+use Strukt\Core\Registry;
 
 /**
 * Strukt Application Module Core

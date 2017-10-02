@@ -58,7 +58,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase{
 	*/
 	public function testModuleCoreStaticClass($app){
 
-		$r = \Strukt\Framework\Registry::getInstance();
+		$r = \Strukt\Core\Registry::getInstance();
 		$r->set("nr", $app->getNameRegistry());
 		$r->set("core", new Strukt\Framework\Module\Core());
 
@@ -85,7 +85,7 @@ class ApplicationTest extends PHPUnit_Framework_TestCase{
 	*/
 	// public function testModuleCoreNewClass(/*$core*/){
 
-	// 	$r = \Strukt\Framework\Registry::getInstance();
+	// 	$r = \Strukt\Core\Registry::getInstance();
 
 	// 	$userModel = $r->get("core")->getNew("au.mdl.User", array("admin", "p@55w0rd"));
 

@@ -21,7 +21,7 @@ abstract class Registry{
 	*/
 	private function regInst(){
 
-		return \Strukt\Framework\Registry::getInstance();
+		return \Strukt\Core\Registry::getInstance();
 	}
 
 	/**

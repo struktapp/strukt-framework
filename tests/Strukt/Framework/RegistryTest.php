@@ -4,7 +4,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase{
 
 	public function testRegistry(){
 
-		$r = \Strukt\Framework\Registry::getInstance();
+		$r = \Strukt\Core\Registry::getInstance();
 		$r->set("user.firstname", "Donald");
 		$r->set("user.surname", "Trump");
 
@@ -22,7 +22,7 @@ class RegistryTest extends PHPUnit_Framework_TestCase{
 
 	public function testPersistence(){
 
-		$r = \Strukt\Framework\Registry::getInstance();
+		$r = \Strukt\Core\Registry::getInstance();
 		
 		$this->assertEquals($r->get("user.surname"), "Trump");
 	}
