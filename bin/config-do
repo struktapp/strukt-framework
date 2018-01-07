@@ -120,7 +120,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 @descr:@Method:GET
 
 @method:helloWorld
-@body:return self::htmlfile(\"index.html\");
+@body:return self::htmlfile(\"public/static/index.html\");
 @descr:@Route:/hello/world
 @descr:@Method:GET
 

@@ -14,10 +14,10 @@ abstract class Router extends \App\Base\Registry{
 	* 
 	* @return \Strukt\Rest\Request
 	*/
-	public function getRequest(){
+	// public function getRequest(){
 
-		return new \Strukt\Rest\Request();
-	}
+	// 	return new \Strukt\Rest\Request();
+	// }
 
 	/**
 	* Getter for request params, uses \Strukt\Rest\Request
@@ -26,7 +26,9 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	public function param($key){
 
-		return \Strukt\Rest\Request::getParam($key);
+		// return \Strukt\Rest\Request::getParam($key);
+
+		return $this->get("servReq")->getAttribute($key);
 	}
 
 	/**
@@ -46,7 +48,13 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function redirect($url){
 
-		\Strukt\Rest\Response::redirect($url);
+		// \Strukt\Rest\Response::redirect($url);
+
+		$res = $registry->get("Response.Redirected")->exec();
+
+		$res = $res->withStatus(200)->withHeader('Location', $url);
+
+		\Strukt\Router\Router::emit($res);
 	}
 
 	/**
@@ -56,9 +64,19 @@ abstract class Router extends \App\Base\Registry{
 	*
 	* @return \Strukt\Rest\ResponseType\HtmlFileResponse
 	*/
-	protected function htmlfile($pathtofile){
+	protected function htmlfile($pathtofile, $code = 200){
 
-		return new \Strukt\Rest\ResponseType\HtmlFileResponse($pathtofile);
+		// return new \Strukt\Rest\ResponseType\HtmlFileResponse($pathtofile);
+
+		if(\Strukt\Fs::isFile($pathtofile)){
+
+			$res = new \Kambo\Http\Message\Response($code, array("content-type"=>"text/html"));
+			$res->getBody()->write(\Strukt\Fs::cat($pathtofile));
+		}
+		else
+			$res = $this->get("Response.NotFound");
+
+		return $res;
 	}
 
 	/**
@@ -69,9 +87,14 @@ abstract class Router extends \App\Base\Registry{
 	*
 	* @return \Strukt\Rest\ResponseType\JsonResponse
 	*/
-	protected function json(array $body, $code = null){
+	protected function json(array $body, $code = 200){
 
-		return new \Strukt\Rest\ResponseType\JsonResponse($body, $code);
+		// return new \Strukt\Rest\ResponseType\JsonResponse($body, $code);
+
+		$res = new \Kambo\Http\Message\Response($code, array("content-type"=>"application/json"));
+		$res->getBody()->write(json_encode($body));
+
+		return $res;
 	}
 
 	/**
@@ -82,8 +105,13 @@ abstract class Router extends \App\Base\Registry{
 	*
 	* @return \Strukt\Rest\ResponseType\HtmlResponse
 	*/
-	protected function html($body, $code = null){
+	protected function html($body, $code = 200){
 
-		return new \Strukt\Rest\ResponseType\HtmlResponse($body, $code);
+		// return new \Strukt\Rest\ResponseType\HtmlResponse($body, $code);
+
+		$res = new \Kambo\Http\Message\Response($code, array("content-type"=>"text/html"));
+		$res->getBody()->write($body);
+
+		return $res;
 	}
 }

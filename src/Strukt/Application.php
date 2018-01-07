@@ -2,15 +2,20 @@
 
 namespace Strukt;
 
-use Strukt\Rest\ResponseType\HtmlFileResponse;
-use Strukt\Rest\Response;
-use Strukt\Rest\Request;
-use Strukt\Rest\Router;
-use Strukt\Rest\Dispatcher;
+// use Strukt\Rest\ResponseType\HtmlFileResponse;
+// use Strukt\Rest\Response;
+// use Strukt\Rest\Request;
+// use Strukt\Rest\Router;
+// use Strukt\Rest\Dispatcher;
 use Strukt\Core\Map;
 use Strukt\Core\Collection;
 use Strukt\Core\Registry;
+use Strukt\Fs;
+use Strukt\Router\Router;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
+
+use Psr\Http\Message\RequestInterface;
+use Psr\Http\Message\ResponseInterface;
 
 
 /**
@@ -137,12 +142,34 @@ class Application{
 		* @todo either cache annotations or cache router loaded
 		*		with annotations for speed and efficiency
 		*/
-		$request = new Request();
-		$response = new Response();
-		$dispatcher = new Dispatcher($request, $response);
-		$router = new Router($dispatcher);
+		// $request = new Request();
+		// $response = new Response();
+		// $dispatcher = new Dispatcher($request, $response);
+		// $router = new Router($dispatcher);
+
+		// if(empty($_SERVER["REQUEST_SCHEME"]))
+		// 	$_SERVER["REQUEST_SCHEME"] = "http";
+
+		// $env = new Environment($_SERVER, fopen('php://input', 'w+'), $_POST, $_COOKIE, $_FILES);
+
+		// $servReq = (new ServerRequestFactory())->create($env);
 
 		$registry = Registry::getInstance();
+
+		// $registry->set("servReq", $servReq);
+
+		$allowed = null;
+		if($registry->exists("router.perms")){
+
+			$allowed = $registry->get("router.perms");
+
+			if(!is_array($allowed))
+				$allowed = null;
+		}
+
+		$servReq = $registry->get("servReq")->exec();
+
+		$router = new Router($servReq, $allowed);
 
 		$cache = null;
 		$routerParams = null;
@@ -210,25 +237,36 @@ class Application{
 			if(!$cache->exists("router-params"))
 				$cache->save("router-params", $routerParams);
 		
-		$object = null;
+		// $object = null;
 		foreach($routerParams as $routerParam){
 
-			if(get_class($object) != $routerParam["func"]["class"]){
+			// if(is_null($object)){
 
 				$class = new \ReflectionClass($routerParam["func"]["class"]);
 				$object = $class->newInstance();
-			}
+			// }
+
+			// if(get_class($object) != $routerParam["func"]["class"]){
+
+				// $class = new \ReflectionClass($routerParam["func"]["class"]);
+				// $object = $class->newInstance();
+			// }
+
+			// if(is_null($object))
+				// exit("Fail");
 
 			$func = $class->getMethod($routerParam["func"]["method"])->getClosure($object);
 
-			$router->route($routerParam["method"],
-							implode("|", array(
+			// if(is_null($func))
+				// exit("Fail");
 
+			$router->addRoute($routerParam["method"],
 								$routerParam["route"],
-								$routerParam["func"]["permission"]
-							)),
-							$func);
+								$func,
+								$routerParam["func"]["permission"]);
 		}
+
+		// exit("OK");
 
 		return $router;
 	}
@@ -261,8 +299,10 @@ class Application{
 			if($registry->exists("logger"))
 				$registry->get("logger")->error($e);
 
-			$resp = new HtmlFileResponse("../errors/500.html", Response::INTERNALSERVERERROR);
-			$resp->output();
+			Router::emit($registry->get("Response.ServerError")->exec());
+
+			// $resp = new HtmlFileResponse("../errors/500.html", Response::INTERNALSERVERERROR);
+			// $resp->output();
 		}
 	}
 }
