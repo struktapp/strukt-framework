@@ -18,10 +18,9 @@ $loader->add('App', __DIR__.'/lib/');
 // $loader->add('Strukt', __DIR__.'/../strukt-router/src/');
 $loader->add($appCfg["app-name"], __DIR__.'/app/src/');
 
-
 $registry = \Strukt\Core\Registry::getInstance();
-
 $registry->set("_dir", __DIR__);
+$registry->set("_staticDir", __DIR__."/public/static");
 
 $registry->set("servReq", new Single(function(){
 
