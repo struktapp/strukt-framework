@@ -154,7 +154,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 @descr:@Route:/hello/world
 @descr:@Method:GET
 
-@method:helloTo@param:name
+@method:helloTo@param:name|req#RequestInterface|res#ResponseInterface
 @body:return sprintf(\"<b>Hello %s!</b>\", \$name);
 @descr:@Route:/hello/{name:alpha}
 @descr:@Method:GET
