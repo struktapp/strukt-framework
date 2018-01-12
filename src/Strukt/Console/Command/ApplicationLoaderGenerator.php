@@ -4,7 +4,7 @@ namespace Strukt\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-use Strukt\Console\Command\Helper\RegenerateModuleLoaderCommandHelper;
+use Strukt\Loader\RegenerateModuleLoader;
 
 /**
 * generate:loader     Generate Application Loader
@@ -13,15 +13,14 @@ class ApplicationLoaderGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$rootDir = \Strukt\Console::getRootDir();
-		if(empty($rootDir))
-			throw new \Exception("Strukt root dir not defined! Use Strukt\Console::useRootDir(<root_dir>)");
+		$registry = \Strukt\Core\Registry::getInstance();
 
-		$appDir = \Strukt\Console::getAppDir();
-		if(empty($appDir))
-			throw new \Exception("Strukt app dir not defined! Use Strukt\Console::useAppDir(<app_dir>)");
+		if(!$registry->exists("dir.root"))
+			throw new \Exception("Strukt root dir not defined!");
 
-		$loader = new RegenerateModuleLoaderCommandHelper();
+		$rootDir = $registry->get("dir.root");
+
+		$loader = new RegenerateModuleLoader();
 
 		$loaderDir = sprintf("%s/lib/App", $rootDir);
 		if(!\Strukt\Fs::isPath($loaderDir))

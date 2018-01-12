@@ -1,13 +1,13 @@
 <?php 
 
-namespace Strukt\Console\Command\Helper;
+namespace Strukt\Loader;
 
 /**
 * Helper that generates module loader
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class RegenerateModuleLoaderCommandHelper{
+class RegenerateModuleLoader{
 
 	/**
 	* Module loader string
@@ -23,13 +23,16 @@ class RegenerateModuleLoaderCommandHelper{
 	*/
 	public function __construct(){
 
-		$rootDir = \Strukt\Console::getRootDir();
-		if(empty($rootDir))
-			throw new \Exception("Strukt root dir not defined! Use Strukt\Console::useRootDir(<root_dir>)");
+		$registry = \Strukt\Core\Registry::getInstance();
 
-		$_appDir = \Strukt\Console::getAppDir();
-		if(empty($_appDir))
-			throw new \Exception("Strukt app dir not defined! Use Strukt\Console::useAppDir(<app_dir>)");
+		if(!$registry->exists("dir.root"))
+			throw new \Exception("Strukt root dir not defined!");
+
+		if(!$registry->exists("dir.app"))
+			throw new \Exception("Strukt app dir not defined!");
+
+		$rootDir = $registry->get("dir.root");
+		$_appDir = $registry->get("dir.app");
 
 		$srcDir = sprintf("%s/%s/src", $rootDir, $_appDir);
 

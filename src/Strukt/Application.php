@@ -117,6 +117,16 @@ class Application{
 	}
 
 	/**
+	* Getter for Module Array
+	*
+	* @return Array
+	*/
+	public function getModuleList(){
+
+		return $this->modules;
+	}
+
+	/**
 	* Create router
 	*
 	* Uses:

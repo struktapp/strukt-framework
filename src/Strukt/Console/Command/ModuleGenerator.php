@@ -22,14 +22,21 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$rootDir = \Strukt\Console::getRootDir();
-		if(empty($rootDir))
-			throw new \Exception("Strukt root dir not defined! Use Strukt\Console::useRootDir(<root_dir>)");
+		$registry = \Strukt\Core\Registry::getInstance();
 
-		$appDir = \Strukt\Console::getAppDir();
-		if(empty($appDir))
-			throw new \Exception("Strukt app dir not defined! Use Strukt\Console::useAppDir(<app_dir>)");
+		if(!$registry->exists("dir.root"))
+			throw new \Exception("Strukt root dir not defined!");
 
+		if(!$registry->exists("dir.app"))
+			throw new \Exception("Strukt app dir not defined!");
+
+		$rootDir = $registry->get("dir.root");
+		$appDir = $registry->get("dir.app");
+		$moduleList = unserialize($registry->get("module-list"));
+
+		/**
+		* Application Name
+		*/
 		$rawAppName = $in->get("application_name");
 
 		if(preg_match("/^[A-Za-z0-9_]+$/", $rawAppName)){
@@ -43,7 +50,13 @@ class ModuleGenerator extends \Strukt\Console\Command{
 		if(empty($appName))
 			$appName = ucfirst($rawAppName);
 
+		/**
+		* Module Name
+		*/
 		$rawModName = $in->get("module_name");
+
+		$rawModName = preg_replace("/module/i", "", $rawModName);
+
 		if(preg_match("/^[A-Za-z0-9_]+$/", $rawModName)){
 
 			foreach(explode("_", $rawModName) as $modPart)
@@ -51,11 +64,18 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 			$modName = sprintf("%sModule", ucfirst(implode("", $modParts)));
 		}
-		
+
 		if(empty($modName))
 			$modName = sprintf("%sModule", ucfirst($rawModName));
 
+		if(in_array(sprintf("%s%s", $appName, $modName), array_keys($moduleList)))
+			throw new \Exception("Module already exists!");
+
+		/**
+		* Alias
+		*/
 		$rawAliasName = $in->get("alias_name");
+
 		if(preg_match("/^[A-Za-z0-9_]+$/", $rawAliasName)){
 
 			foreach(explode("_", $rawAliasName) as $aliasPart)
@@ -63,9 +83,11 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 			$aliasName = ucfirst(implode("", $aliasParts));
 		}
-		
+
 		if(empty($aliasName))
 			$aliasName = ucfirst($rawAliasName);
+
+		//
 
 		$authMod = sprintf("%s/%s/src/%s/%s", 
 								$rootDir,

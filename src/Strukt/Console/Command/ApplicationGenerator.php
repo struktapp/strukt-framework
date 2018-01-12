@@ -22,13 +22,13 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$rootDir = \Strukt\Console::getRootDir();
-		if(empty($rootDir))
-			throw new \Exception("Strukt root dir not defined! Use Strukt\Console::useRootDir(<root_dir>)");
+		$registry = \Strukt\Core\Registry::getInstance();
 
-		$appDir = \Strukt\Console::getAppDir();
-		if(empty($appDir))
-			throw new \Exception("Strukt app dir not defined! Use Strukt\Console::useAppDir(<app_dir>)");
+		if(!$registry->exists("dir.root"))
+			throw new \Exception("Strukt root dir not defined!");
+
+		if(!$registry->exists("dir.app"))
+			throw new \Exception("Strukt app dir not defined!");
 
 		$rawAppName = $in->get("application_name");
 
@@ -40,6 +40,9 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 			$appName = ucfirst(implode("", $parts));
 		}
+
+		$rootDir = $registry->get("dir.root");
+		$appDir = $registry->get("dir.app");
 
 		$authModDir = sprintf("%s/%s/src/%s/AuthModule", 
 								$rootDir, 
@@ -80,7 +83,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			// 	"cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf"
 			// );
 
-			$files = \Strukt\Fs::lsfr("tpl/sgf/app");
+			$files = \Strukt\Fs::lsr("tpl/sgf/app");
 
 			// foreach($files as $file)
 				// if(!\Strukt\Fs::isFile($file))
@@ -132,14 +135,14 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 														sprintf("<?php\n%s", $compiler->compile()));
 			}
 
-			$relStaticDir = \Strukt\Console::getStaticDir();
+			// $relStaticDir = \Strukt\Console::getStaticDir();
 
-			if(!empty($relStaticDir)){
+			// if(!empty($relStaticDir)){
 
-				$staticDir = sprintf("%s/%s", $rootDir, $relStaticDir);
-				if(!\Strukt\Fs::isPath($staticDir))
-					\Strukt\Fs::mkdir($staticDir);	
-			}
+			// 	$staticDir = sprintf("%s/%s", $rootDir, $relStaticDir);
+			// 	if(!\Strukt\Fs::isPath($staticDir))
+			// 		\Strukt\Fs::mkdir($staticDir);	
+			// }
 
 			$appIni = \Strukt\Fs::cat("cfg/app.ini");
 			$newAppIni = str_replace("__APP__", $appName, $appIni);

@@ -10,10 +10,9 @@ use Strukt\Console\Output;
 *
 * Usage:
 *
-*	Namepace:	<application>/<module>[/Router]
+*	Namepace:	<module>
 *	 example:
-*				PayrollSystem/AuthModule/Router
-*				PayrollSystem/AuthModule
+*				PayrollAuthModule
 *
 *	Router: <name[Router]>
 *	   example:
@@ -44,23 +43,44 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$rootDir = \Strukt\Console::getRootDir();
-		if(empty($rootDir))
-			throw new \Exception("Strukt root dirnot defined! Use Strukt\Console::useRootDir(<root_dir>)");
+		$registry = \Strukt\Core\Registry::getInstance();
 
-		$appDir = \Strukt\Console::getAppDir();
-		if(empty($appDir))
-			throw new \Exception("Strukt app dir not defined! Use Strukt\Console::useAppDir(<app_dir>)");
+		if(!$registry->exists("dir.root"))
+			throw new \Exception("Strukt root dir not defined!");
 
-		$prompt["namespace"] = " \nNamespace: ";
+		if(!$registry->exists("dir.app"))
+			throw new \Exception("Strukt app dir not defined!");
+
+		$rootDir = $registry->get("dir.root");
+		$appDir = $registry->get("dir.app");
+		$moduleList = unserialize($registry->get("module-list"));
+
+
+		/**
+		* Module Name
+		*/
+		$prompt["module"] = "Module Name: ";
 
 		while(empty($router["id"]["namespace"])){
 
-			$namespace = trim($in->getInput($prompt["namespace"]));
+			$module = trim($in->getInput($prompt["module"]));
 
-			if(empty($namespace)){
+			if(in_array($module, array_keys($moduleList))){
 
-				$prompt["namespace"] = "Namespace [REQUIRED!]: ";
+				$namespace = $moduleList[$module]["base-ns"];
+
+				$router["id"]["namespace"] = sprintf("%s\Router", $namespace);
+			}
+			else{
+
+				echo "\n  Invalid Module Name!\n\n";
+
+				continue;
+			}
+
+			if(empty($module)){
+
+				$prompt["module"] = "Module Name [REQUIRED!]: ";
 
 				continue;
 			}
@@ -68,27 +88,27 @@ class RouterGenerator extends \Strukt\Console\Command{
 			$nsPath = str_replace("\\", "/", $namespace);
 			$srcDir = sprintf("%s/%s/src", $rootDir, $appDir);
 			$path = sprintf("%s/%s", $srcDir, $nsPath);
-			$modName = str_replace(array("\\","/"), "", $nsPath);
-
-			if(!\Strukt\Fs::isFile(sprintf("%s/%s/%s.php", $srcDir, $nsPath, $modName))){
-
-				echo "\n  Invalid Namespace!\n\n";
-				continue;
-			}
-			
-			$namespace = str_replace("/", '\\', $namespace);
-			$router["id"]["namespace"] = sprintf("%s\Router", str_replace(array("\router", "\Router"), "", $namespace));
 		}
 
-		$prompt["router_name"] = "Router: ";
+		/**
+		* Router Name
+		*/
+		$prompt["router_name"] = "Router Name: ";
 
 		while(empty($router["id"]["name"])){
 
 			$router["id"]["name"] = trim($in->getInput($prompt["router_name"]));
 
+			$pattern = sprintf("/^%s$/i", $router["id"]["name"]);
+
+			if(!empty(preg_grep($pattern, $moduleList[$module]["Router"]))){
+
+				echo "\n  Router already exists!\n\n";
+			}
+
 			if(empty($router["id"]["name"])){
 
-				$prompt["router_name"] = "Router [REQUIRED!]: ";
+				$prompt["router_name"] = "Router Name [REQUIRED!]: ";
 
 				continue;
 			}
@@ -98,6 +118,8 @@ class RouterGenerator extends \Strukt\Console\Command{
 		
 		$router["id"]["extends"] = "\App\Data\Router";
 
+		echo "\n";
+
 		$continue = true;
 
 		while($continue){
@@ -106,14 +128,18 @@ class RouterGenerator extends \Strukt\Console\Command{
 			$method = null;
 			$invalid = null;
 
-			$prompt["route"] = " Method Route: ";
+			/**
+			* Route
+			*/
+			$prompt["route"] = " Route: ";
 
 			while(empty($method["route"])){
 
 				$method["route"] = trim($in->getInput($prompt["route"]));
+
 				if(empty($method["route"])){
 
-					$prompt["route"] = " Method Route [REQUIRED!]: ";
+					$prompt["route"] = " Route [REQUIRED!]: ";
 
 					continue;
 				}
@@ -121,20 +147,29 @@ class RouterGenerator extends \Strukt\Console\Command{
 				$method["route"] = sprintf("/%s", trim($method["route"],"/"));
 			}
 
-			$prompt["perm"] = " Method Permission (Optional): ";
+			/**
+			* Permission
+			*/
+			$prompt["perm"] = " Permission (Optional): ";
 			$method["perm"] = trim($in->getInput($prompt["perm"]));
 
-			$prompt["method_name"] = " Method Name: ";
+			/**
+			* Function
+			*/
+			$prompt["method_name"] = " Function: ";
 
 			while(empty($method["name"])){
 
 				$method["name"] = trim($in->getInput($prompt["method_name"]));
 				if(empty($method["name"]))	
-					$prompt["method_name"] = " Method Name [REQUIRED!]: ";
+					$prompt["method_name"] = " Function [REQUIRED!]: ";
 			}
 			
+			/**
+			* Function Parameters
+			*/
 			$invalid["params"] = true;
-			$prompt["params"] = " Method Parameter(s) separater[,]: ";
+			$prompt["params"] = " Function Parameter(s) separater[,]: ";
 
 			while($invalid["params"]){
 
@@ -145,23 +180,34 @@ class RouterGenerator extends \Strukt\Console\Command{
 					if(!preg_match("/^[\w\s,]+$/", $params)){
 
 						echo "\n  Invalid Input!\n\n";
-						$prompt["params"] = " Method Parameter(s) separater[,]: ";
+						$prompt["params"] = " Function Parameter(s) separater[,]: ";
 
 						continue;
 					}
 
-					$method["params"] = array_map(function($param){
+					foreach(explode(",", trim($params, ",")) as $param){
 
-						return trim($param);
+						$param = trim($param);
 
-					}, explode(",", trim($params, ",")));
+						if(preg_match("/^\w+\s+\w+$/", $param)){
+							
+							$arrParam = preg_split("/[\s,]+/", $param);
+
+							$method["params"][next($arrParam)] = reset($arrParam); 
+						}
+						else
+							$method["params"][] = $param;
+					}
 				}
 
 				$invalid["params"] = false;
 			}
 
+			/**
+			* Http Methods Allowed
+			*/
 			$invalid["actions"] = true;
-			$prompt["actions"] = " Method HTTP Action(s) separate with[,] (GET): ";
+			$prompt["actions"] = " Http Method(s) separater[,] (GET): ";
 
 			while($invalid["actions"]){
 
@@ -174,7 +220,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 					if(!preg_match("/^(GET|POST|DELETE|,|\s)+$/", $actions)){
 
 						echo "\n  Invalid Input!\n\n";
-						$prompt["actions"] = " Method HTTP Action(s) separate with[,] (GET): ";
+						$prompt["actions"] = " Http Method(s) separate[,] (GET): ";
 
 						continue;
 					}
@@ -193,6 +239,9 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 			$router["methods"][] = $method;
 
+			/**
+			* Continue ..
+			*/
 			$continue = trim($in->getInput("Add Method (y): "));
 			if(empty($continue))
 				$continue = "y";
@@ -202,6 +251,12 @@ class RouterGenerator extends \Strukt\Console\Command{
 			
 			$continue = false;
 		}
+
+		$router["id"]["use"] = array(
+
+			"Psr\Http\Message\RequestInterface",
+			"Psr\Http\Message\ResponseInterface"
+		);
 
 		$builderInstance = new \Strukt\Generator\ClassBuilder($router["id"]);
 

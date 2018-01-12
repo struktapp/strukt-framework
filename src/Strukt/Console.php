@@ -14,21 +14,21 @@ class Console extends \Strukt\Console\Application{
 	*
 	* @var string
 	*/
-	private static $rootDir;
+	// private static $rootDir;
 
 	/**
 	* Application directory path
 	*
 	* @var string
 	*/
-	private static $appDir;
+	// private static $appDir;
 
 	/**
 	* Static directory path - Optional
 	*
 	* @var string
 	*/
-	private static $staticDir;
+	// private static $staticDir;
 
 	/**
 	* Constructor loads Strukt Framework in-build applications
@@ -40,20 +40,31 @@ class Console extends \Strukt\Console\Application{
 	* 	\Strukt\Console\Command\ModuleGenerator
 	* 	\Strukt\Console\Command\ApplicationLoaderGenerator
 	*/
-	public function __construct(Array $config = null){
+	public function __construct(Array $config){
 
-		if(is_null($config)){
+		// if(is_null($config)){
 
-			$config = array(
+		// 	$config = array(
 
-				"appName"=>"Strukt Console",
-				"loadNativeCmds"=>true,
-				"labelStruktSect"=>false
-			);
-		}
-		else{
+		// 		"appName"=>"Strukt Console",
+		// 		"loadNativeCmds"=>true,
+		// 		"labelStruktSect"=>false
+		// 	);
+		// }
+		// else{
 
 			$configKeys = array_keys($config);
+
+			if(!in_array("rootDir", $configKeys) || !in_array("appDir", $configKeys))
+				throw new \Exception("Strukt Console requires root and app dir in configs!");
+
+			$registry = \Strukt\Core\Registry::getInstance();
+			$registry->set("dir.root", $config["rootDir"]);
+			$registry->set("dir.app", $config["appDir"]);
+
+			if(in_array("moduleList", $configKeys))
+				if(!is_null($config["moduleList"]))
+					$registry->set("module-list", serialize($config["moduleList"]));
 
 			if(!in_array("appName", $configKeys))
 				$config["appName"] = "Strukt Console";
@@ -63,7 +74,7 @@ class Console extends \Strukt\Console\Application{
 
 			if(!in_array("labelStruktSect", $configKeys))
 				$config["labelStruktSect"] = false;
-		}
+		// }
 
 		parent::__construct($config["appName"]);
 
@@ -73,8 +84,13 @@ class Console extends \Strukt\Console\Application{
 		if($config["loadNativeCmds"]){
 
 			$this->add(new \Strukt\Console\Command\ApplicationGenerator);
-			$this->add(new \Strukt\Console\Command\RouterGenerator);
-			$this->add(new \Strukt\Console\Command\ModuleGenerator);
+
+			if($registry->exists("module-list")){
+
+				$this->add(new \Strukt\Console\Command\RouterGenerator);
+				$this->add(new \Strukt\Console\Command\ModuleGenerator);
+			}
+
 			$this->add(new \Strukt\Console\Command\ApplicationLoaderGenerator);
 		}
 	}
@@ -84,58 +100,58 @@ class Console extends \Strukt\Console\Application{
 	*
 	* @param $appDir
 	*/
-	public static function useAppDir($appDir){
+	// public static function useAppDir($appDir){
 
-		self::$appDir = $appDir;
-	}
+	// 	self::$appDir = $appDir;
+	// }
 
 	/**
 	* Getter for application directory
 	*
 	* @return string
 	*/
-	public static function getAppDir(){
+	// public static function getAppDir(){
 
-		return self::$appDir;
-	}
+	// 	return self::$appDir;
+	// }
 
 	/**
 	* Declare root directory
 	*
 	* @param $appDir
 	*/
-	public static function useRootDir($rootDir){
+	// public static function useRootDir($rootDir){
 
-		self::$rootDir = $rootDir;
-	}
+	// 	self::$rootDir = $rootDir;
+	// }
 
 	/**
 	* Getter for root directory
 	*
 	* @return string
 	*/
-	public static function getRootDir(){
+	// public static function getRootDir(){
 
-		return self::$rootDir;
-	}
+	// 	return self::$rootDir;
+	// }
 
 	/**
 	* Declare static directory
 	*
 	* @param $appDir
 	*/
-	public static function useStaticDir($staticDir){
+	// public static function useStaticDir($staticDir){
 
-		self::$staticDir = $staticDir;
-	}
+	// 	self::$staticDir = $staticDir;
+	// }
 
 	/**
 	* Getter for static directory
 	*
 	* @return string
 	*/
-	public static function getStaticDir(){
+	// public static function getStaticDir(){
 
-		return self::$staticDir;
-	}
+	// 	return self::$staticDir;
+	// }
 }

@@ -11,7 +11,7 @@
         }
     ],
     "require": {
-
+    
         "php": ">=7.0",
         "strukt/generator": "dev-master",
         "strukt/console": "dev-master", 
