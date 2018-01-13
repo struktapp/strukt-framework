@@ -74,6 +74,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 "@ns:__APP__\AuthModule\Router
+@import:Psr\Http\Message\RequestInterface
+@import:Psr\Http\Message\ResponseInterface
 @class:Auth
 @inherit:\App\Data\Router
 
@@ -111,6 +113,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 "@ns:__APP__\AuthModule\Router
+@import:Psr\Http\Message\RequestInterface
+@import:Psr\Http\Message\ResponseInterface
 @class:Index
 @inherit:\App\Data\Router
 
