@@ -6,7 +6,7 @@ use Kambo\Http\Message\Factories\Environment\ServerRequestFactory;
 use Kambo\Http\Message\Response;
 
 use Strukt\Fs;
-use Strukt\Event\Single;
+use Strukt\Event\Event;
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
 
@@ -22,7 +22,7 @@ $registry = \Strukt\Core\Registry::getInstance();
 $registry->set("_dir", __DIR__);
 $registry->set("_staticDir", __DIR__."/public/static");
 
-$registry->set("servReq", new Single(function(){
+$registry->set("servReq", new Event(function(){
 
 	if(empty($_SERVER["REQUEST_SCHEME"]))
 			$_SERVER["REQUEST_SCHEME"] = "http";
@@ -37,7 +37,7 @@ $registry->set("servReq", new Single(function(){
 foreach(["NotFound"=>404, "MethodNotFound"=>405,
 		 	"Forbidden"=>403, "ServerError"=>500,
 			"Ok"=>200, "Redirected"=>302] as $msg=>$code)
-	$registry->set(sprintf("Response.%s", $msg), new Single(function() use($code){
+	$registry->set(sprintf("Response.%s", $msg), new Event(function() use($code){
 
 		$res = new Response($code);
 
