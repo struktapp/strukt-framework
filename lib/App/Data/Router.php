@@ -48,10 +48,7 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function redirect($url){
 
-		// \Strukt\Rest\Response::redirect($url);
-
-		$res = $registry->get("Response.Redirected")->exec();
-
+		$res = $this->get("Response.Redirected")->exec();
 		$res = $res->withStatus(200)->withHeader('Location', $url);
 
 		\Strukt\Router\Router::emit($res);
@@ -66,12 +63,11 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function htmlfile($pathtofile, $code = 200){
 
-		// return new \Strukt\Rest\ResponseType\HtmlFileResponse($pathtofile);
-
 		if(\Strukt\Fs::isFile($pathtofile)){
 
-			$res = new \Kambo\Http\Message\Response($code, array("content-type"=>"text/html"));
-			$res->getBody()->write(\Strukt\Fs::cat($pathtofile));
+			$res = $this->get("Response.Ok")->exec();
+			$res = $res->withHeader("content-type", "text/html");
+			$res->getBody()->write(\Strukt\Fs::cat($pathtofile));			
 		}
 		else
 			$res = $this->get("Response.NotFound");
@@ -89,10 +85,9 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function json(array $body, $code = 200){
 
-		// return new \Strukt\Rest\ResponseType\JsonResponse($body, $code);
-
-		$res = new \Kambo\Http\Message\Response($code, array("content-type"=>"application/json"));
-		$res->getBody()->write(json_encode($body));
+		$res = $this->get("Response.Ok")->exec();
+		$res = $res->withHeader("content-type", "application/json");
+		$res->getBody()->write(\Strukt\Fs::cat($pathtofile));	
 
 		return $res;
 	}
@@ -107,10 +102,9 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function html($body, $code = 200){
 
-		// return new \Strukt\Rest\ResponseType\HtmlResponse($body, $code);
-
-		$res = new \Kambo\Http\Message\Response($code, array("content-type"=>"text/html"));
-		$res->getBody()->write($body);
+		$res = $this->get("Response.Ok")->exec();
+		$res = $res->withHeader("content-type", "text/html");
+		$res->getBody()->write($body);	
 
 		return $res;
 	}
