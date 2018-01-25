@@ -17,7 +17,8 @@
         "strukt/console": "dev-master", 
         "strukt/fs":"dev-master",
         "strukt/commons":"dev-master",
-        "strukt/router": "dev-master"
+        "strukt/router": "dev-master",
+        "zendframework/zend-diactoros": "^1.7"
     },
     "require-dev":{
 
