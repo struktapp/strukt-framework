@@ -67,11 +67,7 @@ abstract class Data{
 		if($this->isTestMode)
 			return $this->rawVals[$key];
 
-		// if(class_exists("Strukt\Rest\Request"))
 		return \Strukt\Core\Registry::getInstance()->get("servReq")->getAttribute($key);
-			// return \Strukt\Rest\Request::getParam($key);
-	
-		// throw new \Exception("Unable to locate [Strukt\Rest\Request]!");
 	}
 
 	/**
@@ -116,8 +112,6 @@ abstract class Data{
 	* @return array
 	*/
 	public function validate(){
-
-		// print_r($this->rawVals);
 
 		$this->validation();
 

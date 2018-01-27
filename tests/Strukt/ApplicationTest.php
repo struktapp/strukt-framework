@@ -64,32 +64,6 @@ class ApplicationTest extends PHPUnit_Framework_TestCase{
 
 		$userController = $r->get("core")->get("au.ctr.User");
 
-		// print_r($userController->doAuthentication("admin","p@55w0rd"));
-		// exit;
-
-		// $this->assertTrue($userController->doAuthentication("admin","p@55w0rd"), array(
-
-			// "admin",
-			// "p@55w0rd"
-		// ));
-
 		$this->assertTrue($userController->doAuthentication("admin","p@55w0rd"));
-
-		// $this->assertFalse($userController->isAuthd());
-
-		// return $core;
 	}
-
-	/**
-	* @depends testModuleCoreStaticClass
-	*/
-	// public function testModuleCoreNewClass(/*$core*/){
-
-	// 	$r = \Strukt\Core\Registry::getInstance();
-
-	// 	$userModel = $r->get("core")->getNew("au.mdl.User", array("admin", "p@55w0rd"));
-
-	// 	$this->assertEquals("admin", $userModel->getUsername());
-	// 	$this->assertEquals(sha1("p@55w0rd"), $userModel->getPassword());
-	// }
 }

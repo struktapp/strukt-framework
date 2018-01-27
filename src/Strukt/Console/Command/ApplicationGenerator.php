@@ -73,21 +73,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 			\Strukt\Fs::mkdir($appModuleRoot);
 
-			// $files = array(
-
-			// 	"cfg/sgfFiles/app/src/App/AuthModule/Model/User.sgf",
-			// 	"cfg/sgfFiles/app/src/App/AuthModule/_AuthModule.sgf",
-			// 	"cfg/sgfFiles/app/src/App/AuthModule/Controller/User.sgf",
-			// 	"cfg/sgfFiles/app/src/App/AuthModule/Form/User.sgf",
-			// 	"cfg/sgfFiles/app/src/App/AuthModule/Router/Auth.sgf",
-			// 	"cfg/sgfFiles/app/src/App/AuthModule/Router/Index.sgf"
-			// );
-
-			$files = \Strukt\Fs::lsr("tpl/sgf/app");
-
-			// foreach($files as $file)
-				// if(!\Strukt\Fs::isFile($file))
-					// throw new \Exception(sprintf("File [%s] was not found!", $file));	
+			$files = \Strukt\Fs::lsr("tpl/sgf/app");	
 
 			foreach($files as $file){
 
@@ -135,39 +121,9 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 														sprintf("<?php\n%s", $compiler->compile()));
 			}
 
-			// $relStaticDir = \Strukt\Console::getStaticDir();
-
-			// if(!empty($relStaticDir)){
-
-			// 	$staticDir = sprintf("%s/%s", $rootDir, $relStaticDir);
-			// 	if(!\Strukt\Fs::isPath($staticDir))
-			// 		\Strukt\Fs::mkdir($staticDir);	
-			// }
-
 			$appIni = \Strukt\Fs::cat("cfg/app.ini");
 			$newAppIni = str_replace("__APP__", $appName, $appIni);
 			\Strukt\Fs::overwrite("cfg/app.ini", $newAppIni);
-
-
-			// $bootstrapDir = sprintf("%s/bootstrap.php", $rootDir);
-			// $bootstrapContents = \Strukt\Fs::cat($bootstrapDir);
-			// $newBootstrapContents = str_replace(array(
-
-			// 		"APP_FOLDER",
-			// 		"APP_ROOT_FOLDER",
-			// 		"// ",
-			// 		"//"
-
-			// 	), array(
-
-			// 		$appName, 
-			// 		$appDir,
-			// 		"",
-			// 		""
-
-			// 	), $bootstrapContents);
-
-			// \Strukt\Fs::overwrite($bootstrapDir, $newBootstrapContents);
 			
 			$out->add("Application genarated successfully.\n");
 		}

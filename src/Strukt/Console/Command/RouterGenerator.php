@@ -55,7 +55,6 @@ class RouterGenerator extends \Strukt\Console\Command{
 		$appDir = $registry->get("dir.app");
 		$moduleList = unserialize($registry->get("module-list"));
 
-
 		/**
 		* Module Name
 		*/

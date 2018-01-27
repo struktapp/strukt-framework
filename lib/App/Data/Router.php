@@ -10,23 +10,11 @@ namespace App\Data;
 abstract class Router extends \App\Base\Registry{
 
 	/**
-	* Get HTTP Request
-	* 
-	* @return \Strukt\Rest\Request
-	*/
-	// public function getRequest(){
-
-	// 	return new \Strukt\Rest\Request();
-	// }
-
-	/**
 	* Getter for request params, uses \Strukt\Rest\Request
 	*
 	* @return mixed
 	*/
 	public function param($key){
-
-		// return \Strukt\Rest\Request::getParam($key);
 
 		return $this->get("servReq")->getAttribute($key);
 	}

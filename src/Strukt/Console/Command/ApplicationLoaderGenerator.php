@@ -25,11 +25,11 @@ class ApplicationLoaderGenerator extends \Strukt\Console\Command{
 		$loader = new RegenerateModuleLoader();
 
 		$loaderDir = sprintf("%s/lib/App", $rootDir);
-		// if(!\Strukt\Fs::isPath($loaderDir))
+		
 		\Strukt\Fs::mkdir($loaderDir);
 
 		$loaderFile = sprintf("%s/Loader.php", $loaderDir);
-		// if(\Strukt\Fs::isFile($loaderFile))
+		
 		\Strukt\Fs::rm($loaderFile);
 
 		$loaderSuccess = \Strukt\Fs::touchWrite(sprintf("%s/Loader.php", $loaderDir), $loader);

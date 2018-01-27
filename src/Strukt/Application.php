@@ -232,12 +232,6 @@ class Application{
 		$object = null;
 		foreach($routerParams as $routerParam){
 
-			// if(is_null($object)){
-
-				// $class = new \ReflectionClass($routerParam["func"]["class"]);
-				// $object = $class->newInstance();
-			// }
-
 			if(get_class($object) != $routerParam["func"]["class"]){
 
 				$class = new \ReflectionClass($routerParam["func"]["class"]);

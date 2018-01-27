@@ -15,8 +15,6 @@ catch(\Exception $e){
 	$moduleList = null;
 }
 
-// print_r($moduleList);exit;
-
 $configs = array(
 
 	"labelStruktSect"=>true, 
@@ -26,14 +24,6 @@ $configs = array(
 	"appDir"=>"app",
 	"rootDir"=>__DIR__
 );
-
-// $r = Strukt\Core\Registry::getInstance();
-// print_r($r);exit;
-
-// Strukt\Console::useRootDir(__DIR__);
-// Strukt\Console::useAppDir("app");
-// Strukt\Console::useAppDir("fixtures");
-// Strukt\Console::useStaticDir("public/static");
 
 $console = new Strukt\Console($configs);
 // $console = new Strukt\Console();

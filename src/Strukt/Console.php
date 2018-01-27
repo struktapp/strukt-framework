@@ -42,39 +42,27 @@ class Console extends \Strukt\Console\Application{
 	*/
 	public function __construct(Array $config){
 
-		// if(is_null($config)){
+		$configKeys = array_keys($config);
 
-		// 	$config = array(
+		if(!in_array("rootDir", $configKeys) || !in_array("appDir", $configKeys))
+			throw new \Exception("Strukt Console requires root and app dir in configs!");
 
-		// 		"appName"=>"Strukt Console",
-		// 		"loadNativeCmds"=>true,
-		// 		"labelStruktSect"=>false
-		// 	);
-		// }
-		// else{
+		$registry = \Strukt\Core\Registry::getInstance();
+		$registry->set("dir.root", $config["rootDir"]);
+		$registry->set("dir.app", $config["appDir"]);
 
-			$configKeys = array_keys($config);
+		if(in_array("moduleList", $configKeys))
+			if(!is_null($config["moduleList"]))
+				$registry->set("module-list", serialize($config["moduleList"]));
 
-			if(!in_array("rootDir", $configKeys) || !in_array("appDir", $configKeys))
-				throw new \Exception("Strukt Console requires root and app dir in configs!");
+		if(!in_array("appName", $configKeys))
+			$config["appName"] = "Strukt Console";
 
-			$registry = \Strukt\Core\Registry::getInstance();
-			$registry->set("dir.root", $config["rootDir"]);
-			$registry->set("dir.app", $config["appDir"]);
+		if(!in_array("loadNativeCmds", $configKeys))
+			$config["loadNativeCmds"] = true;
 
-			if(in_array("moduleList", $configKeys))
-				if(!is_null($config["moduleList"]))
-					$registry->set("module-list", serialize($config["moduleList"]));
-
-			if(!in_array("appName", $configKeys))
-				$config["appName"] = "Strukt Console";
-
-			if(!in_array("loadNativeCmds", $configKeys))
-				$config["loadNativeCmds"] = true;
-
-			if(!in_array("labelStruktSect", $configKeys))
-				$config["labelStruktSect"] = false;
-		// }
+		if(!in_array("labelStruktSect", $configKeys))
+			$config["labelStruktSect"] = false;
 
 		parent::__construct($config["appName"]);
 
@@ -94,64 +82,4 @@ class Console extends \Strukt\Console\Application{
 			$this->add(new \Strukt\Console\Command\ApplicationLoaderGenerator);
 		}
 	}
-
-	/**
-	* Declare application directory
-	*
-	* @param $appDir
-	*/
-	// public static function useAppDir($appDir){
-
-	// 	self::$appDir = $appDir;
-	// }
-
-	/**
-	* Getter for application directory
-	*
-	* @return string
-	*/
-	// public static function getAppDir(){
-
-	// 	return self::$appDir;
-	// }
-
-	/**
-	* Declare root directory
-	*
-	* @param $appDir
-	*/
-	// public static function useRootDir($rootDir){
-
-	// 	self::$rootDir = $rootDir;
-	// }
-
-	/**
-	* Getter for root directory
-	*
-	* @return string
-	*/
-	// public static function getRootDir(){
-
-	// 	return self::$rootDir;
-	// }
-
-	/**
-	* Declare static directory
-	*
-	* @param $appDir
-	*/
-	// public static function useStaticDir($staticDir){
-
-	// 	self::$staticDir = $staticDir;
-	// }
-
-	/**
-	* Getter for static directory
-	*
-	* @return string
-	*/
-	// public static function getStaticDir(){
-
-	// 	return self::$staticDir;
-	// }
 }

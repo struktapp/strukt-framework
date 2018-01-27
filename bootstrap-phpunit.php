@@ -1,13 +1,5 @@
 <?php
 
-// use Kambo\Http\Message\Environment\Environment;
-// use Kambo\Http\Message\Factories\Environment\ServerRequestFactory;
-// use Kambo\Http\Message\Stream;
-// use Kambo\Http\Message\Response;
-
-// use Strukt\Fs;
-// use Strukt\Event\Single;
-
 use Strukt\Core\Registry;
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);

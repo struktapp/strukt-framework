@@ -30,11 +30,6 @@ class ValidationTest extends PHPUnit_Framework_TestCase{
 		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($vals));
 		$validation = $form->validate();
 
-		// $form = new Payroll\AuthModule\Form\User($vals);
-		// $validation = $form->validate();
-
-		// print_r($validation);
-
 		$this->assertTrue($validation["is_valid"]);
 		$this->assertEquals("None", $validation["messages"]);
 	}
@@ -59,18 +54,10 @@ class ValidationTest extends PHPUnit_Framework_TestCase{
 		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($vals));
 		$validation = $form->validate();
 
-		// $form = new Payroll\AuthModule\Form\User($vals);
-		// $validation = $form->validate();
-
-		// print_r($validation);
-
 		$this->assertFalse($validation["is_valid"]);
 
 		extract($validation["messages"]);
 
 		$this->assertFalse($password["is_not_empty"]);
-		// $this->assertTrue($confirm["is_not_empty"]);
-		// $this->assertFalse($password_match["equal_to"]);
-		// $this->assertTrue($role["is_num"]);
 	}
 }
