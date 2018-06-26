@@ -19,7 +19,7 @@ abstract class Registry{
 	*
 	* @return \Strukt\Framework\Registry
 	*/
-	private function regInst(){
+	protected function getInstance(){
 
 		return \Strukt\Core\Registry::getInstance();
 	}
@@ -33,6 +33,6 @@ abstract class Registry{
 	*/
 	protected function get($key){
 
-		return self::regInst()->get($key);
+		return self::getInstance()->get($key);
 	}
 }

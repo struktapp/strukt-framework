@@ -8,13 +8,15 @@ namespace App\Data;
 * @author Moderator <pitsolu@gmail.com>
 */
 abstract class Router extends \App\Base\Registry{
-
 	/**
 	* Getter for request params, uses \Strukt\Rest\Request
 	*
 	* @return mixed
 	*/
 	public function param($key){
+
+		if(!$this->getInstance()->exists("servReq"))
+			throw new \Exception("Server Request object (key:[servReq]) is not in in Strukt\Core\Registy!");
 
 		$serverRequest = $this->get("servReq");
 

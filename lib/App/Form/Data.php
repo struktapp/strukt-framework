@@ -67,9 +67,14 @@ abstract class Data{
 		if($this->isTestMode)
 			return $this->rawVals[$key];
 
-		$serverRequest = \Strukt\Core\Registry::getInstance()->get("servReq");
+		$registry = \Strukt\Core\Registry::getInstance();
 
-		$body = $serverRequest->getParsedBody();	
+		if(!$registry->exists("servReq"))
+			throw new \Exception("Server Request object (key:[servReq]) is not in in Strukt\Core\Registy!");
+
+		$serverRequest = $registry->get("servReq");
+
+		$body = $serverRequest->getParsedBody();
 
 		return $body[$key];
 	}

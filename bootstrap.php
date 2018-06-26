@@ -22,12 +22,12 @@ $servReq = Zend\Diactoros\ServerRequestFactory::fromGlobals(
 	    $_FILES
 	);
 
-$json = file_get_contents("php://input");
-$body = json_decode(str_replace("'", '"', trim($json)), 1);
-foreach($body as $key=>$val)
-	$servReq = $servReq->withAttribute($key, $val);
+// $json = file_get_contents("php://input");
+// $body = json_decode(str_replace("'", '"', trim($json)), 1);
+// foreach($body as $key=>$val)
+// 	$servReq = $servReq->withAttribute($key, $val);
 
-$servReq = $servReq->withParsedBody($body);
+// $servReq = $servReq->withParsedBody($body);
 
 $registry = \Strukt\Core\Registry::getInstance();
 $registry->set("_dir", __DIR__);
