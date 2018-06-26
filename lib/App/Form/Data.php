@@ -67,7 +67,11 @@ abstract class Data{
 		if($this->isTestMode)
 			return $this->rawVals[$key];
 
-		return \Strukt\Core\Registry::getInstance()->get("servReq")->getAttribute($key);
+		$serverRequest = \Strukt\Core\Registry::getInstance()->get("servReq");
+
+		$body = $serverRequest->getParsedBody();	
+
+		return $body[$key];
 	}
 
 	/**

@@ -16,7 +16,11 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	public function param($key){
 
-		return $this->get("servReq")->getAttribute($key);
+		$serverRequest = $this->get("servReq");
+
+		$body = $serverRequest->getParsedBody();
+
+		return $body[$key];
 	}
 
 	/**
@@ -75,7 +79,7 @@ abstract class Router extends \App\Base\Registry{
 
 		$res = $this->get("Response.Ok")->exec();
 		$res = $res->withHeader("content-type", "application/json");
-		$res->getBody()->write(\Strukt\Fs::cat($pathtofile));	
+		$res->getBody()->write(json_encode($body));	
 
 		return $res;
 	}

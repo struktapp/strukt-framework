@@ -159,7 +159,7 @@ class Application{
 				$allowed = null;
 		}
 
-		$servReq = $registry->get("servReq")->exec();
+		$servReq = $registry->get("servReq");
 
 		$router = new Router($servReq, $allowed);
 
