@@ -15,10 +15,10 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	public function param($key){
 
-		if(!$this->getInstance()->exists("servReq"))
+		if(!self::getInstance()->exists("servReq"))
 			throw new \Exception("Server Request object (key:[servReq]) is not in in Strukt\Core\Registy!");
 
-		$serverRequest = $this->get("servReq");
+		$serverRequest = self::get("servReq");
 
 		$body = $serverRequest->getParsedBody();
 
@@ -42,7 +42,7 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function redirect($url){
 
-		$res = $this->get("Response.Redirected")->exec();
+		$res = self::get("Response.Redirected")->exec();
 		$res = $res->withStatus(200)->withHeader('Location', $url);
 
 		\Strukt\Router\Router::emit($res);
@@ -59,12 +59,12 @@ abstract class Router extends \App\Base\Registry{
 
 		if(\Strukt\Fs::isFile($pathtofile)){
 
-			$res = $this->get("Response.Ok")->exec();
+			$res = self::get("Response.Ok")->exec();
 			$res = $res->withHeader("content-type", "text/html");
 			$res->getBody()->write(\Strukt\Fs::cat($pathtofile));			
 		}
 		else
-			$res = $this->get("Response.NotFound");
+			$res = self::get("Response.NotFound");
 
 		return $res;
 	}
@@ -79,7 +79,7 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function json(array $body, $code = 200){
 
-		$res = $this->get("Response.Ok")->exec();
+		$res = self::get("Response.Ok")->exec();
 		$res = $res->withHeader("content-type", "application/json");
 		$res->getBody()->write(json_encode($body));	
 
@@ -96,7 +96,7 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function html($body, $code = 200){
 
-		$res = $this->get("Response.Ok")->exec();
+		$res = self::get("Response.Ok")->exec();
 		$res = $res->withHeader("content-type", "text/html");
 		$res->getBody()->write($body);	
 
