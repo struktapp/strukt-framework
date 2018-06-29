@@ -77,7 +77,7 @@ abstract class Data{
 		$body = $serverRequest->getParsedBody();
 
 		if($body instanceof \Psr\Http\Message\StreamInterface)
-			$body = json_decode((string)$body);
+			$body = json_decode((string)$body, 1);
 
 		return $body[$key];
 	}
