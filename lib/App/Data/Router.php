@@ -22,6 +22,9 @@ abstract class Router extends \App\Base\Registry{
 
 		$body = $serverRequest->getParsedBody();
 
+		if($body instanceof \Psr\Http\Message\StreamInterface)
+			$body = json_decode((string)$body);
+
 		return $body[$key];
 	}
 
