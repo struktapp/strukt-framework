@@ -46,6 +46,9 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 @class:User
 @inherit:\App\Data\Controller
 
+@method:find@param:id
+@body:return \"Couldn't find User:[\$id] - AuthModule\Controller\User::find Not Yet Implemented!\";
+
 @method:getAll
 @body:return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
 
@@ -137,6 +140,15 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 @body:return self::get(\"core\")->get(\"au.ctr.User\")->getAll();
 @descr:@Route:/users/all
 @descr:@Permission:user_all
+@descr:@Method:GET
+
+@method:getUser@param:req#RequestInterface
+@body
+\$id = \$req->getAttribute(\"id\");
+
+		return self::get(\"core\")->get(\"au.ctr.User\")->find(\$id);
+@body
+@descr:@Route:/user
 @descr:@Method:GET
 
 @method:testException
