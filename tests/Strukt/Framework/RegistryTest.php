@@ -1,6 +1,8 @@
 <?php
 
-class RegistryTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class RegistryTest extends TestCase{
 
 	public function testRegistry(){
 

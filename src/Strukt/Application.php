@@ -127,21 +127,11 @@ class Application{
 	}
 
 	/**
-	* Create router
-	*
-	* Uses:
-	*
-	* {@link \Strukt\Rest\Router}
-	*	|
-	*	--{@link \Strukt\Rest\Dispatcher}
-	*		|
-	* 		--{@link \Strukt\Rest\Request}
-	*		|
-	*		--{@link \Strukt\Rest\Response}
+	* Create router properties
 	* 
-	* @return Strukt\Rest\Router
+	* @return array
 	*/
-	public function getRouter(){
+	public function getRouterProperties(){
 
 		/**
 		* @todo either cache annotations or cache router loaded
@@ -149,19 +139,6 @@ class Application{
 		*/
 
 		$registry = Registry::getInstance();
-
-		$allowed = null;
-		if($registry->exists("router.perms")){
-
-			$allowed = $registry->get("router.perms");
-
-			if(!is_array($allowed))
-				$allowed = null;
-		}
-
-		$servReq = $registry->get("servReq");
-
-		$router = new Router($servReq, $allowed);
 
 		$cache = null;
 		$routerParams = null;
@@ -217,8 +194,8 @@ class Application{
 								$params["func"]["class"] = $rclass_name;
 								$params["func"]["method"] = $name;
 								$params["func"]["permission"] = $perm;
-								$routerParams[] = $params;
 
+								$routerParams[] = $params;
 							}
 						}
 					}
@@ -240,11 +217,50 @@ class Application{
 
 			$func = $class->getMethod($routerParam["func"]["method"])->getClosure($object);
 
-			$router->addRoute($routerParam["method"],
-								$routerParam["route"],
-								$func,
-								$routerParam["func"]["permission"]);
+			$routerProps[$routerParam["func"]["class"]][] = array(
+
+				"method"=>$routerParam["method"],
+				"route"=>$routerParam["route"],
+				"name"=>$routerParam["func"]["method"],
+				"perm"=>$routerParam["func"]["permission"],
+				"func"=>$func
+			);
 		}
+
+		return $routerProps;
+	}
+
+	/**
+	* Create router
+	* 
+	* @return Strukt\Rest\Router
+	*/
+	public function getRouter(){
+
+		$registry = Registry::getInstance();
+
+		$allowed = null;
+		if($registry->exists("router.perms")){
+
+			$allowed = $registry->get("router.perms");
+
+			if(!is_array($allowed))
+				$allowed = null;
+		}
+
+		$servReq = $registry->get("servReq");
+
+		$router = new Router($servReq, $allowed);
+		$routes = $router->getRoutes();
+
+		$allRouterProps = $this->getRouterProperties();
+
+		foreach($allRouterProps as $routerProp)
+			foreach($routerProp as $prop)
+				$routes->addRoute($prop["method"],
+									$prop["route"],
+									$prop["func"],
+									$prop["perm"]);
 
 		return $router;
 	}

@@ -1,6 +1,8 @@
 <?php
 
-class ApplicationTest extends PHPUnit_Framework_TestCase{
+use PHPUnit\Framework\TestCase;
+
+class ApplicationTest extends TestCase{
 
 	public function setUp(){
 
