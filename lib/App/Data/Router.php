@@ -8,6 +8,7 @@ namespace App\Data;
 * @author Moderator <pitsolu@gmail.com>
 */
 abstract class Router extends \App\Base\Registry{
+
 	/**
 	* Getter for request params, uses \Strukt\Rest\Request
 	*
@@ -15,17 +16,12 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	public function param($key){
 
-		if(!self::getInstance()->exists("servReq"))
-			throw new \Exception("Server Request object (key:[servReq]) is not in in Strukt\Core\Registy!");
+		if(!self::getInstance()->exists("request"))
+			throw new \Exception("Request object (key:[request]) is not in in Strukt\Core\Registy!");
 
-		$serverRequest = self::get("servReq");
+		$request = self::get("request");
 
-		$body = $serverRequest->getParsedBody();
-
-		if($body instanceof \Psr\Http\Message\StreamInterface)
-			$body = json_decode((string)$body, 1);
-
-		return $body[$key];
+		return $request->query->get($key);
 	}
 
 	/**
@@ -46,9 +42,10 @@ abstract class Router extends \App\Base\Registry{
 	protected function redirect($url){
 
 		$res = self::get("Response.Redirected")->exec();
-		$res = $res->withStatus(200)->withHeader('Location', $url);
+		// $res->setStatusCode(200);
+		$res->headers->set('Location', $url);
 
-		\Strukt\Router\Router::emit($res);
+		$res->send();
 	}
 
 	/**
@@ -63,11 +60,12 @@ abstract class Router extends \App\Base\Registry{
 		if(\Strukt\Fs::isFile($pathtofile)){
 
 			$res = self::get("Response.Ok")->exec();
-			$res = $res->withHeader("content-type", "text/html");
-			$res->getBody()->write(\Strukt\Fs::cat($pathtofile));			
+			$res->headers->set("Content-Type", "text/html");
+			$res->setStatusCode($code);
+			$res->setContent(\Strukt\Fs::cat($pathtofile));			
 		}
 		else
-			$res = self::get("Response.NotFound");
+			$res = self::get("Response.NotFound")->exec();
 
 		return $res;
 	}
@@ -83,8 +81,9 @@ abstract class Router extends \App\Base\Registry{
 	protected function json(array $body, $code = 200){
 
 		$res = self::get("Response.Ok")->exec();
-		$res = $res->withHeader("content-type", "application/json");
-		$res->getBody()->write(json_encode($body));	
+		$res->headers->set("Content-Type", "application/json");
+		$res->setStatusCode($code);
+		$res->setContent(json_encode($body));	
 
 		return $res;
 	}
@@ -100,8 +99,9 @@ abstract class Router extends \App\Base\Registry{
 	protected function html($body, $code = 200){
 
 		$res = self::get("Response.Ok")->exec();
-		$res = $res->withHeader("content-type", "text/html");
-		$res->getBody()->write($body);	
+		$res->headers->set("Content-Type", "text/html");
+		$res->setStatusCode($code);
+		$res->setContent($body);	
 
 		return $res;
 	}
