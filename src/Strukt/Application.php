@@ -9,9 +9,8 @@ use Strukt\Fs;
 use Strukt\Router\Router;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 
-use Psr\Http\Message\RequestInterface;
-use Psr\Http\Message\ResponseInterface;
-
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
 * Strukt Application Module Loader and Runner
@@ -248,9 +247,9 @@ class Application{
 				$allowed = null;
 		}
 
-		$servReq = $registry->get("servReq");
+		$request = $registry->get("request");
 
-		$router = new Router($servReq, $allowed);
+		$router = new Router($allowed, $request);
 		$routes = $router->getRoutes();
 
 		$allRouterProps = $this->getRouterProperties();
@@ -293,7 +292,9 @@ class Application{
 			if($registry->exists("logger"))
 				$registry->get("logger")->error($e);
 
-			Router::emit($registry->get("Response.ServerError")->exec());
+			$res = $registry->get("Response.ServerError")->exec();
+
+			$res->send();
 		}
 	}
 }

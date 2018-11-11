@@ -77,8 +77,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 "@ns:__APP__\AuthModule\Router
-@import:Psr\Http\Message\RequestInterface
-@import:Psr\Http\Message\ResponseInterface
+@import:Psr\Http\Message\Request
+@import:Psr\Http\Message\Response
 @class:Auth
 @inherit:\App\Data\Router
 
@@ -116,8 +116,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 "@ns:__APP__\AuthModule\Router
-@import:Psr\Http\Message\RequestInterface
-@import:Psr\Http\Message\ResponseInterface
+@import:Symfony\Component\HttpFoundation\Request
+@import:Symfony\Component\HttpFoundation\Response
 @class:Index
 @inherit:\App\Data\Router
 
@@ -131,7 +131,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 @descr:@Route:/hello/world
 @descr:@Method:GET
 
-@method:helloTo@param:name|req#RequestInterface|res#ResponseInterface
+@method:helloTo@param:name|req#Request|res#Response
 @body:return sprintf(\"<b>Hello %s!</b>\", \$name);
 @descr:@Route:/hello/{name:alpha}
 @descr:@Method:GET
@@ -142,7 +142,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 @descr:@Permission:user_all
 @descr:@Method:GET
 
-@method:getUser@param:req#RequestInterface
+@method:getUser@param:req#Request
 @body
 \$id = \$req->getAttribute(\"id\");
 
