@@ -271,7 +271,9 @@ class Application{
 	*/
 	public function runDebug(){
 
-		$this->getRouter()->run();
+		$res = $this->getRouter()->dispatch();
+
+		$res->send();
 	}
 
 	/**
@@ -285,7 +287,9 @@ class Application{
 
 		try{
 
-			$this->getRouter()->run();
+			$res = $this->getRouter()->dispatch();
+
+			$res->send();
 		}
 		catch(\Exception $e){
 
@@ -294,7 +298,7 @@ class Application{
 
 			$res = $registry->get("Response.ServerError")->exec();
 
-			$res->send();
+			exit($res->getContent());
 		}
 	}
 }

@@ -144,7 +144,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 
 @method:getUser@param:req#Request
 @body
-\$id = \$req->getAttribute(\"id\");
+\$id = \$req->query->get(\"id\");
 
 		return self::get(\"core\")->get(\"au.ctr.User\")->find(\$id);
 @body
