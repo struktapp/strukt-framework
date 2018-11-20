@@ -69,17 +69,17 @@ abstract class Data{
 
 		$registry = \Strukt\Core\Registry::getInstance();
 
-		if(!$registry->exists("servReq"))
-			throw new \Exception("Server Request object (key:[servReq]) is not in in Strukt\Core\Registy!");
+		if(!$registry->exists("request"))
+			throw new \Exception("Server Request object (key:[request]) is not in in Strukt\Core\Registy!");
 
-		$serverRequest = $registry->get("servReq");
+		$request = $registry->get("request");
 
-		$body = $serverRequest->getParsedBody();
+		// $body = $request->getParsedBody();
 
-		if($body instanceof \Psr\Http\Message\StreamInterface)
-			$body = json_decode((string)$body, 1);
+		// if($body instanceof \Psr\Http\Message\StreamInterface)
+			// $body = json_decode((string)$body, 1);
 
-		return $body[$key];
+		return $request->request->get($key);
 	}
 
 	/**

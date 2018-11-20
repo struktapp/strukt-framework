@@ -14,7 +14,7 @@ $loader->add($appCfg["app-name"], __DIR__.'/app/src/');
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\HttpFoundation\Request;
 
-$request = Request::createFromGlobals();
+// $request = Request::createFromGlobals();
 
 $request = new Request(
     $_GET,
@@ -29,6 +29,10 @@ $registry = \Strukt\Core\Registry::getInstance();
 $registry->set("_dir", __DIR__);
 $registry->set("_staticDir", __DIR__."/public/static");
 $registry->set("request", $request);
+
+// print_r($registry->get('request')->query->get('username'));
+
+// $registry->set("sess", new App\Session\Native());
 
 foreach(["NotFound"=>404, 
 			"MethodNotFound"=>405,

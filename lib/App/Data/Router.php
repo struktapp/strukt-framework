@@ -10,7 +10,7 @@ namespace App\Data;
 abstract class Router extends \App\Base\Registry{
 
 	/**
-	* Getter for request params, uses \Strukt\Rest\Request
+	* Getter for request params, uses \Symfony\Component\HttpFoundation\Request
 	*
 	* @return mixed
 	*/
@@ -19,9 +19,22 @@ abstract class Router extends \App\Base\Registry{
 		if(!self::getInstance()->exists("request"))
 			throw new \Exception("Request object (key:[request]) is not in in Strukt\Core\Registy!");
 
-		$request = self::get("request");
+		$req = self::get('request');
 
-		return $request->query->get($key);
+		$contents = $req->getContent();
+
+		if($req->getMethod() === 'GET'){
+
+			$reqJson = json_decode($contents, 1);
+
+			return $reqJson[$key];
+		}
+
+		if($req->query->has($key))
+			return $req->query->get($key);
+
+		if($req->request->has($key))
+			return $req->request->get($key);
 	}
 
 	/**
@@ -53,7 +66,7 @@ abstract class Router extends \App\Base\Registry{
 	*
 	* @param string $pathtofile relative to static folder
 	*
-	* @return \Strukt\Rest\ResponseType\HtmlFileResponse
+	* @return \Symfony\Component\HttpFoundation\Response
 	*/
 	protected function htmlfile($pathtofile, $code = 200){
 
@@ -76,7 +89,7 @@ abstract class Router extends \App\Base\Registry{
 	* @param array $body
 	* @param int $code
 	*
-	* @return \Strukt\Rest\ResponseType\JsonResponse
+	* @return \Symfony\Component\HttpFoundation\Response
 	*/
 	protected function json(array $body, $code = 200){
 
@@ -94,7 +107,7 @@ abstract class Router extends \App\Base\Registry{
 	* @param string $body
 	* @param int $code
 	*
-	* @return \Strukt\Rest\ResponseType\HtmlResponse
+	* @return \Symfony\Component\HttpFoundation\Response
 	*/
 	protected function html($body, $code = 200){
 
