@@ -41,7 +41,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 @method:getAll
 @body:return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
 
-@method:doAuthentication@param:username|password
+@method:doAuth@param:username|password
 @body
 \$user = self::get(\"core\")->getNew(\"au.mdl.User\", array(\$username, \$password));
 
@@ -119,7 +119,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 		\$messages = \$userForm->validate();
 
 		if(\$messages[\"is_valid\"])
-		    if(self::get(\"core\")->get(\"au.ctr.User\")->doAuthentication(\$username, \$password))
+		    if(self::get(\"core\")->get(\"au.ctr.User\")->doAuth(\$username, \$password))
 		       return self::json(array(
 
 		            \"success\"=>true, 
