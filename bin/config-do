@@ -12,6 +12,7 @@ foreach($autoloadFiles as $autoloadFile)
 
 Strukt\Fs::mkdir("cfg");
 Strukt\Fs::mkdir("tpl/sgf/database/schema/Schema/Migration");
+Strukt\Fs::mkdir("tpl/sgf/database/seeder/Seeder");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Model");
@@ -218,4 +219,16 @@ Strukt\Fs::touchWrite("tpl/sgf/database/schema/Schema/Migration/Version_.sgf",
 
 @method:public>down@param:schema#Schema
 @body:// this up() migration is auto-generated, please modify it to your needs
+");
+
+Strukt\Fs::touchWrite("tpl/sgf/database/seeder/Seeder/NameVer.sgf",
+"@ns:Seed
+@import:Doctrine\DBAL\Connection
+@class:NameVer
+
+@method:public>up@param:conn#Connection
+@body://todo
+
+@method:public>down@param:conn#Connection
+@body://todo
 ");
