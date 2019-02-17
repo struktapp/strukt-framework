@@ -17,6 +17,7 @@ Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Model");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
+Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Tests");
 Strukt\Fs::mkdir("tpl/sgf/lib/App");
 
 Strukt\Fs::touchWrite("cfg/module.ini",
@@ -231,4 +232,31 @@ Strukt\Fs::touchWrite("tpl/sgf/database/seeder/Seed/NameVer.sgf",
 
 @method:public>down@param:conn#Connection
 @body://todo
+");
+
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf","
+@ns:__APP__\AuthModule\Tests
+@import:Strukt\Core\Registry
+@import:PHPUnit\Framework\TestCase
+@class:UserTest
+@inherit:TestCase
+
+@method:setUp
+@body
+\$this->registry = Registry::getInstance();
+
+		\$this->core = \$this->registry->get(\"core\");
+@body
+
+@method:testDoAuthentication
+@body
+\$this->registry = Registry::getInstance();
+
+		\$username = \"admin\";
+		\$password = \"p@55w0rd\";
+
+		\$isSuccess = \$this->core->get(\"au.ctr.User\")->doAuthentication(\$username, \$password);
+
+		\$this->assertTrue(\$isSuccess);
+@body
 ");
