@@ -87,20 +87,25 @@ class Application{
 
 		foreach($modSettings["folder"] as $key=>$fldr){
 
-			foreach(glob(sprintf("%s/%s/*", $dir, $fldr)) as $file){
+    		$it = new \DirectoryIterator(sprintf("%s/%s/", $dir, $fldr));
 
-				$fname = str_replace(".php", "", basename($file));
+    		foreach($it as $file){
 
-				$this->modules[$fmoduleName][$fldr][] = $fname;
+				if($it->isFile()){
 
-				$this->nr->set(sprintf("%s.%s.%s", 
-									strtolower($alias), 
-									strtolower($key), 
-									$fname),
-								sprintf("%s\%s\%s",
-									$baseNs,
-									$fldr,
-									$fname));
+					$fname = str_replace(".php", "", $it->getFilename());
+
+					$this->modules[$fmoduleName][$fldr][] = $fname;
+
+					$this->nr->set(sprintf("%s.%s.%s", 
+										strtolower($alias), 
+										strtolower($key), 
+										$fname),
+									sprintf("%s\%s\%s",
+										$baseNs,
+										$fldr,
+										$fname));
+				}
 			}
 		}	
 	}
