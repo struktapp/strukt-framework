@@ -6,7 +6,7 @@ use Strukt\Core\Map;
 use Strukt\Core\Collection;
 use Strukt\Core\Registry;
 use Strukt\Fs;
-use Strukt\Router\Router;
+use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 
 use Symfony\Component\HttpFoundation\Response;
@@ -36,8 +36,9 @@ class Application{
 	/**
 	* Constructor
 	*/
-	public function __construct(){
+	public function __construct(RouterKernel $router){
 
+		$this->router = $router;
 		$this->modules = array();
 		$this->nr = new Map(new Collection("NameRegistry"));
 	}
@@ -135,138 +136,38 @@ class Application{
 	* 
 	* @return array
 	*/
-	public function getRouterProperties(){
+	public function loadRouter(){
 
 		/**
 		* @todo either cache annotations or cache router loaded
 		*		with annotations for speed and efficiency
 		*/
 
-		$registry = Registry::getInstance();
+		foreach($this->modules as $module){
 
-		$cache = null;
-		$routerParams = null;
-		if($registry->exists("cache")){
+			foreach($module["Router"] as $routr){
 
-			$cache = $registry->get("cache");
-			$routerParams = $cache->fetch("router-params");
-		}
+				$rclass_name = sprintf("%s\Router\%s", $module["base-ns"], $routr);
+				$rclass = new \ReflectionClass($rclass_name);
+				$parser = new BasicAnnotationParser($rclass);
+				$annotations = $parser->getAnnotations();
 
-		if(empty($routerParams)){
+				foreach($annotations as $annotation){
 
-			foreach($this->modules as $module){
+					foreach($annotation as $methodName=>$methodItems){
 
-				if(!empty($module["Router"]))
-					foreach($module["Router"] as $routr){
+						if(array_key_exists("Method", $methodItems)){
 
-						$rclass_name = sprintf("%s\Router\%s", $module["base-ns"], $routr);
-						$rclass = new \ReflectionClass($rclass_name);
-						$parser = new BasicAnnotationParser($rclass);
-						$annotations = $parser->getAnnotations();
+							$class = sprintf("%s@%s", $annotations["class_name"], $methodName);
 
-						foreach($annotations["methods"] as $name=>$items){
-
-							$params = null;
-							if(!empty($items)){
-								
-								$http_method = null;
-								if(in_array("item", array_keys($items["Method"])))
-									$http_method = $items["Method"]["item"];
-								
-								if(in_array("items", array_keys($items["Method"])))
-									$http_method = implode("-", array_map("trim", $items["Method"]["items"]));
-								
-								if(is_null($http_method))
-									throw new \Exception("StruktFrameworkApplicationException: Unrecorgnized method!");
-
-								$perm = null;
-								
-								if(in_array("Permission", array_keys($items))){
-
-									if(!is_null($items["Permission"])){
-
-										if(in_array("items", array_keys($items["Permission"])))
-											throw new \Exception("PermissionAnnotationException: Accepts only one permission per route!");	
-
-										if(in_array("item", array_keys($items["Permission"])))
-											$perm = $items["Permission"]["item"];
-									}
-								}
-
-								$params["method"] = $http_method;
-								$params["route"] = $items["Route"]["item"];
-								$params["func"]["class"] = $rclass_name;
-								$params["func"]["method"] = $name;
-								$params["func"]["permission"] = $perm;
-
-								$routerParams[] = $params;
-							}
+							$this->router->map($methodItems["Method"]["item"],
+												$methodItems["Route"]["item"],
+												$class);
 						}
 					}
-			}			
-		}
-
-		if(!is_null($cache))
-			if(!$cache->exists("router-params"))
-				$cache->save("router-params", $routerParams);
-		
-		$object = null;
-		foreach($routerParams as $routerParam){
-
-			if(get_class($object) != $routerParam["func"]["class"]){
-
-				$class = new \ReflectionClass($routerParam["func"]["class"]);
-				$object = $class->newInstance();
+				}
 			}
-
-			$func = $class->getMethod($routerParam["func"]["method"])->getClosure($object);
-
-			$routerProps[$routerParam["func"]["class"]][] = array(
-
-				"method"=>$routerParam["method"],
-				"route"=>$routerParam["route"],
-				"name"=>$routerParam["func"]["method"],
-				"perm"=>$routerParam["func"]["permission"],
-				"func"=>$func
-			);
 		}
-
-		return $routerProps;
-	}
-
-	/**
-	* Create router
-	* 
-	* @return Strukt\Rest\Router
-	*/
-	public function getRouter(){
-
-		$registry = Registry::getInstance();
-
-		$allowed = null;
-		if($registry->exists("router.perms")){
-
-			$allowed = $registry->get("router.perms");
-
-			if(!is_array($allowed))
-				$allowed = null;
-		}
-
-		$request = $registry->get("request");
-
-		$router = new Router($allowed, $request);
-		$routes = $router->getRoutes();
-
-		$allRouterProps = $this->getRouterProperties();
-
-		foreach($allRouterProps as $routerProp)
-			foreach($routerProp as $prop)
-				$routes->addRoute($prop["method"],
-									$prop["route"],
-									$prop["func"],
-									$prop["perm"]);
-
-		return $router;
 	}
 
 	/**
@@ -276,9 +177,11 @@ class Application{
 	*/
 	public function runDebug(){
 
-		$res = $this->getRouter()->dispatch();
+		$this->loadRouter();
 
-		$res->send();
+		$response = $this->router->run();
+
+		exit($response->getContent());
 	}
 
 	/**
@@ -292,18 +195,18 @@ class Application{
 
 		try{
 
-			$res = $this->getRouter()->dispatch();
+			$this->loadRouter();
 
-			$res->send();
+			$response = $this->router->run();
+
+			exit($response->getContent());
 		}
 		catch(\Exception $e){
 
 			if($registry->exists("logger"))
 				$registry->get("logger")->error($e);
 
-			$res = $registry->get("Response.ServerError")->exec();
-
-			exit($res->getContent());
+			exit($e->getMessage());
 		}
 	}
 }

@@ -2,6 +2,10 @@
 
 namespace App\Data;
 
+use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\RedirectResponse;
+use Symfony\Component\HttpFoundation\JsonResponse;
+
 /**
 * Abstract Router class to be extended by Router
 *
@@ -10,55 +14,13 @@ namespace App\Data;
 abstract class Router extends \App\Base\Registry{
 
 	/**
-	* Getter for request params, uses \Symfony\Component\HttpFoundation\Request
-	*
-	* @return mixed
-	*/
-	public function param($key){
-
-		if(!self::getInstance()->exists("request"))
-			throw new \Exception("Request object (key:[request]) is not in in Strukt\Core\Registy!");
-
-		$req = self::get('request');
-
-		$contents = $req->getContent();
-
-		if($req->getMethod() === 'GET'){
-
-			$reqJson = json_decode($contents, 1);
-
-			return $reqJson[$key];
-		}
-
-		if($req->query->has($key))
-			return $req->query->get($key);
-
-		if($req->request->has($key))
-			return $req->request->get($key);
-	}
-
-	/**
-	* Session object getter
-	*
-	* @return \App\Session\Native
-	*/
-	public function session(){
-
-		return new \App\Session\Native();
-	}
-
-	/**
 	* Request redirect
 	*
 	* @return void
 	*/
-	protected function redirect($url){
+	protected function redirect($url, $code = 302, $headers = []){
 
-		$res = self::get("Response.Redirected")->exec();
-		// $res->setStatusCode(200);
-		$res->headers->set('Location', $url);
-
-		$res->send();
+		return new RedirectResponse($url, $code, $headers);
 	}
 
 	/**
@@ -68,19 +30,16 @@ abstract class Router extends \App\Base\Registry{
 	*
 	* @return \Symfony\Component\HttpFoundation\Response
 	*/
-	protected function htmlfile($pathtofile, $code = 200){
+	protected function htmlfile($filepath, $code = 200){
 
-		if(\Strukt\Fs::isFile($pathtofile)){
+		if(\Strukt\Fs::isFile($filepath)){	
 
-			$res = self::get("Response.Ok")->exec();
-			$res->headers->set("Content-Type", "text/html");
-			$res->setStatusCode($code);
-			$res->setContent(\Strukt\Fs::cat($pathtofile));			
+			$content = \Strukt\Fs::cat($filepath);
+
+			return $this->html($content, $code);	
 		}
-		else
-			$res = self::get("Response.NotFound")->exec();
 
-		return $res;
+		throw new \Strukt\Router\Exception\NotFoundException();
 	}
 
 	/**
@@ -93,12 +52,7 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function json(array $body, $code = 200){
 
-		$res = self::get("Response.Ok")->exec();
-		$res->headers->set("Content-Type", "application/json");
-		$res->setStatusCode($code);
-		$res->setContent(json_encode($body));	
-
-		return $res;
+		return new JsonResponse($body, $code);
 	}
 
 	/**
@@ -111,11 +65,6 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function html($body, $code = 200){
 
-		$res = self::get("Response.Ok")->exec();
-		$res->headers->set("Content-Type", "text/html");
-		$res->setStatusCode($code);
-		$res->setContent($body);	
-
-		return $res;
+		return new Response($body, $code, array("Content-Type"=>"text/html"));	
 	}
 }

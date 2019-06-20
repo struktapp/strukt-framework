@@ -1,5 +1,6 @@
 <?php
 
+use Symfony\Component\HttpFoundation\Request;
 use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase{
@@ -32,7 +33,7 @@ class ApplicationTest extends TestCase{
 	*/
 	public function testNameRegistryOutput($authModule){
 
-		$app = new Strukt\Application();
+		$app = new Strukt\Application(new Strukt\Router\Kernel(Request::createFromGlobals()));
 		$app->register($authModule);
 
 		$nr = $app->getNameRegistry();

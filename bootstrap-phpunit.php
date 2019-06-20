@@ -8,8 +8,7 @@ $appCfg = parse_ini_file("cfg/app.ini");
 
 $loader = require 'vendor/autoload.php';
 $loader->add('App', __DIR__.'/lib/');
-// $loader->add('Strukt', __DIR__.'/../strukt-commons/src/');
-// $loader->add('Strukt', __DIR__.'/../strukt-router/src/');
+$loader->add('Strukt', __DIR__.'/../strukt-router2/src/');
 $loader->add($appCfg["app-name"], __DIR__.'/app/src/');
 
 $registry = Registry::getInstance();

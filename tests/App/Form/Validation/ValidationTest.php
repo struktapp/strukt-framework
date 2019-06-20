@@ -1,5 +1,6 @@
 <?php
 
+use Symfony\Component\HttpFoundation\Request;
 use PHPUnit\Framework\TestCase;
 
 class ValidationTest extends TestCase{
@@ -20,7 +21,7 @@ class ValidationTest extends TestCase{
 			"admin"=>2
 		);
 
-		$vals = array(
+		$params = array(
 
 			"username"=>"admin",
 			"password"=>"p@55w0rd",
@@ -28,8 +29,10 @@ class ValidationTest extends TestCase{
 			"role"=>$role["sadmin"]
 		);
 
+		$request = new Request([], $params);
+
 		$refCls = new ReflectionClass($this->authModuleUserNs);
-		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($vals));
+		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($request));
 		$validation = $form->validate();
 
 		$this->assertTrue($validation["is_valid"]);
@@ -44,7 +47,7 @@ class ValidationTest extends TestCase{
 			"admin"=>2
 		);
 
-		$vals = array(
+		$params = array(
 
 			"username"=>"admin",
 			"password"=>"",
@@ -52,8 +55,10 @@ class ValidationTest extends TestCase{
 			"role"=>$role["sadmin"]
 		);
 
+		$request = new Request([], $params);
+
 		$refCls = new ReflectionClass($this->authModuleUserNs);
-		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($vals));
+		$form = $this->authModuleUser = $refCls->newInstanceArgs(array($request));
 		$validation = $form->validate();
 
 		$this->assertFalse($validation["is_valid"]);

@@ -2,6 +2,8 @@
 
 namespace App\Form;
 
+use Symfony\Component\HttpFoundation\Request;
+
 /**
 * Data class to be inherited in Form
 *
@@ -21,27 +23,23 @@ abstract class Data{
 	*
 	* @return array
 	*/
-	private $rawVals;
+	// private $rawVals;
 
 	/**
 	* Flag to check if is test mode
 	*
 	* @return array
 	*/
-	private $isTestMode = false;
+	// private $isTestMode = false;
 
 	/**
 	* Constructor
 	*
 	* @param $rawVals Array of values
 	*/
-	public function __construct(array $rawVals=null){
+	public function __construct(Request $request){
 
-		if(!is_null($rawVals)){
-
-			$this->rawVals = $rawVals;
-			$this->isTestMode = true;
-		}
+		$this->request = $request;
 	}
 
 	/**
@@ -55,34 +53,6 @@ abstract class Data{
 	}
 
 	/**
-	* Getter for request parameters
-	*
-	* @param string $key
-	*
-	* @throws \Exception
-	* @return string
-	*/
-	protected function getParam($key){
-
-		if($this->isTestMode)
-			return $this->rawVals[$key];
-
-		$registry = \Strukt\Core\Registry::getInstance();
-
-		if(!$registry->exists("request"))
-			throw new \Exception("Server Request object (key:[request]) is not in in Strukt\Core\Registy!");
-
-		$request = $registry->get("request");
-
-		// $body = $request->getParsedBody();
-
-		// if($body instanceof \Psr\Http\Message\StreamInterface)
-			// $body = json_decode((string)$body, 1);
-
-		return $request->request->get($key);
-	}
-
-	/**
 	* Message setter
 	*
 	* @param string $key request parameter name
@@ -93,7 +63,7 @@ abstract class Data{
 	protected function setMessage($key, Validation\Validator $validator){
 
 		$this->message[$key] = $validator->getMessage();
-		$this->rawVals[$key] = $validator->getVal();
+		// $this->rawVals[$key] = $validator->getVal();
 	}
 
 	/**
@@ -105,7 +75,7 @@ abstract class Data{
 	*/
 	public function get($key){
 
-		return $this->rawVals[$key];
+		return $this->request->get($key);
 	}
 
 	/**

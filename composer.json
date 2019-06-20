@@ -17,7 +17,7 @@
         "strukt/console": "dev-master", 
         "strukt/fs":"dev-master",
         "strukt/commons":"dev-master",
-        "strukt/router": "dev-master"
+        "symfony/http-foundation": "^4.3"
     },
     "require-dev":{
 

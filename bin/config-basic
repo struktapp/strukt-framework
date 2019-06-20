@@ -60,11 +60,11 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 \$factory = \$this->getValidationFactory();
 
 		\$this->setMessage(\"username\", \$factory->newValidator()
-				->setVal(\$this->getParam(\"password\"))
+				->setVal(\$this->get(\"username\"))
 				->isNotEmpty());
 
 		\$this->setMessage(\"password\", \$factory->newValidator()
-				->setVal(\$this->getParam(\"password\"))
+				->setVal(\$this->get(\"password\"))
 				->isNotEmpty());
 @body
 ");
@@ -111,12 +111,12 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 @class:Auth
 @inherit:\App\Data\Router
 
-@method:login
+@method:login@param:request:Request
 @body
 \$username = self::param(\"username\");
 		\$password = self::param(\"password\");
 
-		\$userForm = self::get(\"core\")->getNew(\"au.frm.User\");
+		\$userForm = self::get(\"core\")->getNew(\"au.frm.User\", [\$request]);
 		\$messages = \$userForm->validate();
 
 		if(\$messages[\"is_valid\"])
@@ -136,7 +136,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 		    return self::json(array(
 
 		        \"success\"=>false,
-		        \"message\"=>\"Invalid input!\"
+		        \"message\"=>\"Invalid input!\",
+		        \"form\"=>\$messages
 		    ));
 @body
 @descr:@Route:/login
@@ -160,7 +161,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
 @descr:@Route:/hello/world
 @descr:@Method:GET
 
-@method:helloTo@param:name|req#Request|res#Response
+@method:helloTo@param:name|request#Request
 @body:return sprintf(\"<b>Hello %s!</b>\", \$name);
 @descr:@Route:/hello/{name:alpha}
 @descr:@Method:GET
@@ -171,7 +172,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
 @descr:@Permission:user_all
 @descr:@Method:GET
 
-@method:getUser@param:req#Request
+@method:getUser@param:request#Request
 @body
 \$id = \$req->query->get(\"id\");
 
@@ -196,6 +197,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 "@ns:App
+@import:Strukt\Router\Kernel as RouterKernel;
 @class:Loader
 @descr
 	Application Loader Class
@@ -209,7 +211,7 @@ Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 
 @param:private>app#Strukt\Application
 
-@method:__construct
+@method:__construct@param:router#RouterKernel
 @body
 \$this->app = new \Strukt\Application();
 		%s
@@ -225,9 +227,9 @@ Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 	Initialize Strukt Framework
 @descr
 
-@method:getApp#Strukt\Application
+@method:getApp#Strukt\Application@param:router#RouterKernel
 @body
-\$loader = new self;
+\$loader = new self(\$router);
 
 		return \$loader->app;
 @body
