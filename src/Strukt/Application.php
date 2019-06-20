@@ -36,7 +36,7 @@ class Application{
 	/**
 	* Constructor
 	*/
-	public function __construct(RouterKernel $router){
+	public function __construct(RouterKernel $router = null){
 
 		$this->router = $router;
 		$this->modules = array();
@@ -136,7 +136,10 @@ class Application{
 	* 
 	* @return array
 	*/
-	public function loadRouter(){
+	private function loadRouter(){
+
+		if(is_null($this->router))
+			throw new \Exception("%s is required by Strukt\Application!", RouterKernel::class);
 
 		/**
 		* @todo either cache annotations or cache router loaded

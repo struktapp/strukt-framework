@@ -84,10 +84,10 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 @class:Auth
 @inherit:\App\Data\Router
 
-@method:login@param:request:Request
+@method:login@param:request#Request
 @body
-\$username = self::param(\"username\");
-		\$password = self::param(\"password\");
+\$username = \$request->get(\"username\");
+		\$password = \$request->get(\"password\");
 
 		\$userForm = self::get(\"core\")->getNew(\"au.frm.User\", [\$request]);
 		\$messages = \$userForm->validate();
@@ -147,7 +147,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 
 @method:getUser@param:request#Request
 @body
-\$id = \$req->query->get(\"id\");
+\$id = \$request->query->get(\"id\");
 
 		return self::get(\"core\")->get(\"au.ctr.User\")->find(\$id);
 @body
@@ -184,9 +184,9 @@ Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 
 @param:private>app#Strukt\Application
 
-@method:__construct@param:router#RouterKernel
+@method:__construct@param:router#RouterKernel=null
 @body
-\$this->app = new \Strukt\Application();
+\$this->app = new \Strukt\Application(\$router);
 		%s
 
 		\$r = \Strukt\Core\Registry::getInstance();
@@ -200,7 +200,7 @@ Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 	Initialize Strukt Framework
 @descr
 
-@method:getApp#Strukt\Application@param:router#RouterKernel
+@method:getApp#Strukt\Application@param:router#RouterKernel=null
 @body
 \$loader = new self(\$router);
 
