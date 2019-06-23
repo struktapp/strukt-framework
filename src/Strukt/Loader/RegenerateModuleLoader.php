@@ -2,6 +2,12 @@
 
 namespace Strukt\Loader;
 
+use Strukt\Fs;
+use Strukt\Env;
+use Strukt\Generator\Parser;
+use Strukt\Generator\Compiler;
+
+
 /**
 * Helper that generates module loader
 *
@@ -14,7 +20,7 @@ class RegenerateModuleLoader{
 	*
 	* @var string
 	*/
-	private $moduleLoaderContents;
+	private $module_loader_contents;
 
 	/**
 	* Constructor
@@ -23,45 +29,40 @@ class RegenerateModuleLoader{
 	*/
 	public function __construct(){
 
-		$registry = \Strukt\Core\Registry::getInstance();
+		$root_dir = Env::get("root_dir");
+		$app_dir = Env::get("rel_appsrc_dir");
+		$loader_sgf_file = Env::get("rel_loader_sgf");
 
-		if(!$registry->exists("dir.root"))
-			throw new \Exception("Strukt root dir not defined!");
+		$appsrc_path = sprintf("%s%s", $root_dir, $app_dir);
 
-		if(!$registry->exists("dir.app"))
-			throw new \Exception("Strukt app dir not defined!");
+		if(!Fs::isPath($appsrc_path))
+			throw new \Exception(sprintf("Application source path [%s] does not exist!", 
+											$appsrc_path));
 
-		$rootDir = $registry->get("dir.root");
-		$_appDir = $registry->get("dir.app");
-
-		$srcDir = sprintf("%s/%s/src", $rootDir, $_appDir);
-
-		if(!\Strukt\Fs::isPath($srcDir))
-			throw new \Exception("Application source path [$src] does not exist!");
-
-		foreach(scandir($srcDir) as $srcItem)
+		foreach(scandir($appsrc_path) as $srcItem)
 			if(!preg_match("/(.\.php|\.)/", $srcItem))
 				$apps[] = $srcItem;
 
 		foreach($apps as $app){
 
-			$appDir = sprintf("%s/%s", $srcDir, $app);
-			foreach(scandir($appDir) as $appItem)
+			$app_path = sprintf("%s%s", $appsrc_path, $app);
+
+			foreach(scandir($app_path) as $appItem)
 				if(!preg_match("/(.\.php|\.)/", $appItem))
 					$all[$app][] = $appItem;
 		}
 
 		foreach($all as $name=>$mods)
 			foreach($mods as $mod)
-				$register[] = sprintf("\$this->app->register(new \%s\%s\%s%s());", $name, $mod, $name, $mod);
+				$register[] = sprintf("\$this->app->register(new \%s\%s\%s%s());", 
+										$name, $mod, $name, $mod);
 
-		$sgfFile = "tpl/sgf/lib/App/Loader.sgf";
-		if(!\Strukt\Fs::isFile($sgfFile))
-			throw new \Exception(sprintf("File [%s] was not found!", $sgfFile));
+		if(!Fs::isFile($loader_sgf_file))
+			throw new \Exception(sprintf("File [%s] was not found!", $loader_sgf_file));
 			
-		$sgfContents = \Strukt\Fs::cat($sgfFile);
-		$parser = new \Strukt\Generator\Parser($sgfContents);
-		$compiler = new \Strukt\Generator\Compiler($parser, array(
+		$sgf_contents = Fs::cat($loader_sgf_file);
+		$parser = new Parser($sgf_contents);
+		$compiler = new Compiler($parser, array(
 
 			"excludeMethodParamTypes"=>array(
 
@@ -74,7 +75,7 @@ class RegenerateModuleLoader{
 
 		$result = sprintf("<?php\n%s", $compiler->compile());
 
-		$this->moduleLoaderContents = sprintf($result, implode("\n\t\t\t", $register));
+		$this->module_loader_contents = sprintf($result, implode("\n\t\t\t", $register));
 	}
 
 	/**
@@ -84,6 +85,6 @@ class RegenerateModuleLoader{
 	*/
 	public function __toString(){
 
-		return $this->moduleLoaderContents;
+		return $this->module_loader_contents;
 	}
 }

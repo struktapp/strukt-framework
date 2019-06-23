@@ -4,6 +4,16 @@ namespace Strukt\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
+use Strukt\Generator\ClassBuilder;
+use Strukt\Generator\Annotation\Basic as BasicAnnotations;
+use Strukt\Generator\ClassBuilder;
+use Strukt\Http\Request as HttpRequest;
+use Strukt\Http\Reponse as HttpResponse;
+use Strukt\Fs;
+use Strukt\Env;
+use App\Data\Router as AbstractRouter;
+use Strukt\Core\Registry;
+
 
 /**
 * generate:router     Generate Module Router - ACCEPTS NO ARGS
@@ -43,16 +53,20 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$registry = \Strukt\Core\Registry::getInstance();
+		$root_dir = Env::get("root_dir");
+		$app_dir = Env::get("rel_appsrc_dir");
+		
 
-		if(!$registry->exists("dir.root"))
-			throw new \Exception("Strukt root dir not defined!");
+		$registry = Registry::getInstance();
 
-		if(!$registry->exists("dir.app"))
-			throw new \Exception("Strukt app dir not defined!");
+		// if(!$registry->exists("dir.root"))
+		// 	throw new \Exception("Strukt root dir not defined!");
 
-		$rootDir = $registry->get("dir.root");
-		$appDir = $registry->get("dir.app");
+		// if(!$registry->exists("dir.app"))
+		// 	throw new \Exception("Strukt app dir not defined!");
+
+		// $rootDir = $registry->get("dir.root");
+		// $appDir = $registry->get("dir.app");
 		$moduleList = unserialize($registry->get("module-list"));
 
 		/**
@@ -84,9 +98,9 @@ class RouterGenerator extends \Strukt\Console\Command{
 				continue;
 			}
 			
-			$nsPath = str_replace("\\", "/", $namespace);
-			$srcDir = sprintf("%s/%s/src", $rootDir, $appDir);
-			$path = sprintf("%s/%s", $srcDir, $nsPath);
+			$ns_path = str_replace("\\", "/", $namespace);
+			$src_dir = sprintf("%s%s", $root_dir, $app_dir);
+			$path = sprintf("%s%s", $src_dir, $ns_path);
 		}
 
 		/**
@@ -115,7 +129,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 			$router["id"]["name"] = str_replace(array("router", "Router"), "", $router["id"]["name"]);
 		}
 		
-		$router["id"]["extends"] = "\App\Data\Router";
+		$router["id"]["extends"] = sprintf("\%s", AbstractRouter::class);
 
 		echo "\n";
 
@@ -253,11 +267,11 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 		$router["id"]["use"] = array(
 
-			"Psr\Http\Message\RequestInterface",
-			"Psr\Http\Message\ResponseInterface"
+			HttpRouter::class,
+			HttpResponse::class
 		);
 
-		$builderInstance = new \Strukt\Generator\ClassBuilder($router["id"]);
+		$builderInstance = new ClassBuilder($router["id"]);
 
 		foreach($router["methods"] as $method){
 
@@ -279,10 +293,11 @@ class RouterGenerator extends \Strukt\Console\Command{
 			if(in_array("params", array_keys($method)))
 				$func["params"] = $method["params"];
 				
-			$builderInstance->addMethod($func, new \Strukt\Generator\Annotation\Basic($annotations));
+			$builderInstance->addMethod($func, new BasicAnnotations($annotations));
 		}
 
-		\Strukt\Fs::touchWrite(sprintf("%s/Router/%s.php", $path, $router["id"]["name"]), sprintf("<?php\n%s", $builderInstance));
+		Fs::touchWrite(sprintf("%s/Router/%s.php", $path, $router["id"]["name"]), 
+						sprintf("<?php\n%s", $builderInstance));
 
 		$out->add("Router genarated successfully.\n");
 	}

@@ -7,6 +7,9 @@ use Strukt\Console\Output;
 use Strukt\Env;
 use Strukt\Util\Str;
 use Strukt\Fs;
+use Strukt\Generator\Parser;
+use Strukt\Generator\Annotation\Basic as BasicAnnotations;
+use Strukt\Generator\Compiler;
 
 /**
 * generate:app     Generate Application
@@ -71,8 +74,9 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				
 				$sgf_file = Fs::cat($file);
 
-				$parser = new \Strukt\Generator\Parser(str_replace("__APP__", $app_name, $sgf_file));
-				$compiler = new \Strukt\Generator\Compiler($parser, array(
+				$parser = new Parser(str_replace("__APP__", (string)$app_name, $sgf_file));
+
+				$compiler = new Compiler($parser, array(
 
 					"excludeMethodParamTypes"=>array(
 
@@ -96,7 +100,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 							$methAnnots[trim($aKey, "@")] = $aVal;
 						}
 
-						return new \Strukt\Generator\Annotation\Basic($methAnnots);
+						return new BasicAnnotations($methAnnots);
 					}
 				));
 
@@ -112,9 +116,10 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			}
 
 			$app_ini_content = Fs::cat($app_ini);
-			$new_app_ini_content = str_replace("__APP__", $app_name, $app_ini_content);
 
-			Fs::overwrite($app_ini_content, $new_app_ini_content);
+			$new_app_ini_content = str_replace("__APP__", (string)$app_name, $app_ini_content);
+
+			Fs::overwrite($app_ini, $new_app_ini_content);
 			
 			$out->add("Application genarated successfully.\n");
 		}

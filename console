@@ -12,11 +12,13 @@ Env::set("rel_mod_ini", "cfg/module.ini");
 Env::set("rel_tplapp_dir", "tpl/sgf/app/");
 Env::set("rel_tplappsrc_dir", "tpl/sgf/app/src/");
 Env::set("rel_tplauthmod_dir","tpl/sgf/app/src/App/AuthModule/");
+Env::set("rel_app_lib", "lib/App");
+Env::set("rel_loader_sgf","tpl/sgf/lib/App/Loader.sgf");
 
 try{
 	
-	if(!class_exists("App\Loader"))
-		throw new Exception("App Loader does not exixst!");
+	if(!class_exists(App\Loader::class))
+		throw new Exception(sprintf("%s does not exixst!", App\Loader::class));
 	
 	$moduleList = App\Loader::getApp()->getModuleList();	
 }

@@ -1,8 +1,5 @@
 <?php
 
-use Strukt\Fs;
-use Strukt\Event\Event;
-
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
 
 $cfg_app = parse_ini_file("cfg/app.ini");
