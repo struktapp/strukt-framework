@@ -4,6 +4,9 @@ namespace Strukt\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
+use Strukt\Env;
+use Strukt\Util\Str;
+use Strukt\Fs;
 
 /**
 * generate:app     Generate Application
@@ -22,70 +25,55 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$registry = \Strukt\Core\Registry::getInstance();
+		$raw_app_name = $in->get("application_name");
 
-		if(!$registry->exists("dir.root"))
-			throw new \Exception("Strukt root dir not defined!");
+		$app_name = (new Str($raw_app_name))->toCamel();
 
-		if(!$registry->exists("dir.app"))
-			throw new \Exception("Strukt app dir not defined!");
+		$root_dir = Env::get("root_dir");
+		$app_dir = Env::get("rel_appsrc_dir");
+		$mod_ini = Env::get("rel_mod_ini");
+		$app_ini = Env::get("rel_app_ini");
+		$tpl_app_dir = Env::get("rel_tplapp_dir");
+		$tpl_appsrc_dir = Env::get("rel_tplappsrc_dir");
+		$tpl_authmod_dir = Env::get("rel_tplauthmod_dir");
 
-		$rawAppName = $in->get("application_name");
+		$auth_mod_path = sprintf("%s%s%s/AuthModule", 
+								$root_dir, 
+								$app_dir,
+								$app_name);
 
-		$appName = ucfirst($rawAppName);
-		if(preg_match("/^[A_Za-z0-9_]+$/", $rawAppName)){
+		Fs::mkdir($auth_mod_path);
 
-			foreach(explode("_", $rawAppName) as $part)
-				$parts[] = ucfirst($part);
+		$mod_ini_path = sprintf("%s/%s", $root_dir, $mod_ini);
 
-			$appName = ucfirst(implode("", $parts));
-		}
+		$mod_ini_exists = Fs::isFile($mod_ini_path);
 
-		$rootDir = $registry->get("dir.root");
-		$appDir = $registry->get("dir.app");
+		if($mod_ini_exists){
 
-		$authModDir = sprintf("%s/%s/src/%s/AuthModule", 
-								$rootDir, 
-								$appDir,
-								$appName);
+			$mod_ini_contents = parse_ini_file($mod_ini_path);
 
-		\Strukt\Fs::mkdir($authModDir);
+			if(in_array("folder", array_keys($mod_ini_contents)))
+				foreach($mod_ini_contents["folder"] as $folder)
+					Fs::mkdir(sprintf("%s/%s", $auth_mod_path, $folder));
 
-		$moduleIniFile = sprintf("%s/cfg/module.ini", $rootDir);
+			$authmod_dir = str_replace(array($tpl_appsrc_dir, "App"), 
+												array($app_dir, $app_name), 
+												$tpl_authmod_dir);
 
-		$moduleIniFileExists = \Strukt\Fs::isFile($moduleIniFile);
+			Fs::mkdir($authmod_dir);
 
-		if($moduleIniFileExists){
-
-			$moduleSettings = parse_ini_file($moduleIniFile);
-
-			if(in_array("folder", array_keys($moduleSettings)))
-				foreach($moduleSettings["folder"] as $folder)
-					\Strukt\Fs::mkdir(sprintf("%s/%s", $authModDir, $folder));
-
-			$appBase="app/src/";
-			$configAppBase="tpl/sgf/app/src/";
-			$configModuleRoot="tpl/sgf/app/src/App/AuthModule/";
-
-			$appModuleRoot = str_replace(array($configAppBase, "App"), 
-												array($appBase, $appName), 
-												$configModuleRoot);
-
-			\Strukt\Fs::mkdir($appModuleRoot);
-
-			$files = \Strukt\Fs::lsr("tpl/sgf/app");	
+			$files = Fs::lsr($tpl_app_dir);	
 
 			foreach($files as $file){
 
-				if(!\Strukt\Fs::isFile($file))
+				if(!Fs::isFile($file))
 					continue;
 				
-				$sgfFile = \Strukt\Fs::cat($file);
+				$sgf_file = Fs::cat($file);
 
-				$parser = new \Strukt\Generator\Parser(str_replace("__APP__", $appName, $sgfFile));
+				$parser = new \Strukt\Generator\Parser(str_replace("__APP__", $app_name, $sgf_file));
 				$compiler = new \Strukt\Generator\Compiler($parser, array(
 
-					// "excludeStandardAnnotation"=>true,
 					"excludeMethodParamTypes"=>array(
 
 						"string",
@@ -112,23 +100,26 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 					}
 				));
 
-				$base = str_replace($configModuleRoot, $appModuleRoot, preg_replace("/\w+\.sgf$/", "", $file));
-				if(!\Strukt\Fs::isPath($base))
-					\Strukt\Fs::mkdir($base);
+				$base = str_replace($tpl_authmod_dir, $authmod_dir, 
+										preg_replace("/\w+\.sgf$/", "", $file));
 
-				\Strukt\Fs::touchWrite(str_replace(array($configModuleRoot,"sgf","_"), 
-													array($appModuleRoot, "php", $appName), $file), 
-														sprintf("<?php\n%s", $compiler->compile()));
+				if(!Fs::isPath($base))
+					Fs::mkdir($base);
+
+				Fs::touchWrite(str_replace(array($tpl_authmod_dir,"sgf","_"), 
+									array($authmod_dir, "php", $app_name), $file), 
+										sprintf("<?php\n%s", $compiler->compile()));
 			}
 
-			$appIni = \Strukt\Fs::cat("cfg/app.ini");
-			$newAppIni = str_replace("__APP__", $appName, $appIni);
-			\Strukt\Fs::overwrite("cfg/app.ini", $newAppIni);
+			$app_ini_content = Fs::cat($app_ini);
+			$new_app_ini_content = str_replace("__APP__", $app_name, $app_ini_content);
+
+			Fs::overwrite($app_ini_content, $new_app_ini_content);
 			
 			$out->add("Application genarated successfully.\n");
 		}
 		
-		if(!$moduleIniFileExists)
-			$out->add("Failed to find [cfg/module.ini] file!\n");
+		if(!$mod_ini_exists)
+			$out->add(sprintf("Failed to find [%s] file!\n", $app_ini));
 	}
 }

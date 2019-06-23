@@ -9,8 +9,8 @@ use Strukt\Fs;
 use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\Request;
+use Strukt\Http\Response;
+use Strukt\Http\Request;
 
 /**
 * Strukt Application Module Loader and Runner
@@ -71,20 +71,21 @@ class Application{
 		$this->nr->set(sprintf("%s.base.ns", $_alias), $baseNs);
 		$this->nr->set(sprintf("%s.dir", $_alias), $dir);
 
-		$rootDir = Registry::getInstance()->get("_dir");
+		$rootDir = Env::get("root_dir");
+		$relModIni = Env::get("rel_mod_ini");
 
 		if(!Fs::isPath($rootDir))
 			throw new \Exception(sprintf("Root dir [%s] does not exist!", $rootDir));
 
-		$modIniFile = sprintf("%s/cfg/module.ini", $rootDir);
+		$modIniFile = sprintf("%s/%s", $rootDir, $relModIni);
 
 		if(!Fs::isFile($modIniFile))
-			throw new \Exception("Could not find [cfg/module.ini] file!");
+			throw new \Exception(sprintf("Could not find [%s] file!", $relModIni));
 
 		$modSettings = parse_ini_file($modIniFile);
 
 		if(!in_array("folder", array_keys($modSettings)))
-			throw new \Exception("Module Ini file [cfg/module.ini] must specify [alias=>folder] list!");
+			throw new \Exception(sprintf("Module Ini file [%s] must specify [alias=>folder] list!", $relModIni));
 
 		foreach($modSettings["folder"] as $key=>$fldr){
 
@@ -109,6 +110,8 @@ class Application{
 				}
 			}
 		}	
+
+		// print_r($this->modules);
 	}
 
 	/**
@@ -139,7 +142,7 @@ class Application{
 	private function loadRouter(){
 
 		if(is_null($this->router))
-			throw new \Exception("%s is required by Strukt\Application!", RouterKernel::class);
+			throw new \Exception("%s is required by %s!", RouterKernel::class, get_class($this));
 
 		/**
 		* @todo either cache annotations or cache router loaded

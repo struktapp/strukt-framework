@@ -2,9 +2,9 @@
 
 namespace App\Data;
 
-use Symfony\Component\HttpFoundation\Response;
-use Symfony\Component\HttpFoundation\RedirectResponse;
-use Symfony\Component\HttpFoundation\JsonResponse;
+use Strukt\Http\Response;
+use Strukt\Http\RedirectResponse;
+use Strukt\Http\JsonResponse;
 
 /**
 * Abstract Router class to be extended by Router
@@ -28,7 +28,7 @@ abstract class Router extends \App\Base\Registry{
 	*
 	* @param string $pathtofile relative to static folder
 	*
-	* @return \Symfony\Component\HttpFoundation\Response
+	* @return \Strukt\Http\Response
 	*/
 	protected function htmlfile($filepath, $code = 200){
 
@@ -48,7 +48,7 @@ abstract class Router extends \App\Base\Registry{
 	* @param array $body
 	* @param int $code
 	*
-	* @return \Symfony\Component\HttpFoundation\Response
+	* @return \Strukt\Http\Response
 	*/
 	protected function json(array $body, $code = 200){
 
@@ -61,7 +61,7 @@ abstract class Router extends \App\Base\Registry{
 	* @param string $body
 	* @param int $code
 	*
-	* @return \Symfony\Component\HttpFoundation\Response
+	* @return \Strukt\Http\Response
 	*/
 	protected function html($body, $code = 200){
 

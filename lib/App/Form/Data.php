@@ -2,7 +2,7 @@
 
 namespace App\Form;
 
-use Symfony\Component\HttpFoundation\Request;
+use Strukt\Http\Request;
 
 /**
 * Data class to be inherited in Form

@@ -44,12 +44,12 @@ class Console extends \Strukt\Console\Application{
 
 		$configKeys = array_keys($config);
 
-		if(!in_array("rootDir", $configKeys) || !in_array("appDir", $configKeys))
-			throw new \Exception("Strukt Console requires root and app dir in configs!");
+		// if(!in_array("rootDir", $configKeys) || !in_array("appDir", $configKeys))
+		// 	throw new \Exception("Strukt Console requires root and app dir in configs!");
 
 		$registry = \Strukt\Core\Registry::getInstance();
-		$registry->set("dir.root", $config["rootDir"]);
-		$registry->set("dir.app", $config["appDir"]);
+		// $registry->set("dir.root", $config["rootDir"]);
+		// $registry->set("dir.app", $config["appDir"]);
 
 		if(in_array("moduleList", $configKeys))
 			if(!is_null($config["moduleList"]))

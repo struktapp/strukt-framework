@@ -1,7 +1,17 @@
 #!/usr/bin/php
 <?php
 
+use Strukt\Env;
+
 require "bootstrap.php";
+
+Env::set("root_dir", getcwd());
+Env::set("rel_appsrc_dir", "app/src/");
+Env::set("rel_app_ini", "cfg/app.ini");
+Env::set("rel_mod_ini", "cfg/module.ini");
+Env::set("rel_tplapp_dir", "tpl/sgf/app/");
+Env::set("rel_tplappsrc_dir", "tpl/sgf/app/src/");
+Env::set("rel_tplauthmod_dir","tpl/sgf/app/src/App/AuthModule/");
 
 try{
 	
@@ -21,8 +31,8 @@ $configs = array(
 	// "loadNativeCmd"=>false,
 	// "appName"=>"Strukt Console",
 	"moduleList"=>$moduleList,
-	"appDir"=>"app",
-	"rootDir"=>__DIR__
+	// "appDir"=>"app",
+	// "rootDir"=>__DIR__
 );
 
 $console = new Strukt\Console($configs);

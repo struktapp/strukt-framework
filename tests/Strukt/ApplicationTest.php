@@ -1,6 +1,6 @@
 <?php
 
-use Symfony\Component\HttpFoundation\Request;
+use Strukt\Http\Request;
 use PHPUnit\Framework\TestCase;
 
 class ApplicationTest extends TestCase{

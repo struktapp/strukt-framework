@@ -106,8 +106,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Model/User.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 "@ns:__APP__\AuthModule\Router
-@import:Symfony\Component\HttpFoundation\Request
-@import:Symfony\Component\HttpFoundation\Response 
+@import:Strukt\Http\Request
+@import:Strukt\Http\Response 
 @class:Auth
 @inherit:\App\Data\Router
 
@@ -146,8 +146,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
 @ns:__APP__\AuthModule\Router
-@import:Symfony\Component\HttpFoundation\Request
-@import:Symfony\Component\HttpFoundation\Response
+@import:Strukt\Http\Request
+@import:Strukt\Http\Response
 @class:Index
 @inherit:\App\Data\Router
 
