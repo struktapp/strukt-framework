@@ -10,27 +10,6 @@ namespace Strukt;
 class Console extends \Strukt\Console\Application{
 
 	/**
-	* Root directory path
-	*
-	* @var string
-	*/
-	// private static $rootDir;
-
-	/**
-	* Application directory path
-	*
-	* @var string
-	*/
-	// private static $appDir;
-
-	/**
-	* Static directory path - Optional
-	*
-	* @var string
-	*/
-	// private static $staticDir;
-
-	/**
 	* Constructor loads Strukt Framework in-build applications
 	*
 	* Commands loaded:
@@ -44,12 +23,7 @@ class Console extends \Strukt\Console\Application{
 
 		$configKeys = array_keys($config);
 
-		// if(!in_array("rootDir", $configKeys) || !in_array("appDir", $configKeys))
-		// 	throw new \Exception("Strukt Console requires root and app dir in configs!");
-
 		$registry = \Strukt\Core\Registry::getInstance();
-		// $registry->set("dir.root", $config["rootDir"]);
-		// $registry->set("dir.app", $config["appDir"]);
 
 		if(in_array("moduleList", $configKeys))
 			if(!is_null($config["moduleList"]))

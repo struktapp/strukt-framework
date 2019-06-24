@@ -38,6 +38,8 @@ class Application{
 	*/
 	public function __construct(RouterKernel $router = null){
 
+		$this->registry = Registry::getInstance();
+
 		$this->router = $router;
 		$this->modules = array();
 		$this->nr = new Map(new Collection("NameRegistry"));
@@ -148,32 +150,9 @@ class Application{
 		* @todo either cache annotations or cache router loaded
 		*		with annotations for speed and efficiency
 		*/
-
-		foreach($this->modules as $module){
-
-			foreach($module["Router"] as $routr){
-
-				$rclass_name = sprintf("%s\Router\%s", $module["base-ns"], $routr);
-				$rclass = new \ReflectionClass($rclass_name);
-				$parser = new BasicAnnotationParser($rclass);
-				$annotations = $parser->getAnnotations();
-
-				foreach($annotations as $annotation){
-
-					foreach($annotation as $methodName=>$methodItems){
-
-						if(array_key_exists("Method", $methodItems)){
-
-							$class = sprintf("%s@%s", $annotations["class_name"], $methodName);
-
-							$this->router->map($methodItems["Method"]["item"],
-												$methodItems["Route"]["item"],
-												$class);
-						}
-					}
-				}
-			}
-		}
+		$this->registry->get("app.service.router")
+							->apply($this->getModuleList())
+							->exec();
 	}
 
 	/**
@@ -197,8 +176,6 @@ class Application{
 	*/
 	public function run(){
 
-		$registry = Registry::getInstance();
-
 		try{
 
 			$this->loadRouter();
@@ -209,8 +186,8 @@ class Application{
 		}
 		catch(\Exception $e){
 
-			if($registry->exists("logger"))
-				$registry->get("logger")->error($e);
+			if($this->registry->exists("logger"))
+				$this->registry->get("logger")->error($e);
 
 			exit($e->getMessage());
 		}
