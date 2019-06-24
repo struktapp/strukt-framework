@@ -24,6 +24,10 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 					foreach($module["Router"] as $routr){
 
+						/**
+						* @todo either cache annotations or cache router loaded
+						*		with annotations for speed and efficiency
+						*/
 						$class_name = sprintf("%s\Router\%s", $module["base-ns"], $routr);
 						$parser = new BasicAnnotationParser(new \ReflectionClass($class_name));
 						$annotations = $parser->getAnnotations();

@@ -5,6 +5,8 @@ namespace App\Data;
 use Strukt\Http\Response;
 use Strukt\Http\RedirectResponse;
 use Strukt\Http\JsonResponse;
+use Strukt\Router\Exception\NotFoundException;
+use Strukt\Fs;
 
 /**
 * Abstract Router class to be extended by Router
@@ -32,14 +34,14 @@ abstract class Router extends \App\Base\Registry{
 	*/
 	protected function htmlfile($filepath, $code = 200){
 
-		if(\Strukt\Fs::isFile($filepath)){	
+		if(Fs::isFile($filepath)){	
 
-			$content = \Strukt\Fs::cat($filepath);
+			$content = Fs::cat($filepath);
 
 			return $this->html($content, $code);	
 		}
 
-		throw new \Strukt\Router\Exception\NotFoundException();
+		throw new NotFoundException();
 	}
 
 	/**

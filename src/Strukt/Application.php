@@ -146,10 +146,6 @@ class Application{
 		if(is_null($this->router))
 			throw new \Exception("%s is required by %s!", RouterKernel::class, get_class($this));
 
-		/**
-		* @todo either cache annotations or cache router loaded
-		*		with annotations for speed and efficiency
-		*/
 		$this->registry->get("app.service.router")
 							->apply($this->getModuleList())
 							->exec();
