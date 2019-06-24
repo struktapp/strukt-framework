@@ -6,6 +6,8 @@ use Strukt\Console\Input;
 use Strukt\Console\Output;
 use Strukt\Generator\ClassBuilder;
 use Strukt\Fs;
+use Strukt\Env;
+use Strukt\Util\Str;
 
 /**
 * generate:module     Generate Application Module
@@ -30,14 +32,6 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 		$registry = \Strukt\Core\Registry::getInstance();
 
-		// if(!$registry->exists("dir.root"))
-		// 	throw new \Exception("Strukt root dir not defined!");
-
-		// if(!$registry->exists("dir.app"))
-		// 	throw new \Exception("Strukt app dir not defined!");
-
-		// $rootDir = $registry->get("dir.root");
-		// $appDir = $registry->get("dir.app");
 		$moduleList = unserialize($registry->get("module-list"));
 
 		/**
@@ -45,42 +39,18 @@ class ModuleGenerator extends \Strukt\Console\Command{
 		*/
 		$raw_app_name = $in->get("application_name");
 
-		// if(preg_match("/^[A-Za-z0-9_]+$/", $rawAppName)){
-
-		// 	foreach(explode("_", $rawAppName) as $appPart)
-		// 		$appParts[] = ucfirst($appPart);
-
-		// 	$appName = ucfirst(implode("", $appParts));
-		// }
-		
-		// if(empty($appName))
-		// 	$appName = ucfirst($rawAppName);
-
-		$appName = (new Str($raw_app_name))->toCamel();
+		$app_name = (new Str($raw_app_name))->toCamel();
 
 		/**
 		* Module Name
 		*/
 		$raw_mod_name = $in->get("module_name");
 
-		// $rawModName = preg_replace("/module/i", "", $rawModName);
+		$mod_name = (new Str($raw_mod_name))->toCamel();
+		if(!$mod_name->endsWith("Module"))
+			$mod_name = $mod_name->concat("Module");
 
-		// if(preg_match("/^[A-Za-z0-9_]+$/", $rawModName)){
-
-		// 	foreach(explode("_", $rawModName) as $modPart)
-		// 		$modParts[] = ucfirst($modPart);
-
-		// 	$modName = sprintf("%sModule", ucfirst(implode("", $modParts)));
-		// }
-
-		// if(empty($modName))
-		// 	$modName = sprintf("%sModule", ucfirst($rawModName));
-
-		$modName = new Str($raw_mod_name)->toCamel();
-		if(!$modName->endsWith("Module"))
-			$modName = $modName->concat("Module");
-
-		if(in_array(sprintf("%s%s", $appName, $modName), array_keys($moduleList)))
+		if(in_array(sprintf("%s%s", $app_name, $mod_name), array_keys($moduleList)))
 			throw new \Exception("Module already exists!");
 
 		/**
@@ -88,26 +58,15 @@ class ModuleGenerator extends \Strukt\Console\Command{
 		*/
 		$raw_alias_name = $in->get("alias_name");
 
-		// if(preg_match("/^[A-Za-z0-9_]+$/", $rawAliasName)){
-
-		// 	foreach(explode("_", $rawAliasName) as $aliasPart)
-		// 		$aliasParts[] = ucfirst($aliasPart);
-
-		// 	$aliasName = ucfirst(implode("", $aliasParts));
-		// }
-
-		// if(empty($aliasName))
-		// 	$aliasName = ucfirst($rawAliasName);
-
-		$aliasName = new Str($raw_alias_name)->toCamel();
+		$aliasName = (new Str($raw_alias_name))->toCamel();
 
 		//
 
-		$auth_mod_path = sprintf("%s%s%s/%s", 
+		$auth_mod_path = sprintf("%s/%s%s/%s", 
 								$root_dir,
 								$app_dir,
-								$appName,
-								$modName);
+								$app_name,
+								$mod_name);
 
 		Fs::mkdir($auth_mod_path);
 
@@ -125,9 +84,9 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 			$module = new ClassBuilder(array(
 
-				"namespace"=>sprintf("%s\%s", $appName, $modName),
+				"namespace"=>sprintf("%s\%s", $app_name, $mod_name),
 				"extends"=>sprintf("\%s", \App\Module::class),
-				"name"=>sprintf("%s%s", $appName, $modName)
+				"name"=>sprintf("%s%s", $app_name, $mod_name)
 			));
 
 			$module->addProperty(array(
@@ -137,7 +96,7 @@ class ModuleGenerator extends \Strukt\Console\Command{
 				"value"=>sprintf("\"%s\"", $aliasName)
 			));
 
-			Fs::touchWrite(sprintf("%s/%s%s.php", $auth_mod_path, $appName, $modName), 
+			Fs::touchWrite(sprintf("%s/%s%s.php", $auth_mod_path, $app_name, $mod_name), 
 							sprintf("<?php\n%s", $module));
 
 			$out->add("Module genarated successfully.\n");

@@ -6,7 +6,6 @@ use Strukt\Console\Input;
 use Strukt\Console\Output;
 use Strukt\Generator\ClassBuilder;
 use Strukt\Generator\Annotation\Basic as BasicAnnotations;
-use Strukt\Generator\ClassBuilder;
 use Strukt\Http\Request as HttpRequest;
 use Strukt\Http\Reponse as HttpResponse;
 use Strukt\Fs;
@@ -55,18 +54,8 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 		$root_dir = Env::get("root_dir");
 		$app_dir = Env::get("rel_appsrc_dir");
-		
 
 		$registry = Registry::getInstance();
-
-		// if(!$registry->exists("dir.root"))
-		// 	throw new \Exception("Strukt root dir not defined!");
-
-		// if(!$registry->exists("dir.app"))
-		// 	throw new \Exception("Strukt app dir not defined!");
-
-		// $rootDir = $registry->get("dir.root");
-		// $appDir = $registry->get("dir.app");
 		$moduleList = unserialize($registry->get("module-list"));
 
 		/**
@@ -99,7 +88,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 			}
 			
 			$ns_path = str_replace("\\", "/", $namespace);
-			$src_dir = sprintf("%s%s", $root_dir, $app_dir);
+			$src_dir = sprintf("%s/%s", $root_dir, $app_dir);
 			$path = sprintf("%s%s", $src_dir, $ns_path);
 		}
 
@@ -267,7 +256,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 		$router["id"]["use"] = array(
 
-			HttpRouter::class,
+			HttpRequest::class,
 			HttpResponse::class
 		);
 

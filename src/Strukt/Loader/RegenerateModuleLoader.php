@@ -7,7 +7,6 @@ use Strukt\Env;
 use Strukt\Generator\Parser;
 use Strukt\Generator\Compiler;
 
-
 /**
 * Helper that generates module loader
 *
@@ -33,7 +32,7 @@ class RegenerateModuleLoader{
 		$app_dir = Env::get("rel_appsrc_dir");
 		$loader_sgf_file = Env::get("rel_loader_sgf");
 
-		$appsrc_path = sprintf("%s%s", $root_dir, $app_dir);
+		$appsrc_path = sprintf("%s/%s", $root_dir, $app_dir);
 
 		if(!Fs::isPath($appsrc_path))
 			throw new \Exception(sprintf("Application source path [%s] does not exist!", 
@@ -61,6 +60,7 @@ class RegenerateModuleLoader{
 			throw new \Exception(sprintf("File [%s] was not found!", $loader_sgf_file));
 			
 		$sgf_contents = Fs::cat($loader_sgf_file);
+
 		$parser = new Parser($sgf_contents);
 		$compiler = new Compiler($parser, array(
 
