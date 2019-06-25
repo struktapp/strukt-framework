@@ -146,6 +146,10 @@ class Application{
 		if(is_null($this->router))
 			throw new \Exception("%s is required by %s!", RouterKernel::class, get_class($this));
 
+		$this->registry->get("app.service.annotations")
+							->apply($this->getModuleList())
+							->exec();
+
 		$this->registry->get("app.service.router")
 							->apply($this->getModuleList())
 							->exec();

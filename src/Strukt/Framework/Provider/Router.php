@@ -41,7 +41,10 @@ class Router extends AbstractProvider implements ProviderInterface{
 									$http_method = $methodItems["Method"]["item"];
 									$pattern = $methodItems["Route"]["item"];
 									$class = $annotations["class_name"];
+
 									$name = "";
+									if(array_key_exists("Permission", $methodItems))
+										$name = $methodItems["Permission"]["item"];
 
 									$rClass = new \ReflectionClass($class);
 		 							$route_func = $rClass->getMethod($methodName)
