@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Data;
+namespace App;
 
 /**
 * Abstract Controller class to be extended by Controller
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Controller extends \App\Base\Registry{
+abstract class Controller extends Registry{
 
 	//Connecting Controller To Registry
 }

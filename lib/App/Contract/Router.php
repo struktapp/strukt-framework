@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Data;
+namespace App;
 
 use Strukt\Http\Response;
 use Strukt\Http\RedirectResponse;
@@ -13,7 +13,7 @@ use Strukt\Fs;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Router extends \App\Base\Registry{
+abstract class Router extends Registry{
 
 	/**
 	* Request redirect

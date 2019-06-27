@@ -1,13 +1,13 @@
 <?php
 
-namespace App\Form\Validation;
+namespace App\Form;
 
 /**
 * Validation Factory class
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Factory{
+class ValidatorFactory{
 
 	/**
 	* Constructor

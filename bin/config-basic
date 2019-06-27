@@ -34,7 +34,7 @@ Strukt\Fs::touchWrite("cfg/app.ini",
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 "@ns:__APP__\AuthModule\Controller
 @class:User
-@inherit:\App\Data\Controller
+@inherit:\App\Contract\Controller
 
 @method:find@param:id
 @body:return \"Couldn't find User:[\$id] - AuthModule\Controller\User::find Not Yet Implemented!\";
@@ -53,11 +53,11 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 "@ns:__APP__\AuthModule\Form
 @class:User
-@inherit:\App\Form\Data
+@inherit:\App\Contract\Form
 
 @method:protected>validation
 @body
-\$factory = \$this->getValidationFactory();
+\$factory = \$this->getValidatorFactory();
 
 		\$this->setMessage(\"username\", \$factory->newValidator()
 				->setVal(\$this->get(\"username\"))
@@ -109,7 +109,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 @import:Strukt\Http\Request
 @import:Strukt\Http\Response 
 @class:Auth
-@inherit:\App\Data\Router
+@inherit:\App\Contract\Router
 
 @method:login@param:request#Request
 @body
@@ -149,7 +149,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
 @import:Strukt\Http\Request
 @import:Strukt\Http\Response
 @class:Index
-@inherit:\App\Data\Router
+@inherit:\App\Contract\Router
 
 @method:welcome
 @body:return \"</b>Strukt Works!<b>\";
@@ -190,7 +190,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",
 "@ns:__APP__\AuthModule
 @class:__APP__AuthModule
-@inherit:\App\Module
+@inherit:\App\Contract\Module
 
 @param:protected>alias=\"Au\"
 ");

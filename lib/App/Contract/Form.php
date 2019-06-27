@@ -1,15 +1,16 @@
 <?php
 
-namespace App\Form;
+namespace App;
 
 use Strukt\Http\Request;
+use App\Form\ValidatorFactory;
 
 /**
-* Data class to be inherited in Form
+* Form class to be inherited in Form
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Data{
+abstract class Form{
 
 	/**
 	* Messages from validators
@@ -19,23 +20,9 @@ abstract class Data{
 	private $message;
 
 	/**
-	* Raw request values
-	*
-	* @return array
-	*/
-	// private $rawVals;
-
-	/**
-	* Flag to check if is test mode
-	*
-	* @return array
-	*/
-	// private $isTestMode = false;
-
-	/**
 	* Constructor
 	*
-	* @param $rawVals Array of values
+	* @param $request Strukt\Http\Request
 	*/
 	public function __construct(Request $request){
 
@@ -47,9 +34,9 @@ abstract class Data{
 	*
 	* @return App\Form\Validation\Factory
 	*/
-	protected function getValidationFactory(){
+	protected function getValidatorFactory(){
 
-		return \App\Form\Validation\Factory::getInstance();
+		return ValidatorFactory::getInstance();
 	}
 
 	/**
@@ -63,7 +50,6 @@ abstract class Data{
 	protected function setMessage($key, Validation\Validator $validator){
 
 		$this->message[$key] = $validator->getMessage();
-		// $this->rawVals[$key] = $validator->getVal();
 	}
 
 	/**
