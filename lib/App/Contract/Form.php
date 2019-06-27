@@ -1,9 +1,10 @@
 <?php
 
-namespace App;
+namespace App\Contract;
 
 use Strukt\Http\Request;
 use App\Form\ValidatorFactory;
+use App\Form\Validator;
 
 /**
 * Form class to be inherited in Form
@@ -43,11 +44,11 @@ abstract class Form{
 	* Message setter
 	*
 	* @param string $key request parameter name
-	* @param App\Form\Validation\Validator $validator
+	* @param App\Form\Validator $validator
 	*
 	* @return void
 	*/
-	protected function setMessage($key, Validation\Validator $validator){
+	protected function setMessage($key, Validator $validator){
 
 		$this->message[$key] = $validator->getMessage();
 	}

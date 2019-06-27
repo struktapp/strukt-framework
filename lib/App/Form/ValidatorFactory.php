@@ -20,11 +20,11 @@ class ValidatorFactory{
 	/**
 	* Getter for Factory Instance
 	*
-	* @return App\Form\Validation\Factory
+	* @return App\Form\ValidatorFactory
 	*/
 	static public function getInstance(){
 
-		return new Factory();
+		return new ValidatorFactory();
 	}
 
 	/**
@@ -32,7 +32,7 @@ class ValidatorFactory{
 	*
 	* @param string $val
 	*
-	* @return App\Form\Validation\Validator
+	* @return App\Form\ValidatorFactory
 	*/
 	public function newValidator($val=null){
 

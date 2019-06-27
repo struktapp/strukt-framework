@@ -8,7 +8,7 @@ use Strukt\Env;
 use Strukt\Util\Str;
 use Strukt\Fs;
 use Strukt\Generator\Parser;
-use Strukt\Generator\Annotation\Basic as BasicAnnotations;
+use Strukt\Generator\Annotation\Basic as BasicAnnotation;
 use Strukt\Generator\Compiler\Runner as Compiler;
 use Strukt\Generator\Compiler\Configuration;
 

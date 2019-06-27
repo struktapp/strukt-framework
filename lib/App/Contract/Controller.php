@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Contract;
 
 /**
 * Abstract Controller class to be extended by Controller

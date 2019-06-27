@@ -1,6 +1,6 @@
 <?php
 
-namespace App;
+namespace App\Contract;
 
 /**
 * Strukt Module Reflector

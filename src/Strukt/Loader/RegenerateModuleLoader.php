@@ -5,7 +5,8 @@ namespace Strukt\Loader;
 use Strukt\Fs;
 use Strukt\Env;
 use Strukt\Generator\Parser;
-use Strukt\Generator\Compiler;
+use Strukt\Generator\Compiler\Runner as Compiler;
+use Strukt\Generator\Compiler\Configuration;
 
 /**
 * Helper that generates module loader
@@ -62,16 +63,17 @@ class RegenerateModuleLoader{
 		$sgf_contents = Fs::cat($loader_sgf_file);
 
 		$parser = new Parser($sgf_contents);
-		$compiler = new Compiler($parser, array(
+		$config = new Configuration();
 
-			"excludeMethodParamTypes"=>array(
+		$config->setExcludedMethodParamTypes(array(
 
-				"string",
-				"integer",
-				"double",
-				"float"
-			)
+			"string",
+			"integer",
+			"double",
+			"float"
 		));
+
+		$compiler = new Compiler($parser, $config);
 
 		$result = sprintf("<?php\n%s", $compiler->compile());
 
