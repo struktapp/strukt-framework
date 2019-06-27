@@ -22,13 +22,13 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 				foreach($module_list as $module){
 
-					foreach($module["Router"] as $routr){
+					foreach($module["Router"] as $router){
 
 						/**
 						* @todo either cache annotations or cache router loaded
 						*		with annotations for speed and efficiency
 						*/
-						$class_name = sprintf("%s\Router\%s", $module["base-ns"], $routr);
+						$class_name = sprintf("%s\Router\%s", $module["base-ns"], $router);
 						$parser = new BasicAnnotationParser(new \ReflectionClass($class_name));
 						$annotations = $parser->getAnnotations();
 

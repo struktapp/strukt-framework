@@ -2,6 +2,14 @@
 <?php
 
 use Strukt\Env;
+use Strukt\Http\Request;
+use Strukt\Core\Registry;
+use Strukt\Console;
+use Strukt\Router\Kernel as RouterKernel;
+use Strukt\Router\Middleware\Router as RouterMiddleware;
+use Strukt\Framework\Provider\Router as RouterProvider;
+use Strukt\Framework\Provider\Annotation as AnnotationProvider;
+use App\Loader as AppLoader;
 
 require "bootstrap.php";
 
@@ -15,19 +23,35 @@ Env::set("rel_tplauthmod_dir","tpl/sgf/app/src/App/AuthModule/");
 Env::set("rel_app_lib", "lib/App");
 Env::set("rel_loader_sgf","tpl/sgf/lib/App/Loader.sgf");
 
+$kernel = new RouterKernel(Request::createFromGlobals());
+$kernel->providers(array(
+
+	RouterProvider::class,
+	AnnotationProvider::class
+));
+
+$kernel->middlewares(array(
+	
+	"router" => new RouterMiddleware,
+));
+
 try{
 	
-	if(!class_exists(App\Loader::class))
-		throw new Exception(sprintf("%s does not exixst!", App\Loader::class));
+	if(!class_exists(AppLoader::class))
+		throw new Exception(sprintf("%s does not exixst!", AppLoader::class));
 	
-	$moduleList = App\Loader::getApp()->getModuleList();	
+	$app = AppLoader::getApp($kernel);
+
+	$moduleList = $app->getModuleList();
+
+	$app->initialize();	
 }
 catch(\Exception $e){
 
 	$moduleList = null;
 }
 
-$configs = array(
+$console = new Console(array(
 
 	"labelStruktSect"=>true, 
 	// "loadNativeCmd"=>false,
@@ -35,8 +59,6 @@ $configs = array(
 	"moduleList"=>$moduleList,
 	// "appDir"=>"app",
 	// "rootDir"=>__DIR__
-);
+));
 
-$console = new Strukt\Console($configs);
-// $console = new Strukt\Console();
 exit($console->run($_SERVER["argv"]));

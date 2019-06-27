@@ -141,7 +141,7 @@ class Application{
 	* 
 	* @return array
 	*/
-	private function loadRouter(){
+	public function initialize(){
 
 		if(is_null($this->router))
 			throw new \Exception("%s is required by %s!", RouterKernel::class, get_class($this));
@@ -162,7 +162,7 @@ class Application{
 	*/
 	public function runDebug(){
 
-		$this->loadRouter();
+		$this->initialize();
 
 		$response = $this->router->run();
 
@@ -178,7 +178,7 @@ class Application{
 
 		try{
 
-			$this->loadRouter();
+			$this->initialize();
 
 			$response = $this->router->run();
 

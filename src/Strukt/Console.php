@@ -46,14 +46,14 @@ class Console extends \Strukt\Console\Application{
 		if($config["loadNativeCmds"]){
 
 			$this->add(new \Strukt\Console\Command\ApplicationGenerator);
-
+			$this->add(new \Strukt\Console\Command\ApplicationLoaderGenerator);
+			
 			if($registry->exists("module-list")){
 
 				$this->add(new \Strukt\Console\Command\RouterGenerator);
 				$this->add(new \Strukt\Console\Command\ModuleGenerator);
+				$this->add(new \Strukt\Console\Command\RouteList);
 			}
-
-			$this->add(new \Strukt\Console\Command\ApplicationLoaderGenerator);
 		}
 	}
 }

@@ -9,7 +9,8 @@ use Strukt\Util\Str;
 use Strukt\Fs;
 use Strukt\Generator\Parser;
 use Strukt\Generator\Annotation\Basic as BasicAnnotations;
-use Strukt\Generator\Compiler;
+use Strukt\Generator\Compiler\Runner as Compiler;
+use Strukt\Generator\Compiler\Configuration;
 
 /**
 * generate:app     Generate Application
@@ -76,33 +77,33 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 				$parser = new Parser(str_replace("__APP__", (string)$app_name, $sgf_file));
 
-				$compiler = new Compiler($parser, array(
+				$config = new Configuration();
+				$config->setExcludedMethodParamTypes(array(
 
-					"excludeMethodParamTypes"=>array(
-
-						"string",
-						"integer",
-						"double",
-						"float"
-					),
-					"methodAnnotationBuilder"=>function(Array $method){
-
-						if(empty($method["annotations"]))
-							return null; 
-						
-						foreach($method["annotations"] as $annotation){
-
-							list($aKey, $aVal) = explode(":", $annotation, 2);
-
-							if(strpos($aVal, "|") !== false)
-								$aVal = explode("|", $aVal);
-
-							$methAnnots[trim($aKey, "@")] = $aVal;
-						}
-
-						return new BasicAnnotations($methAnnots);
-					}
+					"string",
+					"integer",
+					"double",
+					"float"
 				));
+				$config->addAnnotationBuilder("method", function(array $method){
+
+					if(empty($method["annotations"]))
+						return null; 
+					
+					foreach($method["annotations"] as $annotation){
+
+						list($aKey, $aVal) = explode(":", $annotation, 2);
+
+						if(strpos($aVal, "|") !== false)
+							$aVal = explode("|", $aVal);
+
+						$methAnnots[trim($aKey, "@")] = $aVal;
+					}
+
+					return new BasicAnnotation($methAnnots);
+				});
+
+				$compiler = new Compiler($parser, $config);
 
 				$base = str_replace($tpl_authmod_dir, $authmod_dir, 
 										preg_replace("/\w+\.sgf$/", "", $file));
