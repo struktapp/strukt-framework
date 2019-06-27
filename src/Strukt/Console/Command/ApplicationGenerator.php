@@ -41,12 +41,12 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 		$tpl_appsrc_dir = Env::get("rel_tplappsrc_dir");
 		$tpl_authmod_dir = Env::get("rel_tplauthmod_dir");
 
-		$auth_mod_path = sprintf("%s%s%s/AuthModule", 
+		$auth_mod_path = sprintf("%s/%s%s/AuthModule", 
 								$root_dir, 
 								$app_dir,
 								$app_name);
 
-		Fs::mkdir($auth_mod_path);
+		// Fs::mkdir($auth_mod_path);
 
 		$mod_ini_path = sprintf("%s/%s", $root_dir, $mod_ini);
 
