@@ -1,12 +1,13 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
+use App\Form\ValidatorFactory;
 
 class ValidatorTest extends TestCase{
 
 	public function setUp(){
 
-		$this->factory = App\Form\Validation\Factory::getInstance();
+		$this->factory = ValidatorFactory::getInstance();
 	}
 
 	public function testIsLen(){
