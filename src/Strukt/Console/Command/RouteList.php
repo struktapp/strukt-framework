@@ -9,10 +9,6 @@ use LucidFrame\Console\ConsoleTable;
 
 /**
 * route:list     Route List
-*
-* Usage:
-*
-*       route:list
 */
 class RouteList extends \Strukt\Console\Command{
 

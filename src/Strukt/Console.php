@@ -54,6 +54,8 @@ class Console extends \Strukt\Console\Application{
 				$this->add(new \Strukt\Console\Command\ModuleGenerator);
 				$this->add(new \Strukt\Console\Command\RouteList);
 			}
+
+			$this->add(new \Strukt\Console\Command\ShellExec);
 		}
 	}
 }
