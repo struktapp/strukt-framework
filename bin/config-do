@@ -46,7 +46,7 @@ Strukt\Fs::touchWrite("cfg/app.ini",
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 "@ns:__APP__\AuthModule\Controller
 @class:User
-@inherit:\App\Contract\Controller
+@inherit:\Strukt\Contract\Controller
 
 @method:find@param:id
 @body:return \"Couldn't find User:[\$id] - AuthModule\Controller\User::find Not Yet Implemented!\";
@@ -61,19 +61,14 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 "@ns:__APP__\AuthModule\Form
 @class:User
-@inherit:\App\Contract\Form
+@inherit:\Strukt\Contract\Form
 
 @method:protected>validation
 @body
-\$factory = \$this->getValidatorFactory();
+\$service = \$this->getValidatorService();
 
-		\$this->setMessage(\"username\", \$factory->newValidator()
-				->setVal(\$this->get(\"username\"))
-				->isNotEmpty());
-
-		\$this->setMessage(\"password\", \$factory->newValidator()
-				->setVal(\$this->get(\"password\"))
-				->isNotEmpty());
+		\$this->setMessage(\"username\", \$service->getNew(\$this->get(\"username\"))->isNotEmpty());
+		\$this->setMessage(\"password\", \$service->getNew(\$this->get(\"password\"))->isNotEmpty());
 @body
 ");
 
@@ -82,7 +77,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 @import:Psr\Http\Message\Request
 @import:Psr\Http\Message\Response
 @class:Auth
-@inherit:\App\Contract\Router
+@inherit:\Strukt\Contract\Router
 
 @method:login@param:request#Request
 @body
@@ -122,7 +117,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 @import:Strukt\Http\Request
 @import:Strukt\Http\Response
 @class:Index
-@inherit:\App\Contract\Router
+@inherit:\Strukt\Contract\Router
 
 @method:welcome
 @body:return \"</b>Strukt Works!<b>\";
@@ -163,7 +158,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",
 "@ns:__APP__\AuthModule
 @class:__APP__AuthModule
-@inherit:\App\Contract\Module
+@inherit:\Strukt\Contract\Module
 
 @param:protected>alias=\"Au\"
 ");

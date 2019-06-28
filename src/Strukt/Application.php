@@ -52,7 +52,7 @@ class Application{
 	*
 	* @return void
 	*/
-	public function register(\App\Contract\Module $module){
+	public function register(\Strukt\Contract\Module $module){
 
 		$ns = $module->getNamespace();
 		$alias = $module->getAlias();

@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Contract;
+namespace Strukt\Contract;
 
 use Strukt\Http\Response;
 use Strukt\Http\RedirectResponse;

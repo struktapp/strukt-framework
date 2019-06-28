@@ -1,19 +1,25 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use App\Form\ValidatorFactory;
+use Strukt\Core\Registry;
+use Strukt\Framework\Provider\Validator as ValidatorService;
 
 class ValidatorTest extends TestCase{
 
 	public function setUp(){
 
-		$this->factory = ValidatorFactory::getInstance();
+		$factory = new ValidatorService(); 
+		$factory->register();
+
+		$this->service  = Registry::getInstance()->get("app.service.validator");
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsLen(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("Moderator")
+		$validator = $this->service->getNew("Moderator")
 					->isLen(9)
 					->isNotEmpty();
 
@@ -24,10 +30,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsLenFail(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("Moderator")
+		$validator = $this->service->getNew("Moderator")
 					->isLen(45)
 					->isNotEmpty();
 
@@ -38,10 +46,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsAlpha(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("moderator")
+		$validator = $this->service->getNew("moderator")
 					->isAlpha()
 					->isNotEmpty();
 
@@ -52,10 +62,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsAlphaSpaced(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("pitsolu moderator")
+		$validator = $this->service->getNew("pitsolu moderator")
 					->isAlpha()
 					->isNotEmpty();
 
@@ -66,10 +78,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsAlphaNum(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("pa55w0rd")
+		$validator = $this->service->getNew("pa55w0rd")
 					->isAlphaNum()
 					->isNotEmpty();
 
@@ -80,10 +94,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsAlphaNumFail(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("p@55w0rd")
+		$validator = $this->service->getNew("p@55w0rd")
 					->isAlphaNum()
 					->isNotEmpty();
 
@@ -94,10 +110,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsEmail(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("pitsolu@gmail.com")
+		$validator = $this->service->getNew("pitsolu@gmail.com")
 					->isEmail()
 					->isNotEmpty();
 
@@ -108,12 +126,14 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsDate(){
 
 		$date = new DateTime("now");
 
-		$validator = $this->factory->newValidator()
-					->setVal($date->format("Y-m-d"))
+		$validator = $this->service->getNew($date->format("Y-m-d"))
 					->isDate()
 					->isNotEmpty();
 
@@ -124,10 +144,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testIsIn(){
 
-		$validator = $this->factory->newValidator()
-					->setVal("Ron")
+		$validator = $this->service->getNew("Ron")
 					->isIn(array("Obama", "Romney", "Hilary", "Ron"))
 					->isNotEmpty();
 
@@ -138,10 +160,12 @@ class ValidatorTest extends TestCase{
 		));
 	}
 
+	/**
+     * @runInSeparateProcess
+     */
 	public function testEqualsTo(){
 
-		$validator = $this->factory->newValidator()
-					->setVal(sha1("p@55w0rd"))
+		$validator = $this->service->getNew(sha1("p@55w0rd"))
 					->equalTo(sha1("p@55w0rd"))
 					->isNotEmpty();
 

@@ -10,7 +10,7 @@ use Strukt\Http\Request as HttpRequest;
 use Strukt\Http\Reponse as HttpResponse;
 use Strukt\Fs;
 use Strukt\Env;
-use App\Contract\Router as AbstractRouter;
+use Strukt\Contract\Router as AbstractRouter;
 use Strukt\Core\Registry;
 
 

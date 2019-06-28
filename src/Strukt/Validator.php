@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Form;
+namespace Strukt;
 
 /**
 * Validator class
@@ -37,7 +37,7 @@ class Validator{
 	*
 	* @param string $val
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function setVal($val){
 
@@ -59,7 +59,7 @@ class Validator{
 	/**
 	* Check is value is alpha
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isAlpha(){
 
@@ -73,7 +73,7 @@ class Validator{
 	/**
 	* Check is value is alphanumeric
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isAlphaNum(){
 
@@ -87,7 +87,7 @@ class Validator{
 	/**
 	* Check is value is numeric
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isNumeric(){
 
@@ -101,7 +101,7 @@ class Validator{
 	/**
 	* Check is value is email
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isEmail(){
 
@@ -115,7 +115,7 @@ class Validator{
 	/**
 	* Check is value is date
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isDate($format="Y-m-d"){
 
@@ -132,7 +132,7 @@ class Validator{
 	/**
 	* Check is value is not empty
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isNotEmpty(){
 
@@ -146,7 +146,7 @@ class Validator{
 	/**
 	* Check is value is in enumerator
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isIn($enum){
 
@@ -163,7 +163,7 @@ class Validator{
 	/**
 	* Check values are equal
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function equalTo($val){
 
@@ -177,7 +177,7 @@ class Validator{
 	/**
 	* Check length
 	*
-	* @return App\Form\Validator
+	* @return Strukt\Validator
 	*/
 	public function isLen($len){
 

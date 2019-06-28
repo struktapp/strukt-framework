@@ -1,10 +1,10 @@
 <?php
 
-namespace App\Contract;
+namespace Strukt\Contract;
 
 use Strukt\Http\Request;
-use App\Form\ValidatorFactory;
-use App\Form\Validator;
+use Strukt\Validator;
+use Strukt\Core\Registry;
 
 /**
 * Form class to be inherited in Form
@@ -21,6 +21,20 @@ abstract class Form{
 	private $message;
 
 	/**
+	* Http Request
+	*
+	* @return Strukt\Http\Request
+	*/
+	private $request;
+
+	/**
+	* Strukt\Core\Registry
+	*
+	* @return Strukt\Core\Registry
+	*/
+	private $registry;
+
+	/**
 	* Constructor
 	*
 	* @param $request Strukt\Http\Request
@@ -28,23 +42,24 @@ abstract class Form{
 	public function __construct(Request $request){
 
 		$this->request = $request;
+		$this->registry = Registry::getInstance();
 	}
 
 	/**
 	* Getter for validator factory
 	*
-	* @return App\Form\Validation\Factory
+	* @return anonymous class object
 	*/
-	protected function getValidatorFactory(){
+	protected function getValidatorService(){
 
-		return ValidatorFactory::getInstance();
+		return $this->registry->get("app.service.validator");
 	}
 
 	/**
 	* Message setter
 	*
 	* @param string $key request parameter name
-	* @param App\Form\Validator $validator
+	* @param Strukt\Validator $validator
 	*
 	* @return void
 	*/
