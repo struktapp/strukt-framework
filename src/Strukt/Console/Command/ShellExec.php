@@ -15,11 +15,11 @@ class ShellExec extends \Strukt\Console\Command{
 
 		$registry = Registry::getInstance();
 
-		if($registry->exists("em"))
-			$em = $registry->get("em");
+		if($registry->exists("app.em"))
+			$em = $registry->get("app.em");
 
-		if($registry->exists("da"))
-			$da = $registry->get("da");
+		if($registry->exists("app.da"))
+			$da = $registry->get("app.da");
 
 		if($registry->exists("core"))
 			$core = $registry->get("core");
