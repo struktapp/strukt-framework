@@ -74,8 +74,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 "@ns:__APP__\AuthModule\Router
-@import:Psr\Http\Message\Request
-@import:Psr\Http\Message\Response
+@import:Strukt\Http\Request
+@import:Strukt\Http\Response
 @class:Auth
 @inherit:\Strukt\Contract\Router
 
