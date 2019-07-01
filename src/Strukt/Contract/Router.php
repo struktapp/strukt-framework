@@ -13,7 +13,7 @@ use Strukt\Fs;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Router extends Registry{
+abstract class Router extends AbstractService{
 
 	/**
 	* Request redirect

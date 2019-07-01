@@ -44,7 +44,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 
 @method:doAuthentication@param:username|password
 @body
-\$user = self::get(\"core\")->getNew(\"au.mdl.User\", array(\$username, \$password));
+\$user = \$this->get(\"au.mdl.User\", array(\$username, \$password));
 
 		return \$user->getUsername() == \"admin\" && \$user->getPassword() == sha1(\"p@55w0rd\");
 @body
@@ -111,11 +111,11 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 \$username = \$request->get(\"username\");
 		\$password = \$request->get(\"password\");
 
-		\$userForm = self::get(\"core\")->getNew(\"au.frm.User\", [\$request]);
+		\$userForm = \$this->get(\"au.frm.User\", [\$request]);
 		\$messages = \$userForm->validate();
 
 		if(\$messages[\"is_valid\"])
-		    if(self::get(\"core\")->get(\"au.ctr.User\")->doAuthentication(\$username, \$password))
+		    if(\$this->get(\"au.ctr.User\")->doAuthentication(\$username, \$password))
 		       return self::json(array(
 
 		            \"success\"=>true, 
@@ -162,7 +162,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
 @descr:@Method:GET
 
 @method:getAllUsers
-@body:return self::get(\"core\")->get(\"au.ctr.User\")->getAll();
+@body:return \$this->get(\"au.ctr.User\")->getAll();
 @descr:@Route:/users/all
 @descr:@Permission:user_all
 @descr:@Method:GET
@@ -171,7 +171,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
 @body
 \$id = \$request->query->get(\"id\");
 
-		return self::get(\"core\")->get(\"au.ctr.User\")->find(\$id);
+		return \$this->get(\"au.ctr.User\")->find(\$id);
 @body
 @descr:@Route:/user
 @descr:@Method:GET
@@ -211,9 +211,6 @@ Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 \$this->app = new \Strukt\Application(\$router);
 		%s
 
-		\$r = \Strukt\Core\Registry::getInstance();
-		\$r->set(\"nr\", \$this->app->getNameRegistry());
-		\$r->set(\"core\", new \Strukt\Framework\Module\Core());
 @body
 @descr
 	
@@ -222,11 +219,9 @@ Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
 	Initialize Strukt Framework
 @descr
 
-@method:getApp#Strukt\Application@param:router#RouterKernel=null
+@method:getApp#Strukt\Application
 @body
-\$loader = new self(\$router);
-
-		return \$loader->app;
+return \$this->app;
 @body
 @descr:Getter for Strukt Application
 ");
@@ -240,16 +235,12 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf","
 
 @method:setUp
 @body
-\$this->registry = Registry::getInstance();
-
-		\$this->core = \$this->registry->get(\"core\");
+\$this->core = Registry::getInstance()->get(\"core\");
 @body
 
 @method:testDoAuthentication
 @body
-\$this->registry = Registry::getInstance();
-
-		\$username = \"admin\";
+\$username = \"admin\";
 		\$password = \"p@55w0rd\";
 
 		\$isSuccess = \$this->core->get(\"au.ctr.User\")->doAuthentication(\$username, \$password);

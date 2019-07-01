@@ -4,14 +4,13 @@ namespace Strukt\Contract;
 
 use Strukt\Http\Request;
 use Strukt\Validator;
-use Strukt\Core\Registry;
 
 /**
 * Form class to be inherited in Form
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Form{
+abstract class Form extends AbstractCore{
 
 	/**
 	* Messages from validators
@@ -42,7 +41,6 @@ abstract class Form{
 	public function __construct(Request $request){
 
 		$this->request = $request;
-		$this->registry = Registry::getInstance();
 	}
 
 	/**
@@ -52,7 +50,7 @@ abstract class Form{
 	*/
 	protected function getValidatorService(){
 
-		return $this->registry->get("app.service.validator");
+		return $this->core()->get("app.service.validator");
 	}
 
 	/**

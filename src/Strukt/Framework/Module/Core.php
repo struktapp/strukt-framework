@@ -2,8 +2,7 @@
 
 namespace Strukt\Framework\Module;
 
-use Strukt\Core\Collection;
-use Strukt\Core\Registry;
+use Strukt\Contract\AbstractCore;
 
 /**
 * Strukt Application Module Core
@@ -13,7 +12,7 @@ use Strukt\Core\Registry;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Core{
+class Core extends AbstractCore{
 
 	/**
 	* Name Registry
@@ -27,7 +26,10 @@ class Core{
 	*/
 	public function __construct(){
 
-		$this->nr = Registry::getInstance()->get("nr");
+		if(!$this->core()->exists("nr"))
+			throw new \Exception("[nr|Name Registry] does not exists!");
+
+		$this->nr = $this->core()->get("nr");
 	}
 
 	/**

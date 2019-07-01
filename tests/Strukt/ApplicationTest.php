@@ -1,72 +1,74 @@
 <?php
 
-use Strukt\Http\Request;
 use PHPUnit\Framework\TestCase;
+use Strukt\Application;
+use Strukt\Router\Kernel as Router;
+use Strukt\Core\Collection;
+use Strukt\Core\Map;
+use Strukt\Core\Registry;
+use Strukt\Http\Request;
 
 class ApplicationTest extends TestCase{
 
 	public function setUp(){
 
-		$appCfg = parse_ini_file("cfg/app.ini");
+		$app_cfg = parse_ini_file("cfg/app.ini");
 
-		$this->appName = $appCfg["app-name"];
-		$this->authModuleName = sprintf("%sAuthModule", $appCfg["app-name"]);
-		$this->authModuleNs = sprintf("%s\AuthModule\%s", $this->appName, $this->authModuleName);
-		$this->authModulePath = sprintf("%s/app/src/%s/AuthModule", realpath("."), $this->appName);
-		$this->authModuleBaseNs = sprintf("%s\AuthModule", $this->appName);
+		$this->app_name = $app_cfg["app-name"];
+		$this->auth_mod_name = sprintf("%sAuthModule", $app_cfg["app-name"]);
+		$this->auth_mod_ns = sprintf("%s\AuthModule\%s", $this->app_name, $this->auth_mod_name);
+		$this->auth_mod_path = sprintf("%s/app/src/%s/AuthModule", realpath("."), $this->app_name);
+		$this->auth_mod_base_ns = sprintf("%s\AuthModule", $this->app_name);
 	}
 
 	public function testModuleOutput(){
 		
-		$refCls = new ReflectionClass($this->authModuleNs);
-		$authModule = $refCls->newInstance();
+		$ref_cls = new ReflectionClass($this->auth_mod_ns);
+		$auth_mod = $ref_cls->newInstance();
 
-		$this->assertEquals($authModule->getAlias(), "Au");
-		$this->assertEquals($authModule->getNamespace(), $this->authModuleNs);
-		$this->assertEquals($authModule->getBaseDir(), $this->authModulePath);
+		$this->assertEquals($auth_mod->getAlias(), "Au");
+		$this->assertEquals($auth_mod->getNamespace(), $this->auth_mod_ns);
+		$this->assertEquals($auth_mod->getBaseDir(), $this->auth_mod_path);
 
-		return $authModule;
+		return $auth_mod;
 	}
 
 	/**
 	* @depends testModuleOutput
 	*/
-	public function testNameRegistryOutput($authModule){
+	public function testNameRegistryOutput($auth_mod){
 
-		$app = new Strukt\Application(new Strukt\Router\Kernel(Request::createFromGlobals()));
-		$app->register($authModule);
+		$app = new Application(new Router(Request::createFromGlobals()));
+		$app->register($auth_mod);
+		$app->initialize();
 
-		$nr = $app->getNameRegistry();
+		$nr = Registry::getInstance()->get("nr");
 
-		$this->assertInstanceOf("Strukt\Core\Map", $nr);
+		$this->assertInstanceOf(Map::class, $nr);
 		$this->assertEquals($nr->get("au.name"), "AuthModule");
-		$this->assertEquals($nr->get("au.fname"), $this->authModuleName);
-		$this->assertEquals($nr->get("au.app.name"), $this->appName);
-		$this->assertEquals($nr->get("au.ns"), $this->authModuleNs);
-		$this->assertEquals($nr->get("au.base.ns"), sprintf("%s\AuthModule", $this->appName));
+		$this->assertEquals($nr->get("au.fname"), $this->auth_mod_name);
+		$this->assertEquals($nr->get("au.app.name"), $this->app_name);
+		$this->assertEquals($nr->get("au.ns"), $this->auth_mod_ns);
+		$this->assertEquals($nr->get("au.base.ns"), sprintf("%s\AuthModule", $this->app_name));
 
-		$auRtr = $nr->get("au.rtr");
+		$auth_rtr = $nr->get("au.rtr");
 
-		$rtr = new Strukt\Core\Collection($auRtr->getName());
-		$rtr->set("Auth", sprintf("%s\Router\Auth", $this->authModuleBaseNs));
-		$rtr->set("Index", sprintf("%s\Router\Index", $this->authModuleBaseNs));
+		$rtr = new Collection($auth_rtr->getName());
+		$rtr->set("Auth", sprintf("%s\Router\Auth", $this->auth_mod_base_ns));
+		$rtr->set("Index", sprintf("%s\Router\Index", $this->auth_mod_base_ns));
 
-		$this->assertEquals($auRtr, $rtr);
-
-		return $app;
+		$this->assertEquals($auth_rtr, $rtr);
 	}
 
 	/**
 	* @depends testNameRegistryOutput
 	*/
-	public function testModuleCoreStaticClass($app){
+	public function testModuleCoreStaticClass(){
 
-		$r = \Strukt\Core\Registry::getInstance();
-		$r->set("nr", $app->getNameRegistry());
-		$r->set("core", new Strukt\Framework\Module\Core());
+		$core = Registry::getInstance()->get("core");
 
-		$userController = $r->get("core")->get("au.ctr.User");
+		$user_ctr = $core->get("au.ctr.User");
 
-		$this->assertTrue($userController->doAuthentication("admin","p@55w0rd"));
+		$this->assertTrue($user_ctr->doAuthentication("admin","p@55w0rd"));
 	}
 }

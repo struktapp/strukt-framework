@@ -7,7 +7,7 @@ namespace Strukt\Contract;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Controller extends Registry{
+abstract class Controller extends AbstractService{
 
-	//Connecting Controller To Registry
+	//
 }

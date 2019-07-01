@@ -4,20 +4,30 @@ namespace Strukt;
 
 use Strukt\Core\Map;
 use Strukt\Core\Collection;
-use Strukt\Core\Registry;
-use Strukt\Fs;
 use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
-
+use Strukt\Contract\Module;
+use Strukt\Env;
+use Strukt\Raise;
+use Strukt\Fs;
+use Strukt\Contract\AbstractCore;
 use Strukt\Http\Response;
 use Strukt\Http\Request;
+use Strukt\Framework\Module\Core;
 
 /**
 * Strukt Application Module Loader and Runner
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Application{
+class Application extends AbstractCore{
+
+	/**
+	* Router Kernel
+	*
+	* @var \Strukt\Router\Kernel
+	*/
+	private $router;
 
 	/**
 	* Store resolved module items
@@ -38,8 +48,6 @@ class Application{
 	*/
 	public function __construct(RouterKernel $router = null){
 
-		$this->registry = Registry::getInstance();
-
 		$this->router = $router;
 		$this->modules = array();
 		$this->nr = new Map(new Collection("NameRegistry"));
@@ -52,7 +60,7 @@ class Application{
 	*
 	* @return void
 	*/
-	public function register(\Strukt\Contract\Module $module){
+	public function register(Module $module){
 
 		$ns = $module->getNamespace();
 		$alias = $module->getAlias();
@@ -76,18 +84,15 @@ class Application{
 		$rootDir = Env::get("root_dir");
 		$relModIni = Env::get("rel_mod_ini");
 
-		if(!Fs::isPath($rootDir))
-			throw new \Exception(sprintf("Root dir [%s] does not exist!", $rootDir));
+		Fs::isPath($rootDir) or new Raise(sprintf("Root dir [%s] does not exist!", $rootDir));
 
 		$modIniFile = sprintf("%s/%s", $rootDir, $relModIni);
 
-		if(!Fs::isFile($modIniFile))
-			throw new \Exception(sprintf("Could not find [%s] file!", $relModIni));
+		Fs::isFile($modIniFile) or new Raise(sprintf("Could not find [%s] file!", $relModIni));
 
 		$modSettings = parse_ini_file($modIniFile);
 
-		if(!in_array("folder", array_keys($modSettings)))
-			throw new \Exception(sprintf("Module Ini file [%s] must specify [alias=>folder] list!", $relModIni));
+		in_array("folder", array_keys($modSettings)) or new Raise(sprintf("Module Ini file [%s] must specify [alias=>folder] list!", $relModIni));
 
 		foreach($modSettings["folder"] as $key=>$fldr){
 
@@ -112,18 +117,6 @@ class Application{
 				}
 			}
 		}	
-
-		// print_r($this->modules);
-	}
-
-	/**
-	* Getter for Name Registry 
-	*
-	* @return \Strukt\Core\Map
-	*/
-	public function getNameRegistry(){
-
-		return $this->nr;
 	}
 
 	/**
@@ -143,14 +136,21 @@ class Application{
 	*/
 	public function initialize(){
 
-		if(is_null($this->router))
-			throw new \Exception("%s is required by %s!", RouterKernel::class, get_class($this));
+		$core = $this->core();
 
-		$this->registry->get("app.service.annotations")
+		$core->set("nr", $this->nr);
+		$core->set("core", new Core);
+
+		// if(is_null($this->router))
+			// throw new \Exception("%s is required by %s!", RouterKernel::class, get_class($this));
+
+		if($core->exists("app.service.annotations"))
+			$core->get("app.service.annotations")
 							->apply($this->getModuleList())
 							->exec();
 
-		$this->registry->get("app.service.router")
+		if($core->exists("app.service.router"))
+			$core->get("app.service.router")
 							->apply($this->getModuleList())
 							->exec();
 	}
@@ -186,8 +186,8 @@ class Application{
 		}
 		catch(\Exception $e){
 
-			if($this->registry->exists("logger"))
-				$this->registry->get("logger")->error($e);
+			if($this->core()->exists("app.logger"))
+				$this->core()->get("app.logger")->error($e);
 
 			exit($e->getMessage());
 		}
