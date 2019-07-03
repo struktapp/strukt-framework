@@ -15,7 +15,6 @@ Strukt\Fs::mkdir("tpl/sgf/database/schema/Schema/Migration");
 Strukt\Fs::mkdir("tpl/sgf/database/seeder/Seed");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
-Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Model");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Tests");
 Strukt\Fs::mkdir("tpl/sgf/lib/App");
@@ -24,7 +23,6 @@ Strukt\Fs::touchWrite("cfg/module.ini",
 '[folders]
 folder["ctr"] = "Controller"
 folder["rtr"] = "Router"
-folder["mdl"] = "Model"
 folder["frm"] = "Form"
 folder["tes"] = "Tests"
 ; folder["fix"] = "Fixture"

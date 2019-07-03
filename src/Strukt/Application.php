@@ -44,6 +44,15 @@ class Application extends AbstractCore{
 	private $nr;
 
 	/**
+	* Module Configuration
+	*
+	* @var array
+	*/
+	private $mod_cfg;
+
+
+
+	/**
 	* Constructor
 	*/
 	public function __construct(RouterKernel $router = null){
@@ -51,6 +60,29 @@ class Application extends AbstractCore{
 		$this->router = $router;
 		$this->modules = array();
 		$this->nr = new Map(new Collection("NameRegistry"));
+
+		$root_dir = Env::get("root_dir");
+		$mod_ini = Env::get("rel_mod_ini");
+		$app_ini = Env::get("rel_app_ini");
+
+		Fs::isPath($root_dir) or new Raise(sprintf("Root dir [%s] does not exist!", $root_dir));
+
+		$app_ini_file = sprintf("%s/%s", $root_dir, $app_ini);
+
+		Fs::isFile($app_ini_file) or new Raise(sprintf("Could not find [%s] file!", $app_ini));
+
+		$app_info = parse_ini_file($app_ini_file);
+
+		$this->core()->set("app.name", $app_info["app-name"]);
+
+		$mod_ini_file = sprintf("%s/%s", $root_dir, $mod_ini);
+
+		Fs::isFile($mod_ini_file) or new Raise(sprintf("Could not find [%s] file!", $mod_ini));
+
+		$this->mod_cfg = parse_ini_file($mod_ini_file);
+
+		if(!in_array("folder", array_keys($this->mod_cfg)))
+			new Raise(sprintf("Module Ini file [%s] must specify [alias=>folder] list!", $mod_ini));
 	}
 
 	/**
@@ -81,20 +113,7 @@ class Application extends AbstractCore{
 		$this->nr->set(sprintf("%s.base.ns", $_alias), $baseNs);
 		$this->nr->set(sprintf("%s.dir", $_alias), $dir);
 
-		$rootDir = Env::get("root_dir");
-		$relModIni = Env::get("rel_mod_ini");
-
-		Fs::isPath($rootDir) or new Raise(sprintf("Root dir [%s] does not exist!", $rootDir));
-
-		$modIniFile = sprintf("%s/%s", $rootDir, $relModIni);
-
-		Fs::isFile($modIniFile) or new Raise(sprintf("Could not find [%s] file!", $relModIni));
-
-		$modSettings = parse_ini_file($modIniFile);
-
-		in_array("folder", array_keys($modSettings)) or new Raise(sprintf("Module Ini file [%s] must specify [alias=>folder] list!", $relModIni));
-
-		foreach($modSettings["folder"] as $key=>$fldr){
+		foreach($this->mod_cfg["folder"] as $key=>$fldr){
 
     		$it = new \DirectoryIterator(sprintf("%s/%s/", $dir, $fldr));
 
@@ -140,9 +159,6 @@ class Application extends AbstractCore{
 
 		$core->set("nr", $this->nr);
 		$core->set("core", new Core);
-
-		// if(is_null($this->router))
-			// throw new \Exception("%s is required by %s!", RouterKernel::class, get_class($this));
 
 		if($core->exists("app.service.annotations"))
 			$core->get("app.service.annotations")

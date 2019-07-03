@@ -40,7 +40,8 @@ try{
 	if(!class_exists(AppLoader::class))
 		throw new Exception(sprintf("%s does not exixst!", AppLoader::class));
 	
-	$app = AppLoader::getApp($kernel);
+	$loader = new AppLoader($kernel);
+	$app = $loader->getApp();
 
 	$moduleList = $app->getModuleList();
 

@@ -32,6 +32,27 @@ class Core extends AbstractCore{
 		$this->nr = $this->core()->get("nr");
 	}
 
+	public function isQualifiedAlias($alias){
+
+		return preg_match("/[a-z]{2}\.[a-z]{3}\.\w+/", $alias);
+	}
+
+	public function getNamespace($alias_ns){
+
+		if($this->isQualifiedAlias($alias_ns)){
+
+			$ns = $this->nr->get($alias_ns);
+		}
+		else{
+
+			$app_name = $this->core()->get("app.name");
+
+			$ns = sprintf("%s\%s", $app_name, $alias_ns);
+		}
+
+		return $ns;
+	}
+
 	/**
 	* Getter for class functionality in static class
 	*
@@ -43,7 +64,7 @@ class Core extends AbstractCore{
 	*/
 	public function get($alias_ns){
 
-		$ns = $this->nr->get($alias_ns);
+		$ns = $this->getNamespace($alias_ns);
 
 		$class = new \ReflectionClass($ns);
 
@@ -62,7 +83,7 @@ class Core extends AbstractCore{
 	*/
 	public function getNew($alias_ns, Array $args = null){
 
-		$ns = $this->nr->get($alias_ns);
+		$ns = $this->getNamespace($alias_ns);
 
 		$class = new \ReflectionClass($ns);
 

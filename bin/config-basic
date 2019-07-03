@@ -11,7 +11,6 @@ foreach($autoloadFiles as $autoloadFile)
 Strukt\Fs::mkdir("cfg");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
-Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Model");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Tests");
 Strukt\Fs::mkdir("tpl/sgf/lib/App");
@@ -20,7 +19,6 @@ Strukt\Fs::touchWrite("cfg/module.ini",
 '[folders]
 folder["ctr"] = "Controller"
 folder["rtr"] = "Router"
-folder["mdl"] = "Model"
 folder["frm"] = "Form"
 folder["tes"] = "Tests"
 ; folder["fix"] = "Fixture"
@@ -44,7 +42,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 
 @method:doAuthentication@param:username|password
 @body
-\$user = \$this->get(\"au.mdl.User\", array(\$username, \$password));
+\$user = \$this->get(\"User\", array(\$username, \$password));
 
 		return \$user->getUsername() == \"admin\" && \$user->getPassword() == sha1(\"p@55w0rd\");
 @body
@@ -64,8 +62,8 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
 @body
 ");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Model/User.sgf",
-"@ns:__APP__\AuthModule\Model
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf",
+"@ns:__APP__
 @class:User
 
 @param:private>id

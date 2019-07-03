@@ -66,7 +66,9 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 			Fs::mkdir($authmod_dir);
 
-			$files = Fs::lsr($tpl_app_dir);	
+			$files = Fs::lsr($tpl_app_dir);
+
+			// print_r($files);	
 
 			foreach($files as $file){
 
@@ -111,8 +113,17 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				if(!Fs::isPath($base))
 					Fs::mkdir($base);
 
-				Fs::touchWrite(str_replace(array($tpl_authmod_dir,"sgf","_"), 
-									array($authmod_dir, "php", $app_name), $file), 
+				Fs::touchWrite(str_replace(array($tpl_authmod_dir,
+													"sgf", 
+													"_",
+													"tpl/php/",
+													"/App/"), 
+											array($authmod_dir, 
+													"php", 
+													$app_name,
+													"",
+													"/${app_name}/"), 
+											$file), 
 										sprintf("<?php\n%s", $compiler->compile()));
 			}
 
