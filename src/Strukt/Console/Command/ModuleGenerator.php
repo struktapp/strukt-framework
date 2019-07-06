@@ -85,7 +85,7 @@ class ModuleGenerator extends \Strukt\Console\Command{
 			$module = new ClassBuilder(array(
 
 				"namespace"=>sprintf("%s\%s", $app_name, $mod_name),
-				"extends"=>sprintf("\%s", \App\Module::class),
+				"extends"=>sprintf("\%s", \Strukt\Contract\Module::class),
 				"name"=>sprintf("%s%s", $app_name, $mod_name)
 			));
 
