@@ -17,6 +17,13 @@ abstract class AbstractService extends AbstractCore{
 		return $core->get($alias);
 	}
 
+	protected function getNs($alias_ns){
+
+		$core = $this->core()->get("core");
+
+		return $core->getNamespace($alias_ns);
+	}
+
 	protected function da(){
 
 		if(!$this->core()->exists("app.da"))
