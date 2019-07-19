@@ -54,8 +54,9 @@ class RegenerateModuleLoader{
 
 		foreach($all as $name=>$mods)
 			foreach($mods as $mod)
-				$register[] = sprintf("\$this->app->register(new \%s\%s\%s%s());", 
-										$name, $mod, $name, $mod);
+				if(preg_match("/[A-Za-z]+Module$/", $mod))
+					$register[] = sprintf("\$this->app->register(new \%s\%s\%s%s());", 
+											$name, $mod, $name, $mod);
 
 		if(!Fs::isFile($loader_sgf_file))
 			throw new \Exception(sprintf("File [%s] was not found!", $loader_sgf_file));
