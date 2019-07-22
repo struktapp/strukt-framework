@@ -113,26 +113,35 @@ class Application extends AbstractCore{
 		$this->nr->set(sprintf("%s.base.ns", $_alias), $baseNs);
 		$this->nr->set(sprintf("%s.dir", $_alias), $dir);
 
+		
+
 		foreach($this->mod_cfg["folder"] as $key=>$fldr){
 
-    		$it = new \DirectoryIterator(sprintf("%s/%s/", $dir, $fldr));
+			$facet_dir = sprintf("%s/%s/", $dir, $fldr);
 
-    		foreach($it as $file){
+			$isPath = Fs::isPath($facet_dir);
 
-				if($it->isFile()){
+			if($isPath){
 
-					$fname = str_replace(".php", "", $it->getFilename());
+	    		$it = new \DirectoryIterator($facet_dir);
 
-					$this->modules[$fmoduleName][$fldr][] = $fname;
+	    		foreach($it as $file){
 
-					$this->nr->set(sprintf("%s.%s.%s", 
-										strtolower($alias), 
-										strtolower($key), 
-										$fname),
-									sprintf("%s\%s\%s",
-										$baseNs,
-										$fldr,
-										$fname));
+					if($it->isFile()){
+
+						$fname = str_replace(".php", "", $it->getFilename());
+
+						$this->modules[$fmoduleName][$fldr][] = $fname;
+
+						$this->nr->set(sprintf("%s.%s.%s", 
+											strtolower($alias), 
+											strtolower($key), 
+											$fname),
+										sprintf("%s\%s\%s",
+											$baseNs,
+											$fldr,
+											$fname));
+					}
 				}
 			}
 		}	
