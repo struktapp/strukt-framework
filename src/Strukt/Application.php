@@ -129,18 +129,21 @@ class Application extends AbstractCore{
 
 					if($it->isFile()){
 
-						$fname = str_replace(".php", "", $it->getFilename());
+						if(!preg_match("/\w+\~$/", $it->getFilename())){
 
-						$this->modules[$fmoduleName][$fldr][] = $fname;
+							$fname = str_replace(".php", "", $it->getFilename());
 
-						$this->nr->set(sprintf("%s.%s.%s", 
-											strtolower($alias), 
-											strtolower($key), 
-											$fname),
-										sprintf("%s\%s\%s",
-											$baseNs,
-											$fldr,
-											$fname));
+							$this->modules[$fmoduleName][$fldr][] = $fname;
+
+							$this->nr->set(sprintf("%s.%s.%s", 
+												strtolower($alias), 
+												strtolower($key), 
+												$fname),
+											sprintf("%s\%s\%s",
+												$baseNs,
+												$fldr,
+												$fname));
+						}
 					}
 				}
 			}
