@@ -89,7 +89,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 				else
 					$content = Fs::cat($p_file);
 
-				$file = new SplFileObject($o_file, "w+"); 
+				$file = new \SplFileObject($o_file, "w+"); 
 				$file->fwrite($content);
 			}
 		}
