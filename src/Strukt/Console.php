@@ -56,6 +56,7 @@ class Console extends \Strukt\Console\Application{
 			}
 
 			$this->add(new \Strukt\Console\Command\ShellExec);
+			$this->add(new \Strukt\Console\Command\PackagePublisher);
 		}
 	}
 }
