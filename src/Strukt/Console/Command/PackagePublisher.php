@@ -30,7 +30,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 		if(!Fs::isDir($pkg_dir))
 			throw new \Exception(sprintf("Package [%s] not found!", $package));
 
-		$man_file = Fs::cat(sprintf("%s/manifest/files", $pkg_dir));
+		$man_file = sprintf("%s/manifest/files", $pkg_dir);
 
 		if(!Fs::isFile($man_file))
 			throw new \Exception(sprintf("Package [%s] is not a strukt module or package!", $package));
@@ -53,7 +53,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			}
 		}
 
-		$manifest_files = explode("\n", $man_file);
+		$manifest_files = explode("\n", Fs::cat($man_file));
 
 		foreach($manifest_files as $file){
 
