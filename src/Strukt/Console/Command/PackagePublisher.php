@@ -35,7 +35,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 		if(!Fs::isFile($man_file))
 			throw new \Exception(sprintf("Package [%s] is not a strukt module or package!", $package));
 
-		$mod_file = sprintf("%s/manifest/modules", $app_root);
+		$mod_file = sprintf("%s/manifest/modules", $pkg_dir);
 
 		$modules = [];
 
@@ -54,7 +54,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 				if(trim($cfg["app-name"]) == "__APP__")
 					throw new \Exception(
-						"Create an cfg[app-name] in your [cfg/app.ini] file via [generate:app cli] cmd!");
+						"Create an cfg[app-name] in your [cfg/app.ini] file via [generate:app] cli cmd!");
 			}
 		}
 
