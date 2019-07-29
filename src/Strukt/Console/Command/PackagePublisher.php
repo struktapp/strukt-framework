@@ -58,9 +58,14 @@ class PackagePublisher extends \Strukt\Console\Command{
 			}
 		}
 
-		$manifest_files = explode("\n", Fs::cat($man_file));
+		$files = array_map(function($item){
 
-		foreach($manifest_files as $file){
+			if(!empty($item))
+					return $item;
+
+		}, explode("\n", Fs::cat($man_file)));
+
+		foreach($files as $file){
 
 			$info = pathinfo($file);
 
