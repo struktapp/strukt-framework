@@ -61,7 +61,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 		$files = array_map(function($item){
 
 			if(!empty($item))
-					return $item;
+				return $item;
 
 		}, explode("\n", Fs::cat($man_file)));
 
@@ -87,7 +87,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 				}
 
 				$o_file = sprintf("%s/%s", $dir, $info["basename"]);
-				$p_file = sprintf("%s/%s/%s", $pkg_dir, $info["dirname"], $info["basename"]);
+				$p_file = sprintf("%s/package/%s/%s", $pkg_dir, $info["dirname"], $info["basename"]);
 
 				if(Fs::isFile($o_file)){
 
