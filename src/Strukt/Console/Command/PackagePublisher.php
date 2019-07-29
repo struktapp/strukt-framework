@@ -41,7 +41,12 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 		if(Fs::isFile($mod_file)){
 
-			$modules = explode("\n", $mod_file);
+			$modules = array_map(function($item){
+
+				if(!empty($item))
+					return $item;
+
+			}, explode("\n", Fs::cat($mod_file)));
 
 			if(!empty($modules)){
 
