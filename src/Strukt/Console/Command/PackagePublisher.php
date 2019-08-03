@@ -20,6 +20,41 @@ use Strukt\Fs;
 */
 class PackagePublisher extends \Strukt\Console\Command{
 
+	public function cfg(array $modules){
+
+		$files = array(
+
+			"index.php",
+			"console",
+			"bootstrap.php"
+		);
+
+		$re = sprintf('/\/\/(%s)/', implode("|", array_map(function($item){
+
+			return str_replace("/", "-", $item);
+
+		}, $modules)));
+
+		$app_root = Env::get("root_dir");
+
+		foreach($files as $file){
+
+			$lines = explode("\n", Fs::cat(sprintf("%s/%s", $app_root, $file)));
+
+			$new_lines = [];
+
+			foreach($lines as $line){
+
+				if(!preg_match($re, $line)){
+					
+					$new_lines[] = $line;
+				}
+			}
+
+			Fs::overwrite(sprintf("%s/%s", $app_root, $file), implode("\n", $new_lines));
+		}
+	}
+
 	public function execute(Input $in, Output $out){
 
 		$package = $in->get("package");
@@ -110,5 +145,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			rename(sprintf("%s/%s.php", $o_path, $module), 
 					sprintf("%s/%s%s.php", $o_path, $cfg["app-name"], $module));
 		}
+
+		$this->cfg(array($package));
 	}
-}
+}	
