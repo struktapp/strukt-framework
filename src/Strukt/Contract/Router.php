@@ -5,7 +5,7 @@ namespace Strukt\Contract;
 use Strukt\Http\Response;
 use Strukt\Http\RedirectResponse;
 use Strukt\Http\JsonResponse;
-use Strukt\Router\Exception\NotFoundException;
+use Strukt\Http\Exception\NotFoundException;
 use Strukt\Fs;
 
 /**
