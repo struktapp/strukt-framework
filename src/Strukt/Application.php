@@ -193,6 +193,7 @@ class Application extends AbstractCore{
 		$this->initialize();
 
 		$response = $this->router->run();
+		$response->sendHeaders();
 
 		exit($response->getContent());
 	}
@@ -209,6 +210,7 @@ class Application extends AbstractCore{
 			$this->initialize();
 
 			$response = $this->router->run();
+			$response->sendHeaders();
 
 			exit($response->getContent());
 		}

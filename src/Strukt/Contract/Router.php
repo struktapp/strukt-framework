@@ -32,13 +32,13 @@ abstract class Router extends AbstractService{
 	*
 	* @return \Strukt\Http\Response
 	*/
-	protected function htmlfile($filepath, $code = 200){
+	protected function htmlfile($filepath, $code = 200, $headers = []){
 
 		if(Fs::isFile($filepath)){	
 
 			$content = Fs::cat($filepath);
 
-			return $this->html($content, $code);	
+			return $this->html($content, $code, $headers);	
 		}
 
 		throw new NotFoundException();
@@ -52,9 +52,9 @@ abstract class Router extends AbstractService{
 	*
 	* @return \Strukt\Http\Response
 	*/
-	protected function json(array $body, $code = 200){
+	protected function json(array $body, $code = 200, $headers = []){
 
-		return new JsonResponse($body, $code);
+		return new JsonResponse($body, $code, $headers);
 	}
 
 	/**
@@ -65,8 +65,10 @@ abstract class Router extends AbstractService{
 	*
 	* @return \Strukt\Http\Response
 	*/
-	protected function html($body, $code = 200){
+	protected function html($body, $code = 200, $headers = []){
 
-		return new Response($body, $code, array("Content-Type"=>"text/html"));	
+		$headers = array_merge($headers, array("Content-Type"=>"text/html"));
+
+		return new Response($body, $code, $headers);	
 	}
 }
