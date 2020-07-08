@@ -26,87 +26,107 @@ folder["tes"] = "Tests"
 ; folder["sdr"] = "Seeder"');
 
 Strukt\Fs::touchWrite("cfg/app.ini",
-"app-name = __APP__
+"app-name = {{app}}
 ");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
-"@ns:__APP__\AuthModule\Controller
-@class:User
-@inherit:\Strukt\Contract\Controller
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf","<?php
+namespace {{app}}\AuthModule\Controller;
 
-@method:find@param:id
-@body:return \"Couldn't find User:[\$id] - AuthModule\Controller\User::find Not Yet Implemented!\";
+class User extends \Strukt\Contract\Controller{
 
-@method:getAll
-@body:return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
+	public function find(\$id){
 
-@method:doAuthentication@param:username|password
-@body
-\$user = \$this->get(\"User\", array(\$username, \$password));
+		return \"Couldn't find User:[id] - AuthModule\Controller\User::find Not Yet Implemented!\";
+	}
+
+	public function getAll(){
+
+		return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
+	}
+
+	public function doAuthentication(\$username, \$password){
+
+		\$user = \$this->get(\"User\", array(\$username, \$password));
 
 		return \$user->getUsername() == \"admin\" && \$user->getPassword() == sha1(\"p@55w0rd\");
-@body
-");
+	}
+}");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
-"@ns:__APP__\AuthModule\Form
-@class:User
-@inherit:\Strukt\Contract\Form
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf","<?php
+namespace {{app}}\AuthModule\Form;
 
-@method:protected>validation
-@body
-\$service = \$this->getValidatorService();
+class User extends \Strukt\Contract\Form{
+
+	protected function validation(){
+
+		\$service = \$this->getValidatorService();
 
 		\$this->setMessage(\"username\", \$service->getNew(\$this->get(\"username\"))->isNotEmpty());
 		\$this->setMessage(\"password\", \$service->getNew(\$this->get(\"password\"))->isNotEmpty());
-@body
-");
+	}
+}");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf",
-"@ns:__APP__
-@class:User
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf","<?php
+namespace {{app}};
 
-@param:private>id
+class User{
 
-@param:private>username
+	private $id;
+	private $username;
+	private $password;
 
-@param:private>password
+	public function __construct(\$username, \$password){
 
-@method:__construct@param:username|password
-@body
-	\$this->username = \$username;
+		\$this->username = \$username;
 		\$this->password = sha1(\$password);
-@body
+	}
 
-@method:getId
-@body:return \$this->id;
+	public function getId(){
 
-@method:setId@param:id
-@body:\$this->id = \$id;
+		return \$this->id;
+	}
 
-@method:getUsername
-@body:return \$this->username;
+	public function setId($id){
+		
+		\$this->id = \$id;
+	}
 
-@method:setUsername@param:username
-@body:\$this->username = \$username;
+	public function getUsername(){
+		
+		return \$this->username;
+	}
 
-@method:getPassword
-@body:return \$this->password;
+	public function setUsername(\$username){
+		
+		\$this->username = \$username;
+	}
 
-@method:setPassword@param:password
-@body:\$this->password = sha1(\$password);
-");
+	public function getPassword(){
+		
+		return \$this->password;
+	}
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
-"@ns:__APP__\AuthModule\Router
-@import:Strukt\Http\Request
-@import:Strukt\Http\Response 
-@class:Auth
-@inherit:\Strukt\Contract\Router
+	public function setPassword(\$password){
+		
+		\$this->password = sha1(\$password);
+	}
+}");
 
-@method:login@param:request#Request
-@body
-\$username = \$request->get(\"username\");
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf","<?php
+namespace {{app}}\AuthModule\Router;
+
+use Strukt\Http\Request;
+use Strukt\Http\Response;
+
+class Auth extends \Strukt\Contract\Router{
+
+	/**
+	* @Route:/login
+	* @Method:POST
+	*/
+	public function login(Request \$request){
+
+		\$username = \$request->get(\"username\");
 		\$password = \$request->get(\"password\");
 
 		\$userForm = \$this->get(\"au.frm.User\", [\$request]);
@@ -130,119 +150,145 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 
 		        \"success\"=>false,
 		        \"message\"=>\"Invalid input!\",
-		        \"form\"=>\$messages
+		        \"form\"=>\$messages,
 		    ));
-@body
-@descr:@Route:/login
-@descr:@Method:POST
-");
+	}
+}");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","
-@ns:__APP__\AuthModule\Router
-@import:Strukt\Http\Request
-@import:Strukt\Http\Response
-@class:Index
-@inherit:\Strukt\Contract\Router
 
-@method:welcome
-@body:return \"</b>Strukt Works!<b>\";
-@descr:@Route:/
-@descr:@Method:GET
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","<?php
+namespace {{app}}\AuthModule\Router;
 
-@method:helloWorld
-@body:return self::htmlfile(\"public/static/index.html\");
-@descr:@Route:/hello/world
-@descr:@Method:GET
+use Strukt\Http\Request;
+use Strukt\Http\Response;
 
-@method:helloTo@param:name|request#Request
-@body:return sprintf(\"<b>Hello %s!</b>\", \$name);
-@descr:@Route:/hello/{name:alpha}
-@descr:@Method:GET
+class Index extends \Strukt\Contract\Router{
 
-@method:getAllUsers
-@body:return \$this->get(\"au.ctr.User\")->getAll();
-@descr:@Route:/users/all
-@descr:@Permission:user_all
-@descr:@Method:GET
+	/**
+	* @Route:/
+	* @Method:GET
+	*/
+	public function welcome(){
+		
+		return \"</b>Strukt Works!<b>\";
+	}
 
-@method:getUser@param:request#Request
-@body
-\$id = \$request->query->get(\"id\");
+	/**
+	* @Route:/hello/world
+	* @Method:GET
+	*/
+	public function helloWorld(){
+
+		return self::htmlfile(\"public/static/index.html\");
+	}
+	
+	/**
+	* @Route:/hello/{name:alpha}
+	* @Method:GET
+	*/
+	public function helloTo($name, Request \$request){
+
+		return sprintf(\"<b>Hello %s!</b>\", \$name);	
+	}
+
+	/**
+	* @Route:/users/all
+	* @Permission:user_all
+	* @Method:GET
+	*/
+	public function getAllUsers(){
+		
+		return \$this->get(\"au.ctr.User\")->getAll();
+	}
+
+	/**
+	* @Route:/user
+	* @Method:GET
+	*/
+	public function getUser(Request \$request){
+
+		\$id = \$request->query->get(\"id\");
 
 		return \$this->get(\"au.ctr.User\")->find(\$id);
-@body
-@descr:@Route:/user
-@descr:@Method:GET
+	}
 
-@method:testException
-@body:throw new \Exception(\"Whoops!\");
-@descr:@Route:/test
-@descr:@Method:GET
+	/**
+	* @Route:/test
+	* @Method:GET
+	*/
+	public function testException(){
+
+		throw new \Exception(\"Whoops!\");
+	}	
 ");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",
-"@ns:__APP__\AuthModule
-@class:__APP__AuthModule
-@inherit:\Strukt\Contract\Module
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf","<?php
+namespace {{app}}\AuthModule;
 
-@param:protected>alias=\"Au\"
+class {{app}}AuthModule extends \Strukt\Contract\Module{
+
+	protected $alias=\"Au\";
+}
 ");
 
-Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",
-"@ns:App
-@import:Strukt\Router\Kernel as RouterKernel;
-@class:Loader
-@descr
-	Application Loader Class
+Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf","<?php
+namespace App;
 
-	WARNING: THIS FILE IS AUTO-GENERATED. 
-			   DO NOT ADD ANYTHING BECAUSE 
-			   IT WILL BE OVERWRITTEN
+use Strukt\Router\Kernel as RouterKernel;
 
-	@author Moderator <pitsolu@gmail.com>
-@descr
+/**
+*	Application Loader Class
+*
+*	WARNING: THIS FILE IS AUTO-GENERATED. 
+*			   DO NOT ADD ANYTHING BECAUSE 
+*			   IT WILL BE OVERWRITTEN
+*
+*	@author Moderator <pitsolu@gmail.com>
+*/
+class Loader{
 
-@param:private>app#Strukt\Application
+	private $app;
 
-@method:__construct@param:router#RouterKernel=null
-@body
-\$this->app = new \Strukt\Application(\$router);
-		%s
+	/**
+	* Constructor
+	*	
+	* Initialize Strukt Framework
+	*/
+	public function __construct(RouterKernel \$router=null){
 
-@body
-@descr
+		\$this->app = new \Strukt\Application(\$router);
+		{{packages}}
+	}
+
+	/**
+	* Getter for Strukt Application
+	*/
+	public function getApp():Strukt\Application{
+
+		return \$this->app;
+	}
+}");
+
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf","<?php
+namespace {{app}}\AuthModule\Tests;
+
+use Strukt\Core\Registry;
+use PHPUnit\Framework\TestCase;
+
+class UserTest extends TestCase{
+
+	public function setUp(){
 	
-	Constructor
-	
-	Initialize Strukt Framework
-@descr
+		\$this->core = Registry::getInstance()->get(\"core\");
+	}
 
-@method:getApp#Strukt\Application
-@body
-return \$this->app;
-@body
-@descr:Getter for Strukt Application
-");
+	public function testDoAuthentication(){
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf","
-@ns:__APP__\AuthModule\Tests
-@import:Strukt\Core\Registry
-@import:PHPUnit\Framework\TestCase
-@class:UserTest
-@inherit:TestCase
-
-@method:setUp
-@body
-\$this->core = Registry::getInstance()->get(\"core\");
-@body
-
-@method:testDoAuthentication
-@body
-\$username = \"admin\";
+		\$username = \"admin\";
 		\$password = \"p@55w0rd\";
 
 		\$isSuccess = \$this->core->get(\"au.ctr.User\")->doAuthentication(\$username, \$password);
 
 		\$this->assertTrue(\$isSuccess);
-@body
-");
+	}
+}");

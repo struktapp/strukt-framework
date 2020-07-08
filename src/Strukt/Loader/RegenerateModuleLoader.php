@@ -7,6 +7,7 @@ use Strukt\Env;
 use Strukt\Generator\Parser;
 use Strukt\Generator\Compiler\Runner as Compiler;
 use Strukt\Generator\Compiler\Configuration;
+use Strukt\Templator;
 
 /**
 * Helper that generates module loader
@@ -20,7 +21,7 @@ class RegenerateModuleLoader{
 	*
 	* @var string
 	*/
-	private $module_loader_contents;
+	private $loader_output;
 
 	/**
 	* Constructor
@@ -61,24 +62,12 @@ class RegenerateModuleLoader{
 		if(!Fs::isFile($loader_sgf_file))
 			throw new \Exception(sprintf("File [%s] was not found!", $loader_sgf_file));
 			
-		$sgf_contents = Fs::cat($loader_sgf_file);
+		$tpl_file = Fs::cat($loader_sgf_file);
 
-		$parser = new Parser($sgf_contents);
-		$config = new Configuration();
+		$this->loader_output = Templator::create($tpl_file, array(
 
-		$config->setExcludedMethodParamTypes(array(
-
-			"string",
-			"integer",
-			"double",
-			"float"
+			"packages"=>implode("\n\t\t\t", $register)
 		));
-
-		$compiler = new Compiler($parser, $config);
-
-		$result = sprintf("<?php\n%s", $compiler->compile());
-
-		$this->module_loader_contents = sprintf($result, implode("\n\t\t\t", $register));
 	}
 
 	/**
@@ -88,6 +77,6 @@ class RegenerateModuleLoader{
 	*/
 	public function __toString(){
 
-		return $this->module_loader_contents;
+		return $this->loader_output;
 	}
 }

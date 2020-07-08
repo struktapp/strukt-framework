@@ -7,10 +7,8 @@ use Strukt\Console\Output;
 use Strukt\Env;
 use Strukt\Util\Str;
 use Strukt\Fs;
-use Strukt\Generator\Parser;
-use Strukt\Generator\Annotation\Basic as BasicAnnotation;
-use Strukt\Generator\Compiler\Runner as Compiler;
-use Strukt\Generator\Compiler\Configuration;
+use Strukt\Templator;
+use Strukt\Raise;
 
 /**
 * generate:app     Generate Application
@@ -31,7 +29,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 		$raw_app_name = $in->get("application_name");
 
-		$app_name = (new Str($raw_app_name))->toCamel();
+		$app_name = Str::create($raw_app_name)->toCamel();
 
 		$root_dir = Env::get("root_dir");
 		$app_dir = Env::get("rel_appsrc_dir");
@@ -45,8 +43,6 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 								$root_dir, 
 								$app_dir,
 								$app_name);
-
-		// Fs::mkdir($auth_mod_path);
 
 		$mod_ini_path = sprintf("%s/%s", $root_dir, $mod_ini);
 
@@ -68,44 +64,17 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 			$files = Fs::lsr($tpl_app_dir);
 
-			// print_r($files);	
-
 			foreach($files as $file){
 
 				if(!Fs::isFile($file))
 					continue;
 				
-				$sgf_file = Fs::cat($file);
+				$tpl_file = Fs::cat($file);
 
-				$parser = new Parser(str_replace("__APP__", (string)$app_name, $sgf_file));
+				$output = Templator::create($tpl_file, array(
 
-				$config = new Configuration();
-				$config->setExcludedMethodParamTypes(array(
-
-					"string",
-					"integer",
-					"double",
-					"float"
+					"app"=>$app_name->yield()
 				));
-				$config->addAnnotationBuilder("method", function(array $method){
-
-					if(empty($method["annotations"]))
-						return null; 
-					
-					foreach($method["annotations"] as $annotation){
-
-						list($aKey, $aVal) = explode(":", $annotation, 2);
-
-						if(strpos($aVal, "|") !== false)
-							$aVal = explode("|", $aVal);
-
-						$methAnnots[trim($aKey, "@")] = $aVal;
-					}
-
-					return new BasicAnnotation($methAnnots);
-				});
-
-				$compiler = new Compiler($parser, $config);
 
 				$base = str_replace($tpl_authmod_dir, $authmod_dir, 
 										preg_replace("/\w+\.sgf$/", "", $file));
@@ -113,25 +82,33 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				if(!Fs::isPath($base))
 					Fs::mkdir($base);
 
-				Fs::touchWrite(str_replace(array($tpl_authmod_dir,
-													"sgf", 
-													"_",
-													"tpl/php/",
-													"/App/"), 
-											array($authmod_dir, 
-													"php", 
-													$app_name,
-													"",
-													"/${app_name}/"), 
-											$file), 
-										sprintf("<?php\n%s", $compiler->compile()));
+				$outputfile = Str::create($file)
+					->replace("tpl/sgf/","")
+					->replace("\\App\\", sprintf("/%s/", $app_name->yield()))
+					->replace(".sgf", ".php")
+					->replace("/", "\\");
+					
+
+				if($outputfile->contains("_AuthModule.php")){
+
+					$module_name = sprintf("%sAuthModule.php", $app_name->yield());
+					$outputfile = $outputfile->replace("_AuthModule.php", $module_name);
+				}
+
+				$outputfile = $outputfile->yield();
+
+				if(!Fs::touchWrite($outputfile, $output))
+					new Raise(sprintf("%s did not generate!", $outputfile));
 			}
 
 			$app_ini_content = Fs::cat($app_ini);
 
-			$new_app_ini_content = str_replace("__APP__", (string)$app_name, $app_ini_content);
+			$app_ini_output = Templator::create($app_ini_content, array(
 
-			Fs::overwrite($app_ini, $new_app_ini_content);
+				"app"=>$app_name->yield()
+			));
+
+			Fs::overwrite($app_ini, $app_ini_output);
 			
 			$out->add("Application genarated successfully.\n");
 		}
