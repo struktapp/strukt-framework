@@ -183,14 +183,14 @@ class Index extends \Strukt\Contract\Router{
 
 		throw new \Exception(\"Whoops!\");
 	}	
-");
+}");
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf","<?php
 namespace {{app}}\AuthModule;
 
 class {{app}}AuthModule extends \Strukt\Contract\Module{
 
-	protected $alias=\"Au\";
+	protected \$alias=\"Au\";
 }
 ");
 
@@ -210,7 +210,7 @@ use Strukt\Router\Kernel as RouterKernel;
 */
 class Loader{
 
-	private $app;
+	private \$app;
 
 	/**
 	* Constructor
@@ -226,7 +226,7 @@ class Loader{
 	/**
 	* Getter for Strukt Application
 	*/
-	public function getApp():Strukt\Application{
+	public function getApp():\Strukt\Application{
 
 		return \$this->app;
 	}
