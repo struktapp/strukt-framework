@@ -7,10 +7,11 @@ use Strukt\Core\Collection;
 use Strukt\Core\Map;
 use Strukt\Core\Registry;
 use Strukt\Http\Request;
+use Strukt\Fs;
 
 class ApplicationTest extends TestCase{
 
-	public function setUp(){
+	public function setUp():void{
 
 		$app_cfg = parse_ini_file("cfg/app.ini");
 
@@ -28,7 +29,9 @@ class ApplicationTest extends TestCase{
 
 		$this->assertEquals($auth_mod->getAlias(), "Au");
 		$this->assertEquals($auth_mod->getNamespace(), $this->auth_mod_ns);
-		$this->assertEquals($auth_mod->getBaseDir(), $this->auth_mod_path);
+		
+		if(!Fs::isWindows())
+			$this->assertEquals($auth_mod->getBaseDir(), $this->auth_mod_path);
 
 		return $auth_mod;
 	}

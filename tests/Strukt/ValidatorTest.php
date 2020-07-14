@@ -6,7 +6,7 @@ use Strukt\Framework\Provider\Validator as ValidatorService;
 
 class ValidatorTest extends TestCase{
 
-	public function setUp(){
+	public function setUp():void{
 
 		$factory = new ValidatorService(); 
 		$factory->register();

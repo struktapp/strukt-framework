@@ -4,9 +4,13 @@ namespace Strukt\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-use Strukt\Core\Registry;
 use Strukt\Env;
 use Strukt\Fs;
+use Strukt\Util\Str;
+use Strukt\Util\Json;
+use Strukt\Util\Arr;
+use Strukt\Templator;
+
 /**
 * publish:package     Package Publisher
 *
@@ -20,132 +24,63 @@ use Strukt\Fs;
 */
 class PackagePublisher extends \Strukt\Console\Command{
 
-	public function cfg(array $modules){
-
-		$files = array(
-
-			"index.php",
-			"console",
-			"bootstrap.php"
-		);
-
-		$re = sprintf('/\/\/(%s)/', implode("|", array_map(function($item){
-
-			return str_replace("/", "-", $item);
-
-		}, $modules)));
-
-		$app_root = Env::get("root_dir");
-
-		foreach($files as $file){
-
-			$lines = explode("\n", Fs::cat(sprintf("%s/%s", $app_root, $file)));
-
-			$new_lines = [];
-
-			foreach($lines as $line){
-
-				if(!preg_match($re, $line)){
-					
-					$new_lines[] = $line;
-				}
-			}
-
-			Fs::overwrite(sprintf("%s/%s", $app_root, $file), implode("\n", $new_lines));
-		}
-	}
-
 	public function execute(Input $in, Output $out){
 
 		$package = $in->get("package");
 
-		$app_root = Env::get("root_dir");
-		$pkg_dir = sprintf("%s/vendor/%s", $app_root, $package);
+		$vendor_pkg_path = Str::create(Env::get("root_dir"))
+			->concat("/vendor/")
+			->concat($package)
+			->yield();
 
-		if(!Fs::isDir($pkg_dir))
-			throw new \Exception(sprintf("Package [%s] not found!", $package));
+		$manifest_path = Str::create($vendor_pkg_path)
+					->concat("/manifest.json")
+					->yield();
 
-		$man_file = sprintf("%s/manifest/files", $pkg_dir);
+		$manifest_file = Fs::cat($manifest_path);
+		$manifest = Json::decode($manifest_file);
 
-		if(!Fs::isFile($man_file))
-			throw new \Exception(sprintf("Package [%s] is not a strukt module or package!", $package));
+		Arr::create($manifest["files"])->each(function($key, $relpath) use ($vendor_pkg_path){
 
-		$mod_file = sprintf("%s/manifest/modules", $pkg_dir);
+			$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
+				->concat(Env::get("rel_app_ini")));
 
-		$modules = [];
+			$qpath = Str::create(Env::get("root_dir"))
+				->concat("/")
+				->concat($relpath);
 
-		if(Fs::isFile($mod_file)){
+			if($qpath->contains("app/src/App"))
+				$qpath = $qpath->replace("app/src/App", sprintf("app/src/%s", $app_ini["app-name"]));
 
-			$modules = array_map(function($item){
+			if($qpath->endsWith(".sgf"))
+				$qpath = $qpath->replace(".sgf", ".php");
 
-				if(!empty($item))
-					return $item;
+			$actual_path = $qpath->yield();
 
-			}, explode("\n", Fs::cat($mod_file)));
+			$vendor_file_path = Str::create($vendor_pkg_path)
+				->concat("/package/")
+				->concat($relpath)
+				->yield();
 
-			if(!empty($modules)){
+			$path = pathinfo($actual_path);
 
-				$cfg = parse_ini_file(sprintf("%s/cfg/app.ini", $app_root));
+			$qfilename = Str::create($path["filename"]);
+			if($qfilename->startsWith("_")){
 
-				if(trim($cfg["app-name"]) == "__APP__")
-					throw new \Exception(
-						"Create an cfg[app-name] in your [cfg/app.ini] file via [generate:app] cli cmd!");
+				$filename = $qfilename->replace("_", $app_ini["app-name"])->yield();
+				$actual_path = $qpath->replace($path["filename"], $filename);
 			}
-		}
 
-		$files = array_map(function($item){
+			Fs::mkdir($path["dirname"]);
 
-			if(!empty($item))
-				return $item;
+			$file_content = Fs::cat($vendor_file_path);
+			if(Str::create($vendor_file_path)->endsWith(".sgf"))
+				$file_content = Templator::create($file_content, array(
 
-		}, explode("\n", Fs::cat($man_file)));
+					"app"=>$app_ini["app-name"]
+				));
 
-		foreach($files as $file){
-
-			$info = pathinfo($file);
-
-			if(array_key_exists("dirname", $info)){
-
-				if(!empty($modules)){
-
-					$dir = str_replace("app/src/App", 
-										sprintf("app/src/%s", $cfg["app-name"]), 
-										$info["dirname"]);
-
-					$dir = sprintf("%s/%s", $app_root, $dir);
-				}
-				else $dir = sprintf("%s/%s", $app_root, $info["dirname"]);
-
-				if(!Fs::isDir($dir)){
-
-					Fs::mkdir($dir);
-				}
-
-				$o_file = sprintf("%s/%s", $dir, $info["basename"]);
-				$p_file = sprintf("%s/package/%s/%s", $pkg_dir, $info["dirname"], $info["basename"]);
-
-				if(Fs::isFile($o_file)){
-
-					rename($o_file, sprintf("%s~", $o_file));
-				}
-
-				if(!empty($modules))
-					$content = str_replace("__APP__", $cfg["app-name"], Fs::cat($p_file));
-				else
-					$content = Fs::cat($p_file);
-
-				$file = new \SplFileObject($o_file, "w+"); 
-				$file->fwrite($content);
-			}
-		}
-
-		foreach($modules as $module){
-
-			$o_path = sprintf("%s/app/src/%s/%s", $app_root, $cfg["app-name"], $module);
-			rename(sprintf("%s/%s.php", $o_path, $module), 
-					sprintf("%s/%s%s.php", $o_path, $cfg["app-name"], $module));
-		}
-
-		$this->cfg(array($package));
+			Fs::touchWrite($actual_path, $file_content);
+		});
 	}
 }	
