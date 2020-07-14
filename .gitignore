@@ -1,6 +1,7 @@
 vendor
 app/
 public
+database/
 fixtures/src/Payroll/HumanResourceModule
 fixtures/src/Payroll/PaymentModule
 composer.lock
