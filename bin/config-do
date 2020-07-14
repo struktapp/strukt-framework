@@ -195,7 +195,7 @@ class {{app}}AuthModule extends \Strukt\Contract\Module{
 ");
 
 Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf","
-namespace App;
+namespace App; 
 
 use Strukt\Router\Kernel as RouterKernel;
 

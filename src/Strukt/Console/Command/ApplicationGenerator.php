@@ -27,6 +27,8 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
+		Templator::$truncate_space = false;
+
 		$raw_app_name = $in->get("application_name");
 
 		$app_name = Str::create($raw_app_name)->toCamel();
