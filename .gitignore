@@ -6,10 +6,15 @@ fixtures/src/Payroll/HumanResourceModule
 fixtures/src/Payroll/PaymentModule
 composer.lock
 lib/App/Loader.php
-index.php
 test.php
 php_errors.log
 cfg/
 tpl/
 bin/clean
 tasker.php
+backup
+bootstrap.php
+console
+index.php
+console  
+bootstrap.php  

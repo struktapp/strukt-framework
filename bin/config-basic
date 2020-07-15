@@ -9,6 +9,7 @@ foreach($autoloadFiles as $autoloadFile)
         require_once $autoloadFile;
 
 Strukt\Fs::mkdir("cfg");
+Strukt\Fs::mkdir("tpl/sgf/cfg");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
@@ -25,7 +26,7 @@ folder["tes"] = "Tests"
 ; folder["rep"] = "Repository"
 ; folder["sdr"] = "Seeder"');
 
-Strukt\Fs::touchWrite("cfg/app.ini",
+Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf",
 "app-name = {{app}}
 ");
 

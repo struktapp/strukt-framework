@@ -27,50 +27,50 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		Templator::$truncate_space = false;
-
 		$package = $in->get("package");
 
-		$vendor_pkg_path = Str::create(Env::get("root_dir"))
+		$vendor_pkg = Str::create(Env::get("root_dir"))
 			->concat("/vendor/")
 			->concat($package)
 			->yield();
 
-		$manifest_path = Str::create($vendor_pkg_path)
+		$manifest_path = Str::create($vendor_pkg)
 			->concat("/manifest.json")
 			->yield();
 
 		$manifest_file = Fs::cat($manifest_path);
 		$manifest = Json::decode($manifest_file);
 
-		Arr::create($manifest["files"])->each(function($key, $relpath) use ($vendor_pkg_path){
-
-			$vendor_appbase = Str::create(Env::get("rel_appsrc_dir"))->concat("App")->yield();
-
-			$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
+		$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
 				->concat("/")
 				->concat(Env::get("rel_app_ini"))
 				->yield());
 
-			if(!array_key_exists("app-name", $app_ini))
-				new Raise("cfg/app.ini[app-name] is undefined!");
+		if(!array_key_exists("app-name", $app_ini))
+			new Raise("cfg/app.ini[app-name] is undefined!");
 
-			if(empty($app_ini["app-name"]))
-				new Raise("cfg/app.ini[app-name] is not defined!");
+		if(empty($app_ini["app-name"]))
+			new Raise("cfg/app.ini[app-name] is not defined!");
+
+		$appname = $app_ini["app-name"];
+
+		Arr::create($manifest["files"])->each(function($key, $relpath) use ($vendor_pkg, $appname){
+
+			$vendor_appbase = Str::create(Env::get("rel_appsrc_dir"))->concat("App")->yield();
 
 			$qpath = Str::create(Env::get("root_dir"))
 				->concat("/")
 				->concat($relpath);
 
 			if($qpath->contains($vendor_appbase))
-				$qpath = $qpath->replace($vendor_appbase, sprintf("app/src/%s", $app_ini["app-name"]));
+				$qpath = $qpath->replace($vendor_appbase, sprintf("app/src/%s", $appname));
 
 			if($qpath->endsWith(".sgf"))
 				$qpath = $qpath->replace(".sgf", ".php");
 
 			$actual_path = $qpath->yield();
 
-			$vendor_file_path = Str::create($vendor_pkg_path)
+			$vendor_file_path = Str::create($vendor_pkg)
 				->concat("/package/")
 				->concat($relpath)
 				->yield();
@@ -80,7 +80,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$qfilename = Str::create($path["filename"]);
 			if($qfilename->startsWith("_")){
 
-				$filename = $qfilename->replace("_", $app_ini["app-name"])->yield();
+				$filename = $qfilename->replace("_", $appname)->yield();
 				$actual_path = $qpath->replace($path["filename"], $filename);
 			}
 
@@ -97,6 +97,62 @@ class PackagePublisher extends \Strukt\Console\Command{
 				Fs::rename($actual_path, sprintf("%s~", $actual_path));
 
 			Fs::touchWrite($actual_path, $file_content);
+		});
+
+		$packages = array(
+
+			"strukt/pkg-roles",
+			"strukt/pkg-do",
+			"strukt/pkg-audit",
+			"strukt/pkg-books"
+		);
+
+		Arr::create(array(
+
+			"index.sgf",
+			"bootstrap.sgf",
+			"console"
+
+		))->each(function($key, $filename) use($packages, $appname){
+
+			$path = Str::create(Env::get("root_dir"))
+				->concat("/")
+				->concat(Env::get("rel_tpl_dir"))
+				->concat("/")
+				->concat($filename)
+				->yield();
+
+			foreach($packages as $package){
+
+				$package_path = Str::create(Env::get("root_dir"))
+					->concat("/vendor/")
+					->concat($package)
+					->yield();
+
+				$pkg = Str::create($package)
+					->replace("strukt/","")
+					->replace("-", "_")
+					->yield();
+
+				$installed[$pkg] = Fs::isDir($package_path);
+			} 
+
+			$file_content = Fs::cat($path);
+			$file_content = Templator::create($file_content, array_merge($installed, array(
+
+				"app" => $appname
+			)));
+
+			$qpath = Str::create(Env::get("root_dir"))
+				->concat("/")
+				->concat($filename)
+				->replace(".sgf", ".php")
+				->yield();
+
+			if(Fs::isFile($qpath))
+				Fs::rename($qpath, sprintf("%s~", $qpath));
+
+			Fs::touchWrite($qpath, $file_content);
 		});
 	}
 }	
