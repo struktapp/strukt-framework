@@ -99,60 +99,52 @@ class PackagePublisher extends \Strukt\Console\Command{
 			Fs::touchWrite($actual_path, $file_content);
 		});
 
-		$packages = array(
+		// Arr::create(array(
 
-			"strukt/pkg-roles",
-			"strukt/pkg-do",
-			"strukt/pkg-audit",
-			"strukt/pkg-books"
-		);
+		// 	"index.sgf",
+		// 	"bootstrap.sgf",
+		// 	"console"
 
-		Arr::create(array(
+		// ))->each(function($key, $filename) use($packages, $appname){
 
-			"index.sgf",
-			"bootstrap.sgf",
-			"console"
+		// 	$path = Str::create(Env::get("root_dir"))
+		// 		->concat("/")
+		// 		->concat(Env::get("rel_tpl_dir"))
+		// 		->concat("/")
+		// 		->concat($filename)
+		// 		->yield();
 
-		))->each(function($key, $filename) use($packages, $appname){
+		// 	foreach($packages as $package){
 
-			$path = Str::create(Env::get("root_dir"))
-				->concat("/")
-				->concat(Env::get("rel_tpl_dir"))
-				->concat("/")
-				->concat($filename)
-				->yield();
+		// 		$package_path = Str::create(Env::get("root_dir"))
+		// 			->concat("/vendor/")
+		// 			->concat($package)
+		// 			->yield();
 
-			foreach($packages as $package){
+		// 		$pkg = Str::create($package)
+		// 			->replace("strukt/","")
+		// 			->replace("-", "_")
+		// 			->yield();
 
-				$package_path = Str::create(Env::get("root_dir"))
-					->concat("/vendor/")
-					->concat($package)
-					->yield();
+		// 		$installed[$pkg] = Fs::isDir($package_path);
+		// 	} 
 
-				$pkg = Str::create($package)
-					->replace("strukt/","")
-					->replace("-", "_")
-					->yield();
+		// 	$file_content = Fs::cat($path);
+		// 	$file_content = Templator::create($file_content, array_merge($installed, array(
 
-				$installed[$pkg] = Fs::isDir($package_path);
-			} 
+		// 		"app" => $appname
+		// 	)));
 
-			$file_content = Fs::cat($path);
-			$file_content = Templator::create($file_content, array_merge($installed, array(
+		// 	$qpath = Str::create(Env::get("root_dir"))
+		// 		->concat("/")
+		// 		->concat($filename)
+		// 		->replace(".sgf", ".php")
+		// 		->yield();
 
-				"app" => $appname
-			)));
+		// 	if(Fs::isFile($qpath))
+		// 		Fs::rename($qpath, sprintf("%s~", $qpath));
 
-			$qpath = Str::create(Env::get("root_dir"))
-				->concat("/")
-				->concat($filename)
-				->replace(".sgf", ".php")
-				->yield();
-
-			if(Fs::isFile($qpath))
-				Fs::rename($qpath, sprintf("%s~", $qpath));
-
-			Fs::touchWrite($qpath, $file_content);
-		});
+		// 	Fs::touchWrite($qpath, $file_content);
+		// });
 	}
 }	

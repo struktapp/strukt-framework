@@ -23,7 +23,7 @@ class Console extends \Strukt\Console\Application{
 
 		$configKeys = array_keys($config);
 
-		$registry = \Strukt\Core\Registry::getInstance();
+		$registry = \Strukt\Core\Registry::getSingleton();
 
 		if(in_array("moduleList", $configKeys))
 			if(!is_null($config["moduleList"]))

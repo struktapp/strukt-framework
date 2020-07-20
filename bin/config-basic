@@ -30,90 +30,90 @@ Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf",
 "app-name = {{app}}
 ");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",'<?php
 namespace {{app}}\AuthModule\Controller;
 
 class User extends \Strukt\Contract\Controller{
 
-	public function find(\$id){
+	public function find($id){
 
-		return \"Couldn't find User:[id] - AuthModule\Controller\User::find Not Yet Implemented!\";
+		return "Couldn\'t find User:[id] - AuthModule\Controller\User::find Not Yet Implemented!";
 	}
 
 	public function getAll(){
 
-		return \"AuthModule\Controller\User::getAll Not Yet Implemented!\";
+		return "AuthModule\Controller\User::getAll Not Yet Implemented!";
 	}
 
-	public function doAuthentication(\$username, \$password){
+	public function doAuthentication($username, $password){
 
-		\$user = \$this->get(\"User\", array(\$username, \$password));
+		$user = $this->get("User", array($username, $password));
 
-		return \$user->getUsername() == \"admin\" && \$user->getPassword() == sha1(\"p@55w0rd\");
+		return $user->getUsername() == "admin" && $user->getPassword() == sha1("p@55w0rd");
 	}
-}");
+}');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",'<?php
 namespace {{app}}\AuthModule\Form;
 
 class User extends \Strukt\Contract\Form{
 
 	protected function validation(){
 
-		\$service = \$this->getValidatorService();
+		$service = $this->getValidatorService();
 
-		\$this->setMessage(\"username\", \$service->getNew(\$this->get(\"username\"))->isNotEmpty());
-		\$this->setMessage(\"password\", \$service->getNew(\$this->get(\"password\"))->isNotEmpty());
+		$this->setMessage("username", $service->getNew($this->get("username"))->isNotEmpty());
+		$this->setMessage("password", $service->getNew($this->get("password"))->isNotEmpty());
 	}
-}");
+}');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf",'<?php
 namespace {{app}};
 
 class User{
 
-	private \$id;
-	private \$username;
-	private \$password;
+	private $id;
+	private $username;
+	private $password;
 
-	public function __construct(\$username, \$password){
+	public function __construct($username, $password){
 
-		\$this->username = \$username;
-		\$this->password = sha1(\$password);
+		$this->username = $username;
+		$this->password = sha1($password);
 	}
 
 	public function getId(){
 
-		return \$this->id;
+		return $this->id;
 	}
 
-	public function setId(\$id){
+	public function setId($id){
 		
-		\$this->id = \$id;
+		$this->id = $id;
 	}
 
 	public function getUsername(){
 		
-		return \$this->username;
+		return $this->username;
 	}
 
-	public function setUsername(\$username){
+	public function setUsername($username){
 		
-		\$this->username = \$username;
+		$this->username = $username;
 	}
 
 	public function getPassword(){
 		
-		return \$this->password;
+		return $this->password;
 	}
 
-	public function setPassword(\$password){
+	public function setPassword($password){
 		
-		\$this->password = sha1(\$password);
+		$this->password = sha1($password);
 	}
-}");
+}');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",'<?php
 namespace {{app}}\AuthModule\Router;
 
 use Strukt\Http\Request;
@@ -125,39 +125,39 @@ class Auth extends \Strukt\Contract\Router{
 	* @Route:/login
 	* @Method:POST
 	*/
-	public function login(Request \$request){
+	public function login(Request $request){
 
-		\$username = \$request->get(\"username\");
-		\$password = \$request->get(\"password\");
+		$username = $request->get("username");
+		$password = $request->get("password");
 
-		\$userForm = \$this->get(\"au.frm.User\", [\$request]);
-		\$messages = \$userForm->validate();
+		$userForm = $this->get("au.frm.User", [$request]);
+		$messages = $userForm->validate();
 
-		if(\$messages[\"is_valid\"])
-		    if(\$this->get(\"au.ctr.User\")->doAuthentication(\$username, \$password))
+		if($messages["is_valid"])
+		    if($this->get("au.ctr.User")->doAuthentication($username, $password))
 		       return self::json(array(
 
-		            \"success\"=>true, 
-		            \"message\"=>\"User successfully authenticated.\"
+		            "success"=>true, 
+		            "message"=>"User successfully authenticated."
 		        ));
 		    else 
 		        return self::json(array(
 
-		            \"success\"=>false,
-		            \"message\"=>\"Failed to authenticate user!\"
+		            "success"=>false,
+		            "message"=>"Failed to authenticate user!"
 		        ));
 		else
 		    return self::json(array(
 
-		        \"success\"=>false,
-		        \"message\"=>\"Invalid input!\",
-		        \"form\"=>\$messages,
+		        "success"=>false,
+		        "message"=>"Invalid input!",
+		        "form"=>$messages,
 		    ));
 	}
-}");
+}');
 
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",'<?php
 namespace {{app}}\AuthModule\Router;
 
 use Strukt\Http\Request;
@@ -171,7 +171,7 @@ class Index extends \Strukt\Contract\Router{
 	*/
 	public function welcome(){
 		
-		return \"</b>Strukt Works!<b>\";
+		return "</b>Strukt Works!<b>";
 	}
 
 	/**
@@ -180,16 +180,16 @@ class Index extends \Strukt\Contract\Router{
 	*/
 	public function helloWorld(){
 
-		return self::htmlfile(\"public/static/index.html\");
+		return self::htmlfile("public/static/index.html");
 	}
 	
 	/**
 	* @Route:/hello/{name:alpha}
 	* @Method:GET
 	*/
-	public function helloTo(\$name, Request \$request){
+	public function helloTo($name, Request $request){
 
-		return sprintf(\"<b>Hello %s!</b>\", \$name);	
+		return sprintf("<b>Hello %s!</b>", $name);	
 	}
 
 	/**
@@ -199,18 +199,18 @@ class Index extends \Strukt\Contract\Router{
 	*/
 	public function getAllUsers(){
 		
-		return \$this->get(\"au.ctr.User\")->getAll();
+		return $this->get("au.ctr.User")->getAll();
 	}
 
 	/**
 	* @Route:/user
 	* @Method:GET
 	*/
-	public function getUser(Request \$request){
+	public function getUser(Request $request){
 
-		\$id = \$request->query->get(\"id\");
+		$id = $request->query->get("id");
 
-		return \$this->get(\"au.ctr.User\")->find(\$id);
+		return $this->get("au.ctr.User")->find($id);
 	}
 
 	/**
@@ -219,20 +219,19 @@ class Index extends \Strukt\Contract\Router{
 	*/
 	public function testException(){
 
-		throw new \Exception(\"Whoops!\");
+		throw new \Exception("Whoops!");
 	}	
-}");
+}');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",'<?php
 namespace {{app}}\AuthModule;
 
 class {{app}}AuthModule extends \Strukt\Contract\Module{
 
-	protected \$alias=\"Au\";
-}
-");
+	protected $alias="Au";
+}');
 
-Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf",'<?php
 namespace App;
 
 use Strukt\Router\Kernel as RouterKernel;
@@ -248,16 +247,16 @@ use Strukt\Router\Kernel as RouterKernel;
 */
 class Loader{
 
-	private \$app;
+	private $app;
 
 	/**
 	* Constructor
 	*	
 	* Initialize Strukt Framework
 	*/
-	public function __construct(RouterKernel \$router=null){
+	public function __construct(RouterKernel $router=null){
 
-		\$this->app = new \Strukt\Application(\$router);
+		$this->app = new \Strukt\Application($router);
 		{{packages}}
 	}
 
@@ -266,11 +265,11 @@ class Loader{
 	*/
 	public function getApp():\Strukt\Application{
 
-		return \$this->app;
+		return $this->app;
 	}
-}");
+}');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf","<?php
+Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf",'<?php
 namespace {{app}}\AuthModule\Tests;
 
 use Strukt\Core\Registry;
@@ -280,16 +279,17 @@ class UserTest extends TestCase{
 
 	public function setUp(){
 	
-		\$this->core = Registry::getInstance()->get(\"core\");
+		$this->core = Registry::getInstance()->get("core");
 	}
 
 	public function testDoAuthentication(){
 
-		\$username = \"admin\";
-		\$password = \"p@55w0rd\";
+		$username = "admin";
+		$password = "p@55w0rd";
 
-		\$isSuccess = \$this->core->get(\"au.ctr.User\")->doAuthentication(\$username, \$password);
+		$isSuccess = $this->core->get("au.ctr.User")->doAuthentication($username, $password);
 
-		\$this->assertTrue(\$isSuccess);
+		$this->assertTrue($isSuccess);
 	}
-}");
+}');
+

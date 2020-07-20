@@ -8,6 +8,7 @@ use Strukt\Generator\ClassBuilder;
 use Strukt\Fs;
 use Strukt\Env;
 use Strukt\Util\Str;
+use Strukt\Core\Registry as Registry;
 
 /**
 * generate:module     Generate Application Module
@@ -30,7 +31,7 @@ class ModuleGenerator extends \Strukt\Console\Command{
 		$app_dir = Env::get("rel_appsrc_dir");
 		$mod_ini = Env::get("rel_mod_ini");
 
-		$registry = \Strukt\Core\Registry::getInstance();
+		$registry = Registry::getSingleton();
 
 		$moduleList = unserialize($registry->get("module-list"));
 
@@ -39,14 +40,14 @@ class ModuleGenerator extends \Strukt\Console\Command{
 		*/
 		$raw_app_name = $in->get("application_name");
 
-		$app_name = (new Str($raw_app_name))->toCamel();
+		$app_name = Str::create($raw_app_name)->toCamel();
 
 		/**
 		* Module Name
 		*/
 		$raw_mod_name = $in->get("module_name");
 
-		$mod_name = (new Str($raw_mod_name))->toCamel();
+		$mod_name = Str::create($raw_mod_name)->toCamel();
 		if(!$mod_name->endsWith("Module"))
 			$mod_name = $mod_name->concat("Module");
 
@@ -58,7 +59,7 @@ class ModuleGenerator extends \Strukt\Console\Command{
 		*/
 		$raw_alias_name = $in->get("alias_name");
 
-		$aliasName = (new Str($raw_alias_name))->toCamel();
+		$aliasName = Str::create($raw_alias_name)->toCamel();
 
 		//
 

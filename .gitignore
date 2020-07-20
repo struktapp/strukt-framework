@@ -8,7 +8,8 @@ composer.lock
 lib/App/Loader.php
 test.php
 php_errors.log
-cfg/
+cfg/module.ini
+cfg/app.ini
 tpl/
 bin/clean
 tasker.php
@@ -18,3 +19,4 @@ console
 index.php
 console  
 bootstrap.php  
+cfg/

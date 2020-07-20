@@ -55,7 +55,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 		$root_dir = Env::get("root_dir");
 		$app_dir = Env::get("rel_appsrc_dir");
 
-		$registry = Registry::getInstance();
+		$registry = Registry::getSingleton();
 		$moduleList = unserialize($registry->get("module-list"));
 
 		/**

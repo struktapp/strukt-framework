@@ -27,98 +27,29 @@ $loader->add($cfg_app["app-name"], __DIR__.\'/app/src/\');
 {/if}');
 
 
-Strukt\Fs::touchWrite("tpl/sgf/console",'#!/usr/bin/php
+Strukt\Fs::touchWrite("console",'#!/usr/bin/php
 <?php
 
 use Strukt\Env;
 use Strukt\Http\Request;
-use Strukt\Core\Registry;
 use Strukt\Console;
+use Strukt\Framework\Configuration;
 use Strukt\Router\Kernel as RouterKernel;
-use Strukt\Router\Middleware\Router as RouterMiddleware;
-use Strukt\Framework\Provider\Router as RouterProvider;
-use Strukt\Framework\Provider\Annotation as AnnotationProvider;
 use App\Loader as AppLoader;
 
-{if pkg_do}
-use App\Provider\EntityManager as EntityManagerProvider;
-use App\Provider\EntityManagerAdapter as EntityManagerAdapterProvider;
-use App\Provider\Normalizer as NormalizerProvider;
-use App\Provider\Logger as LoggerProvider;
-use App\Command\Doctrine\GenerateModels as GenerateModelsCommand;
-use App\Command\Doctrine\Migration\GenerateMigration as GenerateMigrationCommand;
-use App\Command\Doctrine\Seeder\GenerateSeeder as GenerateSeederCommand;
-use App\Command\Doctrine\Migration\MigrateExec as MigrateExecCommand;
-use App\Command\Doctrine\Seeder\SeederExec as SeederExecCommand;
-use App\Command\Doctrine\SqlExec as SqlExecCommand;
-use Cobaia\Doctrine\MonologSQLLogger;
-{/if}
-
-{if pkg_roles}
-use {{app}}\AuthModule\Command\PermissionAdd as PermissionAddCommand;
-use {{app}}\AuthModule\Command\RoleAdd as RoleAddCommand;
-use {{app}}\AuthModule\Command\RoleAddPermission as RoleAddPermissionCommand;
-use {{app}}\AuthModule\Command\UserAdd as UserAddCommand;
-use {{app}}\AuthModule\Command\UserDumpCredentials as UserDumpCredentialsCommand;
-use {{app}}\AuthModule\Command\UserResetPassword as UserResetPasswordCommand;
-{/if}
-
-{if pkg_books}
-use {{app}}\AccountsModule\Command\BooksShell as BooksShellCommand;
-{/if}
-
 require "bootstrap.php";
+$settings = require "cfg/settings.php";
+$packages = require "cfg/packages.php";
+
+$config = new Configuration($settings, $packages, "console");
 
 Env::set("root_dir", getcwd());
-Env::set("rel_appsrc_dir", "app/src/");
-Env::set("rel_tpl_dir", "tpl/sgf");
-Env::set("rel_apptpl_ini", "tpl/sgf/cfg/app.sgf");
-Env::set("rel_app_ini", "cfg/app.ini");
-Env::set("rel_mod_ini", "cfg/module.ini");
-Env::set("rel_tplapp_dir", "tpl/sgf/app/");
-Env::set("rel_tplappsrc_dir", "tpl/sgf/app/src/");
-Env::set("rel_tplauthmod_dir","tpl/sgf/app/src/App/AuthModule/");
-Env::set("rel_app_lib", "lib/App");
-Env::set("rel_loader_sgf","tpl/sgf/lib/App/Loader.sgf");
-
-{if pkg_do}
-Env::set("is_dev", true);
-Env::set("rel_db_ini", "cfg/db.ini");
-Env::set("migration_sgf","tpl/sgf/database/schema/Schema/Migration/Version_.sgf");
-Env::set("migration_home","database/schema/Schema/Migration");
-Env::set("migration_ns", Schema\Migration::class);
-Env::set("entity_ns", App\Contract\Entity::class);
-Env::set("seeder_sgf", "tpl/sgf/database/seeder/Seed/NameVer.sgf");
-Env::set("seeder_dir", "database/seeder/Seed");
-Env::set("seeder_home", "database/seeder");
-Env::set("logger_name", "Console Logger");
-Env::set("logger_file", "logs/console.log");
-{/if}
+foreach($config->get("env") as $key=>$attr)
+	Env::set($key, $attr);
 
 $kernel = new RouterKernel(Request::createFromGlobals());
-{if pkg_do}
-$kernel->inject("app.dep.logger.sqllogger", function(){
-
-	return new MonologSQLLogger(null, null, __DIR__ . \'/logs/\');
-});
-{/if}
-
-$kernel->providers(array(
-
-	{if pkg_do}
-	LoggerProvider::class,
-	EntityManagerProvider::class,
-	EntityManagerAdapterProvider::class,
-	NormalizerProvider::class,
-	{/if}
-	RouterProvider::class,
-	AnnotationProvider::class
-));
-
-$kernel->middlewares(array(
-	
-	"router" => new RouterMiddleware,
-));
+$kernel->providers($config->get("providers"));
+$kernel->middlewares($config->get("middlewares"));
 
 try{
 	
@@ -137,7 +68,7 @@ catch(\Exception $e){
 	$moduleList = null;
 }
 
-$configs = array(
+$console = new Console(array(
 
 	"labelStruktSect"=>true, 
 	/** "loadNativeCmds"=>true,**/
@@ -145,177 +76,279 @@ $configs = array(
 	"moduleList"=>$moduleList,
 	"appDir"=>"app",
 	"rootDir"=>__DIR__
-);
-
-$console = new Console($configs);
-
-{if pkg_do}
-$console->addCmdSect("\nDoctrine");
-$console->add(new GenerateModelsCommand());
-$console->add(new GenerateMigrationCommand());
-$console->add(new GenerateSeederCommand());
-$console->add(new MigrateExecCommand());
-$console->add(new SeederExecCommand());
-$console->add(new SqlExecCommand());
-{/if}
-
-{if pkg_auth}
-$console->addCmdSect("\nAuth");
-$console->add(new PermissionAddCommand());
-$console->add(new RoleAddCommand());
-$console->add(new RoleAddPermissionCommand());
-$console->add(new UserAddCommand());
-$console->add(new UserDumpCredentialsCommand());
-$console->add(new UserResetPasswordCommand());
-{/if}
-
-{if pkg_books}
-$console->addCmdSect("\nAcounts");
-$console->add(new BooksShellCommand);
-{/if}
+));
 
 exit($console->run($_SERVER["argv"]));');
 
-Strukt\Fs::touchWrite("tpl/sgf/index.sgf",'<?php
+Strukt\Fs::touchWrite("index.php",'#!/usr/bin/php
+<?php
 
 require "bootstrap.php";
+$settings = require "cfg/settings.php";
+$packages = require "cfg/packages.php";
 
-use Strukt\Http\Response;
+use Strukt\Framework\Configuration;
+use Strukt\Router\Kernel;
 use Strukt\Http\Request;
-use Strukt\Http\RedirectResponse;
-use Strukt\Http\Session;
-
-use Strukt\Router\Middleware\ExceptionHandler;
-use Strukt\Router\Middleware\Authentication; 
-use Strukt\Router\Middleware\Authorization;
-use Strukt\Router\Middleware\StaticFileFinder;
-use Strukt\Router\Middleware\Session as SessionMiddleware;
-use Strukt\Router\Middleware\Router as RouterMiddleware;
-
-use Strukt\Framework\Provider\Validator as ValidatorProvider;
-use Strukt\Framework\Provider\Annotation as AnnotationProvider;
-use Strukt\Framework\Provider\Router as RouterProvider;
-
-{if pkg_do}
-use App\Provider\Logger as LoggerProvider;
-use App\Provider\EntityManager as EntityManagerProvider;
-use App\Provider\EntityManagerAdapter as EntityManagerAdapterProvider;
-use App\Provider\Normalizer as NormalizerProvider;
-use Cobaia\Doctrine\MonologSQLLogger;
-{/if}
-
-{if pkg_audit}
-use App\Middleware\Audit as AuditMiddleware;
-{/if}
-
-use Strukt\Event\Event;
 use Strukt\Env;
 
+$config = new Configuration($settings, $packages, "index");
+$inj = new App\Injectable($packages);
+
 Env::set("root_dir", getcwd());
-Env::set("rel_app_ini", "/cfg/app.ini");
-Env::set("rel_static_dir", "/public/static");
-Env::set("rel_mod_ini", "/cfg/module.ini");
-Env::set("is_dev", true);
+foreach($config->get("env") as $key=>$attr)
+	Env::set($key, $attr);
 
-{if pkg_do}
-Env::set("rel_appsrc_dir", "app/src/");
-Env::set("rel_db_ini", "cfg/db.ini");
-Env::set("logger_name", "Strukt Logger");
-Env::set("logger_file", "logs/app.log");
-{/if}
+$kernel = new Kernel(Request::createFromGlobals());
 
-$kernel = new Strukt\Router\Kernel(Request::createFromGlobals());
-$kernel->inject("app.dep.author", function(){
+$kConfigs = $inj->getConfigs();
+if(!empty($kConfigs))
+	foreach($kConfigs as $id=>$config)
+		$kernel->inject($inj->getId($id), $config);
 
-	return array(
-
-		"permissions" => array(
-
-			/** "show_secrets"**/
-			/** "user_all"**/
-		)
-	);
-});
-
-{if pkg_do}
-$kernel->inject("app.dep.logger.sqllogger", function(){
-
-	return new MonologSQLLogger(null, null, __DIR__ . \'/logs/\');
-});
-{/if}
-
-{if pkg_roles}
-$kernel->inject("app.dep.author", function(Session $session){
-
-	if($session->has("username")){
-
-		$userC = new {{app}}\AuthModule\Controller\User;
-		$permissions = $userC->findPermissionsByUsername($session->get("username"));
-
-		return $permissions;
-	}
-
-	return array();
-});
-{/if}
-
-$kernel->inject("app.dep.authentic", function(Session $session){
-
-	$user = new Strukt\User();
-	$user->setUsername($session->get("username"));
-
-	return $user;
-});
-
-$kernel->inject("app.dep.session", function(){
-
-	return new Session;
-});
-
-$kernel->providers(array(
-
-	ValidatorProvider::class,
-	AnnotationProvider::class,
-	RouterProvider::class
-
-	{if pkg_do}
-	LoggerProvider::class,
-	EntityManagerProvider::class,
-	EntityManagerAdapterProvider::class,
-	NormalizerProvider::class
-	{/if}
-));
-
-$kernel->middlewares(array(
-	
-	ExceptionHandler::class,
-	SessionMiddleware::class,
-	Authorization::class,
-	Authentication::class,
-	StaticFileFinder::class,
-	{if pkg_audit}
-	AuditMiddleware::class,
-	{/if}
-	RouterMiddleware::class
-));
+$kernel->providers($config->get("providers"));
+$kernel->middlewares($config->get("middlewares"));
 
 $loader = new App\Loader($kernel);
 $app = $loader->getApp(); 
 $app->runDebug();');
 
-foreach(array("index.sgf",
-				"console",
-				"bootstrap.sgf") as $file){
+Strukt\Fs::touchWrite("cfg/packages.php", '<?php
 
-	$source = Strukt\Util\Str::create("tpl/sgf/")->concat($file)->yield();
-	$target = Strukt\Util\Str::create($file)
-				->replace(".sgf", ".php")
-				->yield();
+return array(
 
-	$content = Strukt\Templator::create(Strukt\Fs::cat($source), array(
+	// "pkg_do",
+	// "pkg_roles",
+	// "pkg_audit",
+	// "pkg_books"
+);');
 
-		"app"=>""
-	));
+Strukt\Fs::touchWrite("tpl/sgf/cfg/settings.sgf",'<?php
 
-	Strukt\Fs::touchWrite($target, $content);
-}
+return array(
+
+	"console"=>array(
+
+		"base"=>array(
+
+			"env"=>array(
+
+				"rel_appsrc_dir"=>"app/src/",
+				"rel_tpl_dir"=>"tpl/sgf",
+				"rel_apptpl_ini"=>"tpl/sgf/cfg/app.sgf",
+				"rel_app_ini"=>"cfg/app.ini",
+				"rel_mod_ini"=>"cfg/module.ini",
+				"rel_tplapp_dir"=>"tpl/sgf/app/",
+				"rel_tplappsrc_dir"=>"tpl/sgf/app/src/",
+				"rel_tplauthmod_dir"=>"tpl/sgf/app/src/App/AuthModule/",
+				"rel_app_lib"=>"lib/App",
+				"rel_loader_sgf"=>"tpl/sgf/lib/App/Loader.sgf",
+			)
+		),
+		"pkg_do"=>array(
+
+			"providers"=>array(
+
+				App\Provider\EntityManager::class,
+				App\Provider\EntityManagerAdapter::class,
+				App\Provider\Normalizer::class,
+				App\Provider\Logger::class,
+			),
+			"commands"=>array(
+
+				App\Command\Doctrine\GenerateModels::class,
+				App\Command\Doctrine\Migration\GenerateMigration::class,
+				App\Command\Doctrine\Seeder\GenerateSeeder::class,
+				App\Command\Doctrine\Migration\MigrateExec::class,
+				App\Command\Doctrine\Seeder\SeederExec::class,
+				App\Command\Doctrine\SqlExec::class,
+			),
+			"env"=>array(
+
+				"is_dev"=>true,
+				"rel_db_ini"=>"cfg/db.ini",
+				"migration_sgf"=>"tpl/sgf/database/schema/Schema/Migration/Version_.sgf",
+				"migration_home"=>"database/schema/Schema/Migration",
+				"migration_ns"=>Schema\Migration::class,
+				"entity_ns"=>App\Contract\Entity::class,
+				"seeder_sgf"=>"tpl/sgf/database/seeder/Seed/NameVer.sgf",
+				"seeder_dir"=>"database/seeder/Seed",
+				"seeder_home"=>"database/seeder",
+				"logger_name"=>"Console Logger",
+				"logger_file"=>"logs/console.log",
+			)
+		),
+		"pkg_roles"=>array(
+
+			"commands"=>array(
+
+				"{{app}}\AuthModule\Command\PermissionAdd",
+				"{{app}}\AuthModule\Command\RoleAdd",
+				"{{app}}\AuthModule\Command\RoleAddPermission",
+				"{{app}}\AuthModule\Command\UserAdd",
+				"{{app}}\AuthModule\Command\UserDumpCredentials",
+				"{{app}}\AuthModule\Command\UserResetPassword",
+			)
+		),
+		"pkg_books"=>array(
+
+			"commands"=>array(
+
+				"{{app}}\AccountsModule\Command\BooksShell"
+			)
+		)
+	),
+	"index"=>array(
+
+		"base"=>array(
+
+			"providers"=>array(
+
+				Strukt\Framework\Provider\Validator::class,
+				Strukt\Framework\Provider\Annotation::class,
+				Strukt\Framework\Provider\Router::class,
+			),
+			"middlewares"=>array(
+
+				Strukt\Router\Middleware\ExceptionHandler::class,
+				Strukt\Router\Middleware\Authentication::class,
+				Strukt\Router\Middleware\Authorization::class,
+				Strukt\Router\Middleware\StaticFileFinder::class,
+				Strukt\Router\Middleware\Session::class,
+				Strukt\Router\Middleware\Route::class,
+			),
+			"env"=>array(
+
+				"rel_app_ini"=>"/cfg/app.ini",
+				"rel_static_dir"=>"/public/static",
+				"rel_mod_ini"=>"/cfg/module.ini",
+				"is_dev"=>true,
+			)
+		),
+		"pkg_do"=>array(
+
+			"providers"=>array(
+
+				App\Provider\Logger::class,
+				App\Provider\EntityManager::class,
+				App\Provider\EntityManagerAdapter::class,
+				App\Provider\Normalizer::class
+			),
+			"env"=>array(
+
+				"rel_appsrc_dir"=>"app/src/",
+				"rel_db_ini"=>"cfg/db.ini",
+				"logger_name"=>"Strukt Logger",
+				"logger_file"=>"logs/app.log"
+			)
+		),
+		"pkg_audit"=>array(
+
+			"middlewares"=>array(
+
+				App\Middleware\Audit::class
+			)
+		)
+	)
+);');
+
+Strukt\Fs::touchWrite("tpl/sgf/lib/App/Injectable.sgf",'<?php
+
+namespace App;
+
+use Cobaia\Doctrine\MonologSQLLogger;
+use Strukt\Core\Map;
+use Strukt\Http\Session;
+use Strukt\Builder\Collection as CollectionBuilder;
+use Strukt\Env;
+
+class Injectable{
+
+	private $packages;
+	private $map;
+	private $injectables;
+
+	public function __construct(array $packages){
+
+		$packages[] = "base";
+
+		$this->packages = $packages;
+
+		$this->map = array(
+
+			"author"=>"app.dep.author",
+			"authentic"=>"app.dep.authentic",
+			"session"=>"app.dep.session",
+			"logger"=>"app.dep.logger.sqllogger"
+		);
+
+		$this->injectables = array(
+
+			"base"=>array(
+
+				"author"=>function(){
+
+					return array(
+
+						"permissions" => array(
+
+							/** "show_secrets"**/
+							/** "user_all"**/
+						)
+					);
+				},
+				"authentic"=>function(Session $session){
+
+					$user = new Strukt\User();
+					$user->setUsername($session->get("username"));
+
+					return $user;
+				},
+				"session", function(){
+
+					return new Session;
+				}
+			),
+			"pkg_do"=>array(
+
+				"logger"=>function(){
+
+					$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
+
+					return new MonologSQLLogger(null, null, $log_dir);
+				}
+			),
+			"pkg_roles"=>array(
+
+				"author"=>function(Session $session){
+
+					if($session->has("username")){
+
+						$userC = new {{app}}\AuthModule\Controller\User;
+						$permissions = $userC->findPermissionsByUsername($session->get("username"));
+
+						return $permissions;
+					}
+
+					return array();
+				}
+			)
+		);
+	}
+
+	public function getId($id){
+
+		return $this->map[$id];
+	}
+
+	public function getConfigs(){
+
+		$cnf = [];
+		foreach($this->packages as $package)
+			$cnf = array_merge($cnf, $this->injectables[$package]);
+
+		array_keys($cnf); exit;
+
+		return $cnf;
+	}
+}');
