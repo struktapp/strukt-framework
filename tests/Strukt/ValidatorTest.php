@@ -11,7 +11,7 @@ class ValidatorTest extends TestCase{
 		$factory = new ValidatorService(); 
 		$factory->register();
 
-		$this->service  = Registry::getInstance()->get("app.service.validator");
+		$this->service  = Registry::getSingleton()->get("app.service.validator");
 	}
 
 	/**

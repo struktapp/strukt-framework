@@ -45,7 +45,7 @@ class ApplicationTest extends TestCase{
 		$app->register($auth_mod);
 		$app->initialize();
 
-		$nr = Registry::getInstance()->get("nr");
+		$nr = Registry::getSingleton()->get("nr");
 
 		$this->assertInstanceOf(Map::class, $nr);
 		$this->assertEquals($nr->get("au.name"), "AuthModule");
@@ -68,7 +68,7 @@ class ApplicationTest extends TestCase{
 	*/
 	public function testModuleCoreStaticClass(){
 
-		$core = Registry::getInstance()->get("core");
+		$core = Registry::getSingleton()->get("core");
 
 		$user_ctr = $core->get("au.ctr.User");
 

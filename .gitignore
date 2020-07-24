@@ -14,9 +14,9 @@ tpl/
 bin/clean
 tasker.php
 backup
-bootstrap.php
 console
 index.php
-console  
-bootstrap.php  
+console    
+bootstrap.php
 cfg/
+logs/

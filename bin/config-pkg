@@ -8,9 +8,25 @@ foreach($autoloadFiles as $autoloadFile)
     if(file_exists($autoloadFile))
         require_once $autoloadFile;
 
-Strukt\Fs::mkdir("tpl/sgf");
+Strukt\Fs::mkdir("cfg/");
+Strukt\Fs::mkdir("tpl/sgf/lib/App/");
+Strukt\Fs::mkdir("tpl/sgf/cfg/");
 
-Strukt\Fs::touchWrite("tpl/sgf/bootstrap.sgf",'<?php
+Strukt\Fs::touchWrite("cfg/module.ini",
+'[folders]
+folder["ctr"] = "Controller"
+folder["rtr"] = "Router"
+folder["frm"] = "Form"
+folder["tes"] = "Tests"
+; folder["fix"] = "Fixture"
+; folder["rep"] = "Repository"
+; folder["sdr"] = "Seeder"');
+
+Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf",
+"app-name = {{app}}
+");
+
+Strukt\Fs::touchWrite("boostrap.php", '<?php
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
 
@@ -19,13 +35,13 @@ $cfg_app = parse_ini_file("cfg/app.ini");
 $loader = require \'vendor/autoload.php\';
 $loader->add(\'App\', __DIR__.\'/lib/\');
 $loader->add(\'Strukt\', __DIR__.\'/src/\');
-{if pkg_do}
-$loader->add(\'Seed\', __DIR__.\'/database/seeder/\');
-{/if}
-{if app}
-$loader->add($cfg_app["app-name"], __DIR__.\'/app/src/\');
-{/if}');
 
+//pkg_do
+$loader->add(\'Seed\', __DIR__.\'/database/seeder/\');
+
+if(!is_null($cfg_app))
+	$loader->add($cfg_app["app-name"], __DIR__.\'/app/src/\');
+');
 
 Strukt\Fs::touchWrite("console",'#!/usr/bin/php
 <?php
@@ -34,20 +50,31 @@ use Strukt\Env;
 use Strukt\Http\Request;
 use Strukt\Console;
 use Strukt\Framework\Configuration;
-use Strukt\Router\Kernel as RouterKernel;
+use Strukt\Router\Kernel;
+use Strukt\Framework\App;
 use App\Loader as AppLoader;
+use App\Injectable as AppInjectable;
 
 require "bootstrap.php";
-$settings = require "cfg/settings.php";
-$packages = require "cfg/packages.php";
-
-$config = new Configuration($settings, $packages, "console");
+$settings = require "cfg/settings.php"; 
 
 Env::set("root_dir", getcwd());
+
+$packages = App::packages("published");
+
+$config = new Configuration($settings, $packages, "console");
 foreach($config->get("env") as $key=>$attr)
 	Env::set($key, $attr);
 
-$kernel = new RouterKernel(Request::createFromGlobals());
+$kernel = new Kernel(Request::createFromGlobals());
+ 
+$inj = new AppInjectable($packages);
+$kconfigs = $inj->getConfigs();
+
+if(!empty($kconfigs))
+	foreach($kconfigs as $id=>$kconfig)
+		$kernel->inject($inj->getId($id), $kconfig);
+
 $kernel->providers($config->get("providers"));
 $kernel->middlewares($config->get("middlewares"));
 
@@ -77,6 +104,20 @@ $console = new Console(array(
 	"appDir"=>"app",
 	"rootDir"=>__DIR__
 ));
+
+$pkgs = array(
+
+	"pkg_do"=>"Doctrine",
+	"pkg_books"=>"Accounts",
+	"pkg_roles"=>"RBAC"
+);
+
+foreach($config->get("commands") as $pkg=>$cmdset){
+
+	$console->addCmdSect(sprintf("\n%s", $pkgs[$pkg]));
+	foreach($cmdset as $cmd)
+		$console->add(App::newCls($cmd));
+}
 
 exit($console->run($_SERVER["argv"]));');
 
@@ -113,17 +154,78 @@ $loader = new App\Loader($kernel);
 $app = $loader->getApp(); 
 $app->runDebug();');
 
-Strukt\Fs::touchWrite("cfg/packages.php", '<?php
+Strukt\Fs::touchWrite("cfg/injectables.php", '<?php
+
+use Strukt\User; 
+use Cobaia\Doctrine\MonologSQLLogger;
+use Strukt\Http\Session;
+use Strukt\Env;
+use Strukt\Framework\App;
 
 return array(
 
-	// "pkg_do",
-	// "pkg_roles",
-	// "pkg_audit",
-	// "pkg_books"
+	"map"=>array(
+
+		"author"=>"app.dep.author",
+		"authentic"=>"app.dep.authentic",
+		"session"=>"app.dep.session",
+		"logger"=>"app.dep.logger.sqllogger"
+	),
+	"injectables"=>array(
+
+		"base"=>array(
+
+			"author"=>function(){
+
+				return array(
+
+					"permissions" => array(
+
+						/** "show_secrets"**/
+						/** "user_all"**/
+					)
+				);
+			},
+			"authentic"=>function(Session $session){
+
+				$user = new Strukt\User();
+				$user->setUsername($session->get("username"));
+
+				return $user;
+			},
+			"session"=>function(){
+
+				return new Session;
+			}
+		),
+		"pkg_do"=>array(
+
+			"logger"=>function(){
+
+				$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
+
+				return new MonologSQLLogger(null, null, $log_dir);
+			}
+		),
+		"pkg_roles"=>array(
+
+			"author"=>function(Session $session){
+
+				if($session->has("username")){
+
+					$userC = App::newCls("{{app}}\AuthModule\Controller\User");
+					$permissions = $userC->findPermissionsByUsername($session->get("username"));
+
+					return $permissions;
+				}
+
+				return array();
+			}
+		)
+	)
 );');
 
-Strukt\Fs::touchWrite("tpl/sgf/cfg/settings.sgf",'<?php
+Strukt\Fs::touchWrite("cfg/settings.php",'<?php
 
 return array(
 
@@ -149,10 +251,10 @@ return array(
 
 			"providers"=>array(
 
+				App\Provider\Logger::class,
 				App\Provider\EntityManager::class,
 				App\Provider\EntityManagerAdapter::class,
 				App\Provider\Normalizer::class,
-				App\Provider\Logger::class,
 			),
 			"commands"=>array(
 
@@ -251,104 +353,3 @@ return array(
 		)
 	)
 );');
-
-Strukt\Fs::touchWrite("tpl/sgf/lib/App/Injectable.sgf",'<?php
-
-namespace App;
-
-use Cobaia\Doctrine\MonologSQLLogger;
-use Strukt\Core\Map;
-use Strukt\Http\Session;
-use Strukt\Builder\Collection as CollectionBuilder;
-use Strukt\Env;
-
-class Injectable{
-
-	private $packages;
-	private $map;
-	private $injectables;
-
-	public function __construct(array $packages){
-
-		$packages[] = "base";
-
-		$this->packages = $packages;
-
-		$this->map = array(
-
-			"author"=>"app.dep.author",
-			"authentic"=>"app.dep.authentic",
-			"session"=>"app.dep.session",
-			"logger"=>"app.dep.logger.sqllogger"
-		);
-
-		$this->injectables = array(
-
-			"base"=>array(
-
-				"author"=>function(){
-
-					return array(
-
-						"permissions" => array(
-
-							/** "show_secrets"**/
-							/** "user_all"**/
-						)
-					);
-				},
-				"authentic"=>function(Session $session){
-
-					$user = new Strukt\User();
-					$user->setUsername($session->get("username"));
-
-					return $user;
-				},
-				"session", function(){
-
-					return new Session;
-				}
-			),
-			"pkg_do"=>array(
-
-				"logger"=>function(){
-
-					$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
-
-					return new MonologSQLLogger(null, null, $log_dir);
-				}
-			),
-			"pkg_roles"=>array(
-
-				"author"=>function(Session $session){
-
-					if($session->has("username")){
-
-						$userC = new {{app}}\AuthModule\Controller\User;
-						$permissions = $userC->findPermissionsByUsername($session->get("username"));
-
-						return $permissions;
-					}
-
-					return array();
-				}
-			)
-		);
-	}
-
-	public function getId($id){
-
-		return $this->map[$id];
-	}
-
-	public function getConfigs(){
-
-		$cnf = [];
-		foreach($this->packages as $package)
-			$cnf = array_merge($cnf, $this->injectables[$package]);
-
-		array_keys($cnf); exit;
-
-		return $cnf;
-	}
-}');

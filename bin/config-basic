@@ -16,19 +16,6 @@ Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Tests");
 Strukt\Fs::mkdir("tpl/sgf/lib/App");
 
-Strukt\Fs::touchWrite("cfg/module.ini",
-'[folders]
-folder["ctr"] = "Controller"
-folder["rtr"] = "Router"
-folder["frm"] = "Form"
-folder["tes"] = "Tests"
-; folder["fix"] = "Fixture"
-; folder["rep"] = "Repository"
-; folder["sdr"] = "Seeder"');
-
-Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf",
-"app-name = {{app}}
-");
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",'<?php
 namespace {{app}}\AuthModule\Controller;

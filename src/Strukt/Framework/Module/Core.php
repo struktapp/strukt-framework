@@ -3,6 +3,9 @@
 namespace Strukt\Framework\Module;
 
 use Strukt\Contract\AbstractCore;
+use Strukt\Raise;
+use Strukt\Ref;
+use Strukt\Type\Str;
 
 /**
 * Strukt Application Module Core
@@ -27,7 +30,7 @@ class Core extends AbstractCore{
 	public function __construct(){
 
 		if(!$this->core()->exists("nr"))
-			throw new \Exception("[nr|Name Registry] does not exists!");
+			new Raise("[nr|Name Registry] does not exists!");
 
 		$this->nr = $this->core()->get("nr");
 	}
@@ -39,18 +42,13 @@ class Core extends AbstractCore{
 
 	public function getNamespace($alias_ns){
 
-		if($this->isQualifiedAlias($alias_ns)){
-
-			$ns = $this->nr->get($alias_ns);
-		}
-		else{
-
-			$app_name = $this->core()->get("app.name");
-
-			$ns = sprintf("%s\%s", $app_name, $alias_ns);
-		}
-
-		return $ns;
+		if($this->isQualifiedAlias($alias_ns))
+			return $this->nr->get($alias_ns);
+		else 
+			return Str::create($this->core()->get("app.name"))
+				->concat("\\")
+				->concat($alias_ns)
+				->yield();
 	}
 
 	/**
@@ -64,11 +62,7 @@ class Core extends AbstractCore{
 	*/
 	public function get($alias_ns){
 
-		$ns = $this->getNamespace($alias_ns);
-
-		$class = new \ReflectionClass($ns);
-
-		return $class->newInstanceWithoutConstructor();
+		return Ref::create($this->getNamespace($alias_ns))->noMake()->getInstance();
 	}
 
 	/**
@@ -83,15 +77,6 @@ class Core extends AbstractCore{
 	*/
 	public function getNew($alias_ns, Array $args = null){
 
-		$ns = $this->getNamespace($alias_ns);
-
-		$class = new \ReflectionClass($ns);
-
-		if(is_null($args))
-			$newInstance = $class->newInstance();
-		else
-			$newInstance = $class->newInstanceArgs($args);
-
-		return $newInstance;
+		return Ref::create($this->getNamespace($alias_ns))->makeArgs($args)->getInstance();
 	}
 }

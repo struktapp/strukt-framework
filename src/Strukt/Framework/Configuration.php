@@ -39,10 +39,13 @@ class Configuration{
 				if($this->configs->exists($keyMap)){
 
 					$cfg = $this->configs->get($keyMap);
-
+						
 					if(is_array($cfg)){
 
-						$cfgs = array_merge($cfgs, $cfg);
+						if($key == "commands")
+							$cfgs[$package] = $cfg;
+						else
+							$cfgs = array_merge($cfgs, $cfg);
 					}
 					elseif($cfg instanceof Collection){
 

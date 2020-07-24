@@ -19,26 +19,12 @@ Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Tests");
 Strukt\Fs::mkdir("tpl/sgf/lib/App");
 
-Strukt\Fs::touchWrite("cfg/module.ini",
-'[folders]
-folder["ctr"] = "Controller"
-folder["rtr"] = "Router"
-folder["frm"] = "Form"
-folder["tes"] = "Tests"
-; folder["fix"] = "Fixture"
-; folder["rep"] = "Repository"
-; folder["sdr"] = "Seeder"');
-
 Strukt\Fs::touchWrite("cfg/db.ini",
 "dbname = payroll
 user = root
 password = root*
 host = localhost
 driver = pdo_pgsql
-");
-
-Strukt\Fs::touchWrite("cfg/app.ini",
-"app-name = {{app}}
 ");
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",'<?php

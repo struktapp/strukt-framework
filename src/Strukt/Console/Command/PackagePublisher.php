@@ -6,9 +6,9 @@ use Strukt\Console\Input;
 use Strukt\Console\Output;
 use Strukt\Env;
 use Strukt\Fs;
-use Strukt\Util\Str;
-use Strukt\Util\Json;
-use Strukt\Util\Arr;
+use Strukt\Type\Str;
+use Strukt\Type\Json;
+use Strukt\Type\Arr;
 use Strukt\Templator;
 use Strukt\Raise;
 
@@ -98,53 +98,5 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			Fs::touchWrite($actual_path, $file_content);
 		});
-
-		// Arr::create(array(
-
-		// 	"index.sgf",
-		// 	"bootstrap.sgf",
-		// 	"console"
-
-		// ))->each(function($key, $filename) use($packages, $appname){
-
-		// 	$path = Str::create(Env::get("root_dir"))
-		// 		->concat("/")
-		// 		->concat(Env::get("rel_tpl_dir"))
-		// 		->concat("/")
-		// 		->concat($filename)
-		// 		->yield();
-
-		// 	foreach($packages as $package){
-
-		// 		$package_path = Str::create(Env::get("root_dir"))
-		// 			->concat("/vendor/")
-		// 			->concat($package)
-		// 			->yield();
-
-		// 		$pkg = Str::create($package)
-		// 			->replace("strukt/","")
-		// 			->replace("-", "_")
-		// 			->yield();
-
-		// 		$installed[$pkg] = Fs::isDir($package_path);
-		// 	} 
-
-		// 	$file_content = Fs::cat($path);
-		// 	$file_content = Templator::create($file_content, array_merge($installed, array(
-
-		// 		"app" => $appname
-		// 	)));
-
-		// 	$qpath = Str::create(Env::get("root_dir"))
-		// 		->concat("/")
-		// 		->concat($filename)
-		// 		->replace(".sgf", ".php")
-		// 		->yield();
-
-		// 	if(Fs::isFile($qpath))
-		// 		Fs::rename($qpath, sprintf("%s~", $qpath));
-
-		// 	Fs::touchWrite($qpath, $file_content);
-		// });
 	}
 }	

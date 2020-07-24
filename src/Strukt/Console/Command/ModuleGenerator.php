@@ -7,7 +7,7 @@ use Strukt\Console\Output;
 use Strukt\Generator\ClassBuilder;
 use Strukt\Fs;
 use Strukt\Env;
-use Strukt\Util\Str;
+use Strukt\Type\Str;
 use Strukt\Core\Registry as Registry;
 
 /**

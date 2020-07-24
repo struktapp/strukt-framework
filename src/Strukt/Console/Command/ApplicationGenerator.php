@@ -5,7 +5,7 @@ namespace Strukt\Console\Command;
 use Strukt\Console\Input;
 use Strukt\Console\Output;
 use Strukt\Env;
-use Strukt\Util\Str;
+use Strukt\Type\Str;
 use Strukt\Fs;
 use Strukt\Templator;
 use Strukt\Raise;
@@ -113,6 +113,6 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 		Fs::touchWrite($app_ini, $app_ini_output);
 		
-		$out->add(sprintf("Successfully generated %s application.!\n", $app_name->yield()));
+		$out->add(sprintf("Successfully generated %s application!\n", $app_name->yield()));
 	}
 }
