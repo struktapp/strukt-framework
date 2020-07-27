@@ -26,7 +26,7 @@ Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf",
 "app-name = {{app}}
 ");
 
-Strukt\Fs::touchWrite("boostrap.php", '<?php
+Strukt\Fs::touchWrite("bootstrap.php", '<?php
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
 
@@ -52,11 +52,12 @@ use Strukt\Console;
 use Strukt\Framework\Configuration;
 use Strukt\Router\Kernel;
 use Strukt\Framework\App;
+use Strukt\Framework\Injectable;
 use App\Loader as AppLoader;
-use App\Injectable as AppInjectable;
 
 require "bootstrap.php";
-$settings = require "cfg/settings.php"; 
+$settings = require "cfg/settings.php";
+$inject = require "cfg/injectables.php";  
 
 Env::set("root_dir", getcwd());
 
@@ -68,7 +69,7 @@ foreach($config->get("env") as $key=>$attr)
 
 $kernel = new Kernel(Request::createFromGlobals());
  
-$inj = new AppInjectable($packages);
+$inj = new Injectable($packages, $inject["map"], $inject["events"]);
 $kconfigs = $inj->getConfigs();
 
 if(!empty($kconfigs))
@@ -126,15 +127,18 @@ Strukt\Fs::touchWrite("index.php",'#!/usr/bin/php
 
 require "bootstrap.php";
 $settings = require "cfg/settings.php";
-$packages = require "cfg/packages.php";
+$inject = require "cfg/injectables.php";
 
 use Strukt\Framework\Configuration;
+use Strukt\Framework\App;
 use Strukt\Router\Kernel;
 use Strukt\Http\Request;
 use Strukt\Env;
 
+$packages = App::packages("published");
+
 $config = new Configuration($settings, $packages, "index");
-$inj = new App\Injectable($packages);
+$inj = new Injectable($packages, $inject["map"], $inject["events"]);
 
 Env::set("root_dir", getcwd());
 foreach($config->get("env") as $key=>$attr)
@@ -171,7 +175,7 @@ return array(
 		"session"=>"app.dep.session",
 		"logger"=>"app.dep.logger.sqllogger"
 	),
-	"injectables"=>array(
+	"events"=>array(
 
 		"base"=>array(
 
