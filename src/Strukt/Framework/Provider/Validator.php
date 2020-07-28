@@ -2,7 +2,7 @@
 
 namespace Strukt\Framework\Provider;
 
-use Strukt\Event\Event;
+use Strukt\Event;
 use Strukt\Contract\AbstractProvider;
 use Strukt\Contract\ProviderInterface;
 

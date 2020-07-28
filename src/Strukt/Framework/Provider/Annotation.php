@@ -4,7 +4,7 @@ namespace Strukt\Framework\Provider;
 
 use Strukt\Router\RouteCollection;
 use Strukt\Router\Route;
-use Strukt\Event\Event;
+use Strukt\Event;
 use Strukt\Contract\AbstractProvider;
 use Strukt\Contract\ProviderInterface;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
@@ -19,6 +19,8 @@ class Annotation extends AbstractProvider implements ProviderInterface{
 	public function register(){
 
 		$this->core()->set("app.service.annotations", new Event(function($module_list){
+
+			$annotations = [];
 
 			foreach($module_list as $module){
 
