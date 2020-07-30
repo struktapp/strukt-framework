@@ -26,22 +26,22 @@ Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf",
 "app-name = {{app}}
 ");
 
-Strukt\Fs::touchWrite("bootstrap.php", '<?php
+Strukt\Fs::touchWrite("bootstrap.php", "<?php
 
 error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
 
-$cfg_app = parse_ini_file("cfg/app.ini");
+$cfg_app = parse_ini_file('cfg/app.ini');
 
-$loader = require \'vendor/autoload.php\';
-$loader->add(\'App\', __DIR__.\'/lib/\');
-$loader->add(\'Strukt\', __DIR__.\'/src/\');
+$loader = require 'vendor/autoload.php';
+$loader->add('App', __DIR__.'/lib/');
+$loader->add('Strukt', __DIR__.'/src/');
 
 //pkg_do
-$loader->add(\'Seed\', __DIR__.\'/database/seeder/\');
+$loader->add('Seed', __DIR__.'/database/seeder/');
 
 if(!is_null($cfg_app))
-	$loader->add($cfg_app["app-name"], __DIR__.\'/app/src/\');
-');
+	$loader->add($cfg_app["app-name"], __DIR__.'/app/src/');
+");
 
 Strukt\Fs::touchWrite("console",'#!/usr/bin/php
 <?php
@@ -56,8 +56,8 @@ use Strukt\Framework\Injectable;
 use App\Loader as AppLoader;
 
 require "bootstrap.php";
-$settings = require "cfg/settings.php";
-$inject = require "cfg/injectables.php";  
+$settings = require "cfg/settings.php"; 
+$inject = require "cfg/injectables.php"; 
 
 Env::set("root_dir", getcwd());
 
@@ -68,7 +68,6 @@ foreach($config->get("env") as $key=>$attr)
 	Env::set($key, $attr);
 
 $kernel = new Kernel(Request::createFromGlobals());
- 
 $inj = new Injectable($packages, $inject["map"], $inject["events"]);
 $kconfigs = $inj->getConfigs();
 
@@ -122,22 +121,22 @@ foreach($config->get("commands") as $pkg=>$cmdset){
 
 exit($console->run($_SERVER["argv"]));');
 
-Strukt\Fs::touchWrite("index.php",'#!/usr/bin/php
-<?php
+Strukt\Fs::touchWrite("index.php",'<?php
 
 require "bootstrap.php";
 $settings = require "cfg/settings.php";
 $inject = require "cfg/injectables.php";
 
 use Strukt\Framework\Configuration;
-use Strukt\Framework\App;
+use Strukt\Framework\Injectable;
+use Strukt\Framework\App as FrameworkApp;
 use Strukt\Router\Kernel;
 use Strukt\Http\Request;
 use Strukt\Env;
 
-$packages = App::packages("published");
+$packages = FrameworkApp::packages("published");
 
-$config = new Configuration($settings, $packages, "index");
+$config = new Configuration($settings, $packages);
 $inj = new Injectable($packages, $inject["map"], $inject["events"]);
 
 Env::set("root_dir", getcwd());
@@ -146,12 +145,13 @@ foreach($config->get("env") as $key=>$attr)
 
 $kernel = new Kernel(Request::createFromGlobals());
 
-$kConfigs = $inj->getConfigs();
-if(!empty($kConfigs))
-	foreach($kConfigs as $id=>$config)
-		$kernel->inject($inj->getId($id), $config);
-
 $kernel->providers($config->get("providers"));
+
+$kconfigs = $inj->getConfigs();
+if(!empty($kconfigs))
+	foreach($kconfigs as $id=>$kconfig)
+		$kernel->inject($inj->getId($id), $kconfig);
+
 $kernel->middlewares($config->get("middlewares"));
 
 $loader = new App\Loader($kernel);
@@ -235,7 +235,7 @@ return array(
 
 	"console"=>array(
 
-		"base"=>array(
+		"base"=>array( 
 
 			"env"=>array(
 
@@ -249,16 +249,25 @@ return array(
 				"rel_tplauthmod_dir"=>"tpl/sgf/app/src/App/AuthModule/",
 				"rel_app_lib"=>"lib/App",
 				"rel_loader_sgf"=>"tpl/sgf/lib/App/Loader.sgf",
+			),
+			"providers"=>array(
+
+				Strukt\Framework\Provider\Annotation::class,
+				Strukt\Framework\Provider\Router::class
+			),
+			"middlewares"=>array(
+
+				Strukt\Router\Middleware\Router::class
 			)
 		),
 		"pkg_do"=>array(
 
 			"providers"=>array(
-
+ 
 				App\Provider\Logger::class,
 				App\Provider\EntityManager::class,
 				App\Provider\EntityManagerAdapter::class,
-				App\Provider\Normalizer::class,
+				App\Provider\Normalizer::class
 			),
 			"commands"=>array(
 
@@ -317,16 +326,16 @@ return array(
 			"middlewares"=>array(
 
 				Strukt\Router\Middleware\ExceptionHandler::class,
-				Strukt\Router\Middleware\Authentication::class,
-				Strukt\Router\Middleware\Authorization::class,
-				Strukt\Router\Middleware\StaticFileFinder::class,
 				Strukt\Router\Middleware\Session::class,
-				Strukt\Router\Middleware\Route::class,
+				Strukt\Router\Middleware\Authorization::class,
+				Strukt\Router\Middleware\Authentication::class,
+				Strukt\Router\Middleware\StaticFileFinder::class,
+				Strukt\Router\Middleware\Router::class,
 			),
 			"env"=>array(
 
 				"rel_app_ini"=>"/cfg/app.ini",
-				"rel_static_dir"=>"/public/static",
+				"rel_static_dir"=>"public/static",
 				"rel_mod_ini"=>"/cfg/module.ini",
 				"is_dev"=>true,
 			)

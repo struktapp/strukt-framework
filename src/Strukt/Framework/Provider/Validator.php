@@ -8,6 +8,11 @@ use Strukt\Contract\ProviderInterface;
 
 class Validator extends AbstractProvider implements ProviderInterface{
 
+	public function __construct(){
+
+		//
+	}
+
 	public function register(){
 
 		$this->core()->set("app.service.validator", new class{

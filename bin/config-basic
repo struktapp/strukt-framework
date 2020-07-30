@@ -109,8 +109,8 @@ use Strukt\Http\Response;
 class Auth extends \Strukt\Contract\Router{
 
 	/**
-	* @Route:/login
-	* @Method:POST
+	* @Route(/login)
+	* @Method(POST)
 	*/
 	public function login(Request $request){
 
@@ -153,8 +153,8 @@ use Strukt\Http\Response;
 class Index extends \Strukt\Contract\Router{
 
 	/**
-	* @Route:/
-	* @Method:GET
+	* @Route(/)
+	* @Method(GET)
 	*/
 	public function welcome(){
 		
@@ -162,8 +162,8 @@ class Index extends \Strukt\Contract\Router{
 	}
 
 	/**
-	* @Route:/hello/world
-	* @Method:GET
+	* @Route(/hello/world)
+	* @Method(GET)
 	*/
 	public function helloWorld(){
 
@@ -171,8 +171,8 @@ class Index extends \Strukt\Contract\Router{
 	}
 	
 	/**
-	* @Route:/hello/{name:alpha}
-	* @Method:GET
+	* @Route(/hello/{name:alpha})
+	* @Method(GET)
 	*/
 	public function helloTo($name, Request $request){
 
@@ -180,9 +180,9 @@ class Index extends \Strukt\Contract\Router{
 	}
 
 	/**
-	* @Route:/users/all
-	* @Permission:user_all
-	* @Method:GET
+	* @Route(/users/all)
+	* @Permission(user_all)
+	* @Method(GET)
 	*/
 	public function getAllUsers(){
 		
@@ -190,8 +190,8 @@ class Index extends \Strukt\Contract\Router{
 	}
 
 	/**
-	* @Route:/user
-	* @Method:GET
+	* @Route(/user)
+	* @Method(GET)
 	*/
 	public function getUser(Request $request){
 
@@ -201,8 +201,8 @@ class Index extends \Strukt\Contract\Router{
 	}
 
 	/**
-	* @Route:/test
-	* @Method:GET
+	* @Route(/test)
+	* @Method(GET)
 	*/
 	public function testException(){
 
