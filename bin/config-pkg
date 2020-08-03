@@ -161,7 +161,7 @@ $app->runDebug();');
 Strukt\Fs::touchWrite("cfg/injectables.php", '<?php
 
 use Strukt\User; 
-use Cobaia\Doctrine\MonologSQLLogger;
+use App\Service\Logger\Monologer;
 use Strukt\Http\Session;
 use Strukt\Env;
 use Strukt\Framework\App;
@@ -208,7 +208,7 @@ return array(
 
 				$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
 
-				return new MonologSQLLogger(null, null, $log_dir);
+				return new Monologer(null, null, $log_dir);
 			}
 		),
 		"pkg_roles"=>array(
