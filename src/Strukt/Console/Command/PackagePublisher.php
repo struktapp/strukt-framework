@@ -90,7 +90,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			if(Str::create($vendor_file_path)->endsWith(".sgf"))
 				$file_content = Templator::create($file_content, array(
 
-					"app"=>$app_ini["app-name"]
+					"app"=>$appname
 				));
 
 			if(Fs::isFile($actual_path))
