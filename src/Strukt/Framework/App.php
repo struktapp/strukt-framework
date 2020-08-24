@@ -67,7 +67,7 @@ class App{
 				"pkg_do"=>\App\Provider\EntityManagerAdapter::class,
 				"pkg_audit"=>\Schema\Migration\VersionAudit::class,
 				"pkg_books"=>\Schema\Migration\VersionAccounts::class,
-				"pkg_roles"=>\Schema\Migration\VersionAuth::class
+				"pkg_roles"=>\Schema\Migration\VersionRoles::class
 			))
 			->each(function($name, $cls) use(&$pkgs){				
 
