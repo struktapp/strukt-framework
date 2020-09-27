@@ -145,13 +145,12 @@ foreach($config->get("env") as $key=>$attr)
 
 $kernel = new Kernel(Request::createFromGlobals());
 
-$kernel->providers($config->get("providers"));
-
 $kconfigs = $inj->getConfigs();
 if(!empty($kconfigs))
 	foreach($kconfigs as $id=>$kconfig)
 		$kernel->inject($inj->getId($id), $kconfig);
 
+$kernel->providers($config->get("providers"));
 $kernel->middlewares($config->get("middlewares"));
 
 $loader = new App\Loader($kernel);
