@@ -266,7 +266,8 @@ return array(
 				App\Provider\Logger::class,
 				App\Provider\EntityManager::class,
 				App\Provider\EntityManagerAdapter::class,
-				App\Provider\Normalizer::class
+				App\Provider\Normalizer::class,
+				App\Provider\SchemaMeta::class
 			),
 			"commands"=>array(
 
