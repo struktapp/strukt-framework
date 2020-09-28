@@ -18,6 +18,9 @@ class ShellExec extends \Strukt\Console\Command{
 		if($registry->exists("app.em"))
 			$em = $registry->get("app.em");
 
+		if($registry->exists("app.sm"))
+			$sm = $registry->get("app.sm");
+
 		if($registry->exists("app.da"))
 			$da = $registry->get("app.da");
 
@@ -25,7 +28,7 @@ class ShellExec extends \Strukt\Console\Command{
 			$core = $registry->get("core");
 
 		$sh = new \Psy\Shell();
-		$sh->setScopeVariables(compact('core', 'em', 'da', 'registry'));
+		$sh->setScopeVariables(compact('core', 'sm', 'em', 'da', 'registry'));
 		$sh->run();
 	}
 }
