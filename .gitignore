@@ -20,3 +20,4 @@ console
 bootstrap.php
 cfg/
 logs/
+.phpunit.result.cache
