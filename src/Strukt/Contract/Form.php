@@ -98,8 +98,7 @@ abstract class Form extends AbstractCore{
 		$this->validation();
 
 		foreach($this->message as $field=>$props)
-      		foreach($props as $prop)
-        		if(!$prop)
+      		if(!array_product(array_values($props)))
           			return array("is_valid"=>false, "messages"=>$this->message);
 
     	return array("is_valid"=>true, "messages"=>"None");

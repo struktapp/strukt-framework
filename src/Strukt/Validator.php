@@ -2,26 +2,16 @@
 
 namespace Strukt;
 
+use Strukt\Raise;
+use Strukt\Core\Registry;
+use Strukt\Contract\Validator as ValidatorContract;
+
 /**
 * Validator class
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Validator{
-
-	/**
-	* Value to undergo validation
-	*
-	* @var string
-	*/
-	private $val;
-
-	/**
-	* Failure or success messages for each condition
-	*
-	* @var array
-	*/
-	private $message;
+class Validator extends ValidatorContract{
 
 	/**
 	* Constructor get validation value
@@ -30,30 +20,6 @@ class Validator{
 
 		if(!is_null($val))
 			$this->setVal($val);
-	}
-
-	/**
-	* Setter for validation value
-	*
-	* @param string $val
-	*
-	* @return Strukt\Validator
-	*/
-	public function setVal($val){
-
-		$this->val = $val;
-
-		return $this;
-	}
-
-	/**
-	* Getter for validation value
-	*
-	* @return string
-	*/
-	public function getVal(){
-
-		return $this->val;
 	}
 
 	/**
@@ -188,13 +154,41 @@ class Validator{
 		return $this;
 	}
 
-	/**
-	* Getter for messages
-	*
-	* @return array
-	*/
-	public function getMessage(){
+	public function __call($name, $args){
 
-		return $this->message;
+		$registry = $this->core();
+
+		if($registry->exists("app.service.validator-extras")){
+
+			$validator = $registry->get("app.service.validator-extras");
+
+			$validator->setVal($this->getVal());
+
+			$oRef = new \ReflectionObject($validator);
+
+			$parentCls = $oRef->getParentClass();
+
+			if($parentCls){
+				
+				if($parentCls->getName() == ValidatorContract::class){
+
+					if($oRef->hasMethod($name)){
+
+						$oRef->getMethod($name)->invokeArgs($validator, $args);
+
+						$this->message = array_merge($this->message, $validator->getMessage());
+
+						return $this;
+					}
+
+					new Raise(sprintf("%s does not exists in [app...validator-extras]!", $name)); 
+				}
+			}
+
+			new Raise(sprintf("[app...validator-extras] must inherit abstract class %s!", 
+								ValidatorContract::class));
+		}
+
+		new Raise("[app.service.validator-extras] does not exist!");
 	}
 }

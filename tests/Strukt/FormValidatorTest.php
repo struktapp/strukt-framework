@@ -4,29 +4,46 @@ use PHPUnit\Framework\TestCase;
 use Strukt\Core\Registry;
 use Strukt\Framework\Provider\Validator as ValidatorService;
 
-class ValidatorTest extends TestCase{
+class FormValidatorTest extends TestCase{
 
 	public function setUp():void{
 
 		$factory = new ValidatorService(); 
 		$factory->register();
 
-		$this->service  = Registry::getSingleton()->get("app.service.validator");
+		$registry = Registry::getSingleton();
+
+		if(!$registry->exists("app.service.validator-extras")){
+
+			$registry->set("app.service.validator-extras", new class extends \Strukt\Contract\Validator{
+
+				public function isLenGt($len){
+
+					$this->message["is_gt"] = false;
+					if(strlen($this->getVal()) > $len)
+						$this->message["is_gt"] = true;
+				}
+			});
+		}
+
+		$this->service = $registry->get("app.service.validator");
 	}
 
 	/**
      * @runInSeparateProcess
      */
-	public function testIsLen(){
+	public function testLen(){
 
 		$validator = $this->service->getNew("Moderator")
-					->isLen(9)
-					->isNotEmpty();
+							->isLenGt(8)
+							->isLen(9)
+							->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
 			"is_valid_length"=>true,
-			"is_not_empty"=>true
+			"is_not_empty"=>true,
+			"is_gt"=>true
 		));
 	}
 

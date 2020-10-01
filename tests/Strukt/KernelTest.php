@@ -14,13 +14,12 @@ class KernelTest extends TestCase{
 
 	public function setUp():void{
 
-		// Env::set("root_dir", getcwd());
-		Env::set("rel_app_ini", "cfg/app.ini");
-		Env::set("rel_static_dir", "public/static");
-		Env::set("rel_mod_ini", "cfg/module.ini");
-		Env::set("is_dev", true);
+		//		
 	}
  
+ 	/**
+    * @runInSeparateProcess
+    */
 	public function testBoilerPlate(){
 
 		$this->kernel = new Kernel(Request::createFromGlobals());
@@ -64,8 +63,10 @@ class KernelTest extends TestCase{
 		$app = $loader->getApp(); 
 		$app->initialize();
 
-		// $registry = Registry::getSingleton();
-		// print_r($registry->get("app.service.router"));
-		// print_r($registry->get("app.router"));
+		$_SERVER["REQUEST_URI"] = "/";
+
+		$response = $this->kernel->run();
+
+		$this->assertEquals("</b>Strukt Works!<b>", $response->getContent());
 	}
 }
