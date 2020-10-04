@@ -35,5 +35,5 @@
 
         "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
     },
-    "bin":["bin/config-basic", "bin/config-do", "bin/config-pkg"]
+    "bin":["bin/config-basic", "bin/config-pkg"]
 }
