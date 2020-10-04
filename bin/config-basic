@@ -264,7 +264,7 @@ use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase{
 
-	public function setUp(){
+	public function setUp():void{
 	
 		$this->core = Registry::getInstance()->get("core");
 	}
