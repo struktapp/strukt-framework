@@ -109,7 +109,8 @@ $pkgs = array(
 
 	"pkg_do"=>"Doctrine",
 	"pkg_books"=>"Accounts",
-	"pkg_roles"=>"RBAC"
+	"pkg_roles"=>"RBAC",
+	"pkg_tests"=>"PhpUnit"
 );
 
 foreach($config->get("commands") as $pkg=>$cmdset){
