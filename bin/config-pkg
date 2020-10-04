@@ -259,6 +259,14 @@ return array(
 				Strukt\Router\Middleware\Router::class
 			)
 		),
+		"pkg_tests"=>array(
+
+			"commands"=>array(
+
+				App\Command\Tests\Exec::class,
+				App\Command\Tests\ListCmd::class
+			)
+		),
 		"pkg_do"=>array(
 
 			"providers"=>array(
