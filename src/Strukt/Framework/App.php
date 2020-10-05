@@ -64,11 +64,11 @@ class App{
 
 			Arr::create(array(
 
-				"pkg_do"=>\App\Provider\EntityManagerAdapter::class,
-				"pkg_audit"=>\Schema\Migration\VersionAudit::class,
-				"pkg_books"=>\Schema\Migration\VersionAccounts::class,
-				"pkg_roles"=>\Schema\Migration\VersionRoles::class,
-				"pkg_tests"=>\App\Command\Tests\ListCmd::class
+				"pkg_do"=>\App\Package\PkgDo::class,
+				"pkg_audit"=>\App\Package\PkgAudit::class,
+				"pkg_books"=>\App\Package\PkgBooks::class,
+				"pkg_roles"=>\App\Package\PkgRoles::class,
+				"pkg_tests"=>\App\Package\PkgTests::class
 			))
 			->each(function($name, $cls) use(&$pkgs){				
 
