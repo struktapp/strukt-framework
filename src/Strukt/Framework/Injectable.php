@@ -35,7 +35,8 @@ class Injectable{
 
 		$cnf = [];
 		foreach($this->packages as $package)
-			$cnf = array_merge($cnf, $this->injectables[$package]);
+			if(array_key_exists($package, $this->injectables))
+				$cnf = array_merge($cnf, $this->injectables[$package]);
 
 		return $cnf;
 	}
