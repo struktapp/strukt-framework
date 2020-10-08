@@ -21,8 +21,7 @@ class Configuration{
 	public function get(string $key){
 
 		$facets = array(
-
-			"env",
+			
 			"providers",
 			"middlewares",
 			"commands"

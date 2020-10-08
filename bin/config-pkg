@@ -59,6 +59,7 @@ require "bootstrap.php";
 $settings = require "cfg/settings.php"; 
 $inject = require "cfg/injectables.php"; 
 
+Env::withFile();
 Env::set("root_dir", getcwd());
 
 $packages = App::packages("published");
@@ -140,6 +141,7 @@ $packages = FrameworkApp::packages("published");
 $config = new Configuration($settings, $packages);
 $inj = new Injectable($packages, $inject["map"], $inject["events"]);
 
+Env::withFile();
 Env::set("root_dir", getcwd());
 foreach($config->get("env") as $key=>$attr)
 	Env::set($key, $attr);
@@ -237,19 +239,6 @@ return array(
 
 		"base"=>array( 
 
-			"env"=>array(
-
-				"rel_appsrc_dir"=>"app/src/",
-				"rel_tpl_dir"=>"tpl/sgf",
-				"rel_apptpl_ini"=>"tpl/sgf/cfg/app.sgf",
-				"rel_app_ini"=>"cfg/app.ini",
-				"rel_mod_ini"=>"cfg/module.ini",
-				"rel_tplapp_dir"=>"tpl/sgf/app/",
-				"rel_tplappsrc_dir"=>"tpl/sgf/app/src/",
-				"rel_tplauthmod_dir"=>"tpl/sgf/app/src/App/AuthModule/",
-				"rel_app_lib"=>"lib/App",
-				"rel_loader_sgf"=>"tpl/sgf/lib/App/Loader.sgf",
-			),
 			"providers"=>array(
 
 				Strukt\Framework\Provider\Annotation::class,
@@ -285,21 +274,7 @@ return array(
 				App\Command\Doctrine\Seeder\GenerateSeeder::class,
 				App\Command\Doctrine\Migration\MigrateExec::class,
 				App\Command\Doctrine\Seeder\SeederExec::class,
-				App\Command\Doctrine\SqlExec::class,
-			),
-			"env"=>array(
-
-				"is_dev"=>true,
-				"rel_db_ini"=>"cfg/db.ini",
-				"migration_sgf"=>"tpl/sgf/database/schema/Schema/Migration/Version_.sgf",
-				"migration_home"=>"database/schema/Schema/Migration",
-				"migration_ns"=>Schema\Migration::class,
-				"entity_ns"=>App\Contract\Entity::class,
-				"seeder_sgf"=>"tpl/sgf/database/seeder/Seed/NameVer.sgf",
-				"seeder_dir"=>"database/seeder/Seed",
-				"seeder_home"=>"database/seeder",
-				"logger_name"=>"Console Logger",
-				"logger_file"=>"logs/console.log",
+				App\Command\Doctrine\SqlExec::class
 			)
 		),
 		"pkg_roles"=>array(
@@ -311,7 +286,7 @@ return array(
 				"{{app}}\AuthModule\Command\RoleAddPermission",
 				"{{app}}\AuthModule\Command\UserAdd",
 				"{{app}}\AuthModule\Command\UserDumpCredentials",
-				"{{app}}\AuthModule\Command\UserResetPassword",
+				"{{app}}\AuthModule\Command\UserResetPassword"
 			)
 		),
 		"pkg_books"=>array(
@@ -330,23 +305,17 @@ return array(
 
 				Strukt\Framework\Provider\Validator::class,
 				Strukt\Framework\Provider\Annotation::class,
-				Strukt\Framework\Provider\Router::class,
+				Strukt\Framework\Provider\Router::class
 			),
 			"middlewares"=>array(
 
+				App\Middleware\Cors::class,
 				Strukt\Router\Middleware\ExceptionHandler::class,
 				Strukt\Router\Middleware\Session::class,
 				Strukt\Router\Middleware\Authorization::class,
 				Strukt\Router\Middleware\Authentication::class,
 				Strukt\Router\Middleware\StaticFileFinder::class,
-				Strukt\Router\Middleware\Router::class,
-			),
-			"env"=>array(
-
-				"rel_app_ini"=>"/cfg/app.ini",
-				"rel_static_dir"=>"public/static",
-				"rel_mod_ini"=>"/cfg/module.ini",
-				"is_dev"=>true,
+				Strukt\Router\Middleware\Router::class
 			)
 		),
 		"pkg_do"=>array(
@@ -357,13 +326,6 @@ return array(
 				App\Provider\EntityManager::class,
 				App\Provider\EntityManagerAdapter::class,
 				App\Provider\Normalizer::class
-			),
-			"env"=>array(
-
-				"rel_appsrc_dir"=>"app/src/",
-				"rel_db_ini"=>"cfg/db.ini",
-				"logger_name"=>"Strukt Logger",
-				"logger_file"=>"logs/app.log"
 			)
 		),
 		"pkg_audit"=>array(
@@ -375,3 +337,23 @@ return array(
 		)
 	)
 );');
+
+
+Strukt\Fs::touchWrite(".env","rel_appsrc_dir = app/src/
+rel_tpl_dir = tpl/sgf
+rel_tplapp_dir = tpl/sgf/app/
+rel_tplappsrc_dir = tpl/sgf/app/src/
+rel_tplauthmod_dir = tpl/sgf/app/src/App/AuthModule/
+rel_apptpl_ini = tpl/sgf/cfg/app.sgf
+rel_loader_sgf = tpl/sgf/lib/App/Loader.sgf
+rel_app_lib = lib/App
+rel_static_dir = public/static
+
+rel_app_ini = /cfg/app.ini
+rel_mod_ini = /cfg/module.ini
+rel_db_ini = cfg/db.ini
+
+logger_name = Strukt Logger
+logger_file = logs/app.log
+
+is_dev = true");
