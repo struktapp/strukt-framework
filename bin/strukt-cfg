@@ -749,7 +749,7 @@ rel_loader_sgf = tpl/sgf/lib/App/Loader.sgf
 rel_app_lib = lib/App
 rel_static_dir = public/static
 
-rel_app_ini = /cfg/app.ini
+rel_app_ini = cfg/app.ini
 rel_mod_ini = /cfg/module.ini
 rel_db_ini = cfg/db.ini
 

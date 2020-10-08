@@ -11,8 +11,5 @@ $loader->add('App', __DIR__.'/lib/');
 $loader->add('Strukt', __DIR__.'/src/');
 $loader->add($cfg_app["app-name"], __DIR__.'/app/src/');
 
+Env::withFile();
 Env::set("root_dir", getcwd());
-Env::set("rel_app_ini", "cfg/app.ini");
-Env::set("rel_mod_ini", "cfg/module.ini");
-Env::set("rel_static_dir", "public/static");
-Env::set("is_dev", true);
