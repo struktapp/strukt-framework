@@ -19,7 +19,6 @@ Strukt\Fs::mkdir("lib/App/Contract");
 Strukt\Fs::mkdir("lib/App/Middleware");
 Strukt\Fs::mkdir("lib/App/Provider");
 
-
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",'<?php
 namespace {{app}}\AuthModule\Controller;
 
@@ -412,3 +411,349 @@ class Logger extends AbstractProvider implements ProviderInterface{
 		});	
 	}
 }');
+
+
+Strukt\Fs::touchWrite("cfg/module.ini",
+'[folders]
+folder["ctr"] = "Controller"
+folder["rtr"] = "Router"
+folder["frm"] = "Form"
+folder["tes"] = "Tests"
+; folder["fix"] = "Fixture"
+; folder["rep"] = "Repository"
+; folder["sdr"] = "Seeder"');
+
+Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf",
+"app-name = {{app}}
+");
+
+Strukt\Fs::touchWrite("bootstrap.php", '<?php
+
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
+
+$cfg_app = parse_ini_file("cfg/app.ini");
+
+$loader = require "vendor/autoload.php";
+$loader->add("App", __DIR__."/lib/");
+$loader->add("Strukt", __DIR__."/src/");
+
+//pkg_do
+$loader->add("Seed", __DIR__."/database/seeder/");
+
+if(!is_null($cfg_app))
+	$loader->add($cfg_app["app-name"], __DIR__."/app/src/");
+');
+
+Strukt\Fs::touchWrite("console",'#!/usr/bin/php
+<?php
+
+use Strukt\Env;
+use Strukt\Http\Request;
+use Strukt\Console;
+use Strukt\Framework\Configuration;
+use Strukt\Router\Kernel;
+use Strukt\Framework\App;
+use Strukt\Framework\Injectable;
+use App\Loader as AppLoader;
+
+require "bootstrap.php";
+$settings = require "cfg/settings.php"; 
+$inject = require "cfg/injectables.php"; 
+
+Env::withFile();
+Env::set("root_dir", getcwd());
+
+$packages = App::packages("published");
+
+$config = new Configuration($settings, $packages, "console");
+foreach($config->get("env") as $key=>$attr)
+	Env::set($key, $attr);
+
+$kernel = new Kernel(Request::createFromGlobals());
+$inj = new Injectable($packages, $inject["map"], $inject["events"]);
+$kconfigs = $inj->getConfigs();
+
+if(!empty($kconfigs))
+	foreach($kconfigs as $id=>$kconfig)
+		$kernel->inject($inj->getId($id), $kconfig);
+
+$kernel->providers($config->get("providers"));
+$kernel->middlewares($config->get("middlewares"));
+
+try{
+	
+	if(!class_exists(AppLoader::class))
+		throw new Exception(sprintf("%s does not exixst!", AppLoader::class));
+	
+	$loader = new AppLoader($kernel);
+	$app = $loader->getApp();
+
+	$moduleList = $app->getModuleList();
+
+	$app->initialize();	
+}
+catch(\Exception $e){
+
+	$moduleList = null;
+}
+
+$console = new Console(array(
+
+	"labelStruktSect"=>true, 
+	/** "loadNativeCmds"=>true,**/
+	"appName"=>"Strukt Console",
+	"moduleList"=>$moduleList,
+	"appDir"=>"app",
+	"rootDir"=>__DIR__
+));
+
+$pkgs = array(
+
+	"pkg_do"=>"Doctrine",
+	"pkg_books"=>"Accounts",
+	"pkg_roles"=>"RBAC",
+	"pkg_tests"=>"PhpUnit"
+);
+
+foreach($config->get("commands") as $pkg=>$cmdset){
+
+	$console->addCmdSect(sprintf("\n%s", $pkgs[$pkg]));
+	foreach($cmdset as $cmd)
+		$console->add(App::newCls($cmd));
+}
+
+exit($console->run($_SERVER["argv"]));');
+
+Strukt\Fs::touchWrite("index.php",'<?php
+
+require "bootstrap.php";
+$settings = require "cfg/settings.php";
+$inject = require "cfg/injectables.php";
+
+use Strukt\Framework\Configuration;
+use Strukt\Framework\Injectable;
+use Strukt\Framework\App as FrameworkApp;
+use Strukt\Router\Kernel;
+use Strukt\Http\Request;
+use Strukt\Env;
+
+$packages = FrameworkApp::packages("published");
+
+$config = new Configuration($settings, $packages);
+$inj = new Injectable($packages, $inject["map"], $inject["events"]);
+
+Env::withFile();
+Env::set("root_dir", getcwd());
+foreach($config->get("env") as $key=>$attr)
+	Env::set($key, $attr);
+
+$kernel = new Kernel(Request::createFromGlobals());
+
+$kconfigs = $inj->getConfigs();
+if(!empty($kconfigs))
+	foreach($kconfigs as $id=>$kconfig)
+		$kernel->inject($inj->getId($id), $kconfig);
+
+$kernel->providers($config->get("providers"));
+$kernel->middlewares($config->get("middlewares"));
+
+$loader = new App\Loader($kernel);
+$app = $loader->getApp(); 
+$app->runDebug();');
+
+Strukt\Fs::touchWrite("cfg/injectables.php", '<?php
+
+use Strukt\User; 
+use App\Service\Logger\Monologer;
+use Strukt\Http\Session;
+use Strukt\Env;
+use Strukt\Framework\App;
+
+return array(
+
+	"map"=>array(
+
+		"author"=>"app.dep.author",
+		"authentic"=>"app.dep.authentic",
+		"session"=>"app.dep.session",
+		"logger"=>"app.dep.logger.sqllogger"
+	),
+	"events"=>array(
+
+		"base"=>array(
+
+			"author"=>function(){
+
+				return array(
+
+					"permissions" => array(
+
+						/** "show_secrets"**/
+						/** "user_all"**/
+					)
+				);
+			},
+			"authentic"=>function(Session $session){
+
+				$user = new Strukt\User();
+				$user->setUsername($session->get("username"));
+
+				return $user;
+			},
+			"session"=>function(){
+
+				return new Session;
+			}
+		),
+		"pkg_do"=>array(
+
+			"logger"=>function(){
+
+				$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
+
+				return new Monologer(null, null, $log_dir);
+			}
+		),
+		"pkg_roles"=>array(
+
+			"author"=>function(Session $session){
+
+				if($session->has("username")){
+
+					$userC = App::newCls("{{app}}\AuthModule\Controller\User");
+					$permissions = $userC->findPermissionsByUsername($session->get("username"));
+
+					return $permissions;
+				}
+
+				return array();
+			}
+		)
+	)
+);');
+
+Strukt\Fs::touchWrite("cfg/settings.php",'<?php
+
+return array(
+
+	"console"=>array(
+
+		"base"=>array( 
+
+			"providers"=>array(
+
+				Strukt\Framework\Provider\Annotation::class,
+				Strukt\Framework\Provider\Router::class
+			),
+			"middlewares"=>array(
+
+				Strukt\Router\Middleware\Router::class
+			)
+		),
+		"pkg_tests"=>array(
+
+			"commands"=>array(
+
+				App\Command\Tests\Exec::class,
+				App\Command\Tests\ListCmd::class
+			)
+		),
+		"pkg_do"=>array(
+
+			"providers"=>array(
+ 
+				App\Provider\Logger::class,
+				App\Provider\EntityManager::class,
+				App\Provider\EntityManagerAdapter::class,
+				App\Provider\Normalizer::class,
+				App\Provider\SchemaMeta::class
+			),
+			"commands"=>array(
+
+				App\Command\Doctrine\GenerateModels::class,
+				App\Command\Doctrine\Migration\GenerateMigration::class,
+				App\Command\Doctrine\Seeder\GenerateSeeder::class,
+				App\Command\Doctrine\Migration\MigrateExec::class,
+				App\Command\Doctrine\Seeder\SeederExec::class,
+				App\Command\Doctrine\SqlExec::class
+			)
+		),
+		"pkg_roles"=>array(
+
+			"commands"=>array(
+
+				"{{app}}\AuthModule\Command\PermissionAdd",
+				"{{app}}\AuthModule\Command\RoleAdd",
+				"{{app}}\AuthModule\Command\RoleAddPermission",
+				"{{app}}\AuthModule\Command\UserAdd",
+				"{{app}}\AuthModule\Command\UserDumpCredentials",
+				"{{app}}\AuthModule\Command\UserResetPassword"
+			)
+		),
+		"pkg_books"=>array(
+
+			"commands"=>array(
+
+				"{{app}}\AccountsModule\Command\BooksShell"
+			)
+		)
+	),
+	"index"=>array(
+
+		"base"=>array(
+
+			"providers"=>array(
+
+				Strukt\Framework\Provider\Validator::class,
+				Strukt\Framework\Provider\Annotation::class,
+				Strukt\Framework\Provider\Router::class
+			),
+			"middlewares"=>array(
+
+				App\Middleware\Cors::class,
+				Strukt\Router\Middleware\ExceptionHandler::class,
+				Strukt\Router\Middleware\Session::class,
+				Strukt\Router\Middleware\Authorization::class,
+				Strukt\Router\Middleware\Authentication::class,
+				Strukt\Router\Middleware\StaticFileFinder::class,
+				Strukt\Router\Middleware\Router::class
+			)
+		),
+		"pkg_do"=>array(
+
+			"providers"=>array(
+
+				App\Provider\Logger::class,
+				App\Provider\EntityManager::class,
+				App\Provider\EntityManagerAdapter::class,
+				App\Provider\Normalizer::class
+			)
+		),
+		"pkg_audit"=>array(
+
+			"middlewares"=>array(
+
+				App\Middleware\Audit::class
+			)
+		)
+	)
+);');
+
+Strukt\Fs::touchWrite(".env","rel_appsrc_dir = app/src/
+rel_tpl_dir = tpl/sgf
+rel_tplapp_dir = tpl/sgf/app/
+rel_tplappsrc_dir = tpl/sgf/app/src/
+rel_tplauthmod_dir = tpl/sgf/app/src/App/AuthModule/
+rel_apptpl_ini = tpl/sgf/cfg/app.sgf
+rel_loader_sgf = tpl/sgf/lib/App/Loader.sgf
+rel_app_lib = lib/App
+rel_static_dir = public/static
+
+rel_app_ini = /cfg/app.ini
+rel_mod_ini = /cfg/module.ini
+rel_db_ini = cfg/db.ini
+
+logger_name = Strukt Logger
+logger_file = logs/app.log
+
+is_dev = true");
