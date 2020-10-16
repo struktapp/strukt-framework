@@ -442,6 +442,8 @@ $loader->add("Seed", __DIR__."/database/seeder/");
 
 if(!is_null($cfg_app))
 	$loader->add($cfg_app["app-name"], __DIR__."/app/src/");
+
+return $loader;
 ');
 
 Strukt\Fs::touchWrite("console",'#!/usr/bin/php
@@ -456,7 +458,8 @@ use Strukt\Framework\App;
 use Strukt\Framework\Injectable;
 use App\Loader as AppLoader;
 
-require "bootstrap.php";
+$loader = require "bootstrap.php";
+$loader->add("Schema", __DIR__."/database/schema");
 $settings = require "cfg/settings.php"; 
 $inject = require "cfg/injectables.php"; 
 
@@ -466,8 +469,6 @@ Env::set("root_dir", getcwd());
 $packages = App::packages("published");
 
 $config = new Configuration($settings, $packages, "console");
-foreach($config->get("env") as $key=>$attr)
-	Env::set($key, $attr);
 
 $kernel = new Kernel(Request::createFromGlobals());
 $inj = new Injectable($packages, $inject["map"], $inject["events"]);

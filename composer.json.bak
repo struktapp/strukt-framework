@@ -22,10 +22,6 @@
         "phplucidframe/console-table": "^1.2",
         "psy/psysh": "^0.10.4"
     },
-    "require-dev":{
-
-        "phpunit/phpunit": "5.6.2"
-    },
     "suggest":{
 
         "filp/whoops":"when running debug mode whoops prints cool errors",
@@ -35,5 +31,5 @@
 
         "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
     },
-    "bin":["bin/config-basic", "bin/config-pkg"]
+    "bin":["bin/strukt-cfg"]
 }

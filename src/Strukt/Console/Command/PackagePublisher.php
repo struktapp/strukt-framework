@@ -11,6 +11,13 @@ use Strukt\Type\Json;
 use Strukt\Type\Arr;
 use Strukt\Templator;
 use Strukt\Raise;
+use Strukt\Ref;
+
+use Strukt\Package\PkgDo;
+use Strukt\Package\PkgRoles;
+use Strukt\Package\PkgAudit;
+use Strukt\Package\PkgBooks;
+use Strukt\Package\PkgTests;
 
 /**
 * publish:package     Package Publisher
@@ -25,21 +32,26 @@ use Strukt\Raise;
 */
 class PackagePublisher extends \Strukt\Console\Command{
 
+	public function __construct(){
+
+		$this->packages = array(
+
+			"pkg-do"=>PkgDo::class,
+			"pkg-roles"=>PkgRoles::class,
+			"pkg-audit"=>PkgAudit::class,
+			"pkg-books"=>PkgBooks::class,
+			"pkg-tests"=>PkgTests::class
+		);
+	}
+
 	public function execute(Input $in, Output $out){
 
-		$package = $in->get("package");
+		$pkgname = $in->get("package");
 
 		$vendor_pkg = Str::create(Env::get("root_dir"))
-			->concat("/vendor/")
-			->concat($package)
+			->concat("/vendor/strukt/")
+			->concat($pkgname)
 			->yield();
-
-		$manifest_path = Str::create($vendor_pkg)
-			->concat("/manifest.json")
-			->yield();
-
-		$manifest_file = Fs::cat($manifest_path);
-		$manifest = Json::decode($manifest_file);
 
 		$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
 				->concat("/")
@@ -52,9 +64,16 @@ class PackagePublisher extends \Strukt\Console\Command{
 		if(empty($app_ini["app-name"]))
 			new Raise("cfg/app.ini[app-name] is not defined!");
 
+		$pkgclass = $this->packages[$pkgname]; 
+
+		if(!class_exists($pkgclass))
+			new Raise(sprintf("Package %s is not installed!", $pkgclass));
+
+		$pkg = Ref::create($pkgclass)->make()->getInstance();
+
 		$appname = $app_ini["app-name"];
 
-		Arr::create($manifest["files"])->each(function($key, $relpath) use ($vendor_pkg, $appname){
+		Arr::create($pkg->getFiles())->each(function($key, $relpath) use ($vendor_pkg, $appname){
 
 			$vendor_appbase = Str::create(Env::get("rel_appsrc_dir"))->concat("App")->yield();
 
@@ -87,16 +106,19 @@ class PackagePublisher extends \Strukt\Console\Command{
 			Fs::mkdir($path["dirname"]);
 
 			$file_content = Fs::cat($vendor_file_path);
-			if(Str::create($vendor_file_path)->endsWith(".sgf"))
-				$file_content = Templator::create($file_content, array(
+			if(Str::create($vendor_file_path)->endsWith(".sgf") &&
+				!Str::create($vendor_file_path)->contains("tpl/sgf"))
+					$file_content = Templator::create($file_content, array(
 
-					"app"=>$appname
-				));
+						"app"=>$appname
+					));
 
 			if(Fs::isFile($actual_path))
 				Fs::rename($actual_path, sprintf("%s~", $actual_path));
 
 			Fs::touchWrite($actual_path, $file_content);
 		});
+
+		$out->add("Package successfully published\n");
 	}
 }	

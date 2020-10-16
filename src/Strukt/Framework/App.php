@@ -9,6 +9,13 @@ use Strukt\Fs;
 use Strukt\Type\Str; 
 use Strukt\Type\Arr;
 use Strukt\Type\Json;
+// use Strukt\Ref;
+
+use Strukt\Package\PkgDo;
+use Strukt\Package\PkgRoles;
+use Strukt\Package\PkgAudit;
+use Strukt\Package\PkgBooks;
+use Strukt\Package\PkgTests;
 
 class App{
 
@@ -58,45 +65,31 @@ class App{
 
 		$pkgs = [];
 
-		$type = Str::create(trim($type));
+		$type = Str::create($type);
 
-		if($type->equals("published")){
+		Arr::create(array(
 
-			Arr::create(array(
+			"pkg_do"=>PkgDo::class,
+			"pkg_audit"=>PkgAudit::class,
+			"pkg_books"=>PkgBooks::class,
+			"pkg_roles"=>PkgRoles::class,
+			"pkg_tests"=>PkgTests::class
+		))
+		->each(function($name, $cls) use(&$pkgs, $type){				
 
-				"pkg_do"=>\App\Package\PkgDo::class,
-				"pkg_audit"=>\App\Package\PkgAudit::class,
-				"pkg_books"=>\App\Package\PkgBooks::class,
-				"pkg_roles"=>\App\Package\PkgRoles::class,
-				"pkg_tests"=>\App\Package\PkgTests::class
-			))
-			->each(function($name, $cls) use(&$pkgs){				
+			if($type->equals("installed")){
 
 				if(class_exists($cls))
 					$pkgs[] = $name;
-			});
-		}
+			}
 
-		if($type->equals("installed")){
+			if($type->equals("published")){
 
-			$path = Str::create(Env::get("root_dir"))
-							->concat("/")
-							->concat("composer.json")
-							->yield();
-
-			$composer = Json::decode(Fs::cat($path));		
-
-			Arr::create($composer["require"])->each(function($key, $val) use(&$pkgs){
-
-				if(preg_match("/strukt\/pkg\-*/", $key)){
-
-					$pkgs[] = Str::create($key)
-						->replace("strukt/", "")
-						->replace("-","_")
-						->yield();
-				}
-			});
-		}
+				if(class_exists($cls))
+					if(Ref::create($cls)->make()->getInstance()->isPublished())
+						$pkgs[] = $name;
+			}
+		});
 
 		return $pkgs;
 	}
