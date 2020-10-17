@@ -559,8 +559,7 @@ $kernel->providers($config->get("providers"));
 $kernel->middlewares($config->get("middlewares"));
 
 $loader = new App\Loader($kernel);
-$app = $loader->getApp(); 
-$app->runDebug();');
+$loader->getApp()->run()->init()->debug();');
 
 Strukt\Fs::touchWrite("cfg/injectables.php", '<?php
 
