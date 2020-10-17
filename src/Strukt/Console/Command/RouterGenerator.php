@@ -279,6 +279,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 				"body"=>"//"
 			);
 
+			$method["params"]["request"] = "Request";
 			if(in_array("params", array_keys($method)))
 				$func["params"] = $method["params"];
 				
