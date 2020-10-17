@@ -2,6 +2,9 @@
 
 namespace Strukt;
 
+use Strukt\Env;
+use Strukt\Core\Registry;
+
 /**
 * Console Loader
 *
@@ -19,31 +22,15 @@ class Console extends \Strukt\Console\Application{
 	* 	\Strukt\Console\Command\ModuleGenerator
 	* 	\Strukt\Console\Command\ApplicationLoaderGenerator
 	*/
-	public function __construct(Array $config){
+	public function __construct($load_native_cmds = true){
 
-		$configKeys = array_keys($config);
+		$registry = Registry::getSingleton();
 
-		$registry = \Strukt\Core\Registry::getSingleton();
+		parent::__construct(Env::get("cli_app_name"));
 
-		if(in_array("moduleList", $configKeys))
-			if(!is_null($config["moduleList"]))
-				$registry->set("module-list", serialize($config["moduleList"]));
+		$this->addCmdSect(Env::get("cli_label"));
 
-		if(!in_array("appName", $configKeys))
-			$config["appName"] = "Strukt Console";
-
-		if(!in_array("loadNativeCmds", $configKeys))
-			$config["loadNativeCmds"] = true;
-
-		if(!in_array("labelStruktSect", $configKeys))
-			$config["labelStruktSect"] = false;
-
-		parent::__construct($config["appName"]);
-
-		if($config["labelStruktSect"])
-			$this->addCmdSect("Strukt");
-
-		if($config["loadNativeCmds"]){
+		if($load_native_cmds){
 
 			$this->add(new \Strukt\Console\Command\ApplicationGenerator);
 			$this->add(new \Strukt\Console\Command\ApplicationLoaderGenerator);

@@ -446,67 +446,98 @@ if(!is_null($cfg_app))
 return $loader;
 ');
 
+Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
+
+namespace App;
+
+use Strukt\Framework\Configuration;
+use Strukt\Framework\Injectable;
+use Strukt\Framework\App as FrameworkApp;
+use Strukt\Router\Kernel as RouterKernel;
+use Strukt\Http\Request;
+use Strukt\Core\Registry;
+
+use App\Loader as AppLoader;
+
+class Kernel{
+
+	private $kernel;
+	private $config;
+	private $loader;
+	private $app;
+
+	public function __construct(array $settings, array $inject){
+
+		$packages = FrameworkApp::packages("published");
+
+		$this->config = new Configuration($settings, $packages);
+		$inj = new Injectable($packages, $inject["map"], $inject["events"]);
+
+		$this->kernel = new RouterKernel(Request::createFromGlobals());
+
+		$kconfigs = $inj->getConfigs();
+		if(!empty($kconfigs))
+			foreach($kconfigs as $id=>$kconfig)
+				$this->kernel->inject($inj->getId($id), $kconfig);
+
+		$this->kernel->providers($this->config->get("providers"));
+		$this->kernel->middlewares($this->config->get("middlewares"));
+
+		$this->loader = new AppLoader($this->kernel);
+		$this->app =  $this->loader->getApp();
+
+		$registry = Registry::getSingleton();
+		$registry->set("module-list", serialize($this->app->getModuleList()));
+	}
+
+	public function getConfig():\Strukt\Framework\Configuration{
+
+		return $this->config;
+	}
+
+	public function getRouter():\Strukt\Router\Kernel{
+
+		return $this->kernel;
+	}
+
+	public function getLoader():\App\Loader{
+
+		return $this->loader;
+	}
+
+	public function getApp():\Strukt\Application{
+
+		return $this->app;
+	}
+
+	public function run():void{
+		
+		$this->app->run()->init()->noDebug();
+	}
+}');
+
 Strukt\Fs::touchWrite("console",'#!/usr/bin/php
 <?php
 
-use Strukt\Env;
-use Strukt\Http\Request;
 use Strukt\Console;
-use Strukt\Framework\Configuration;
-use Strukt\Router\Kernel;
-use Strukt\Framework\App;
-use Strukt\Framework\Injectable;
+use Strukt\Env;
+
 use App\Loader as AppLoader;
+use App\Kernel as AppKernel;
 
 $loader = require "bootstrap.php";
 $loader->add("Schema", __DIR__."/database/schema");
-$settings = require "cfg/settings.php"; 
-$inject = require "cfg/injectables.php"; 
 
 Env::withFile();
 Env::set("root_dir", getcwd());
 
-$packages = App::packages("published");
+$settings = require "cfg/settings.php"; 
+$inject = require "cfg/injectables.php"; 
 
-$config = new Configuration($settings, $packages, "console");
+$kernel = new AppKernel($settings, $inject);
+$kernel->getApp()->run()->init();
 
-$kernel = new Kernel(Request::createFromGlobals());
-$inj = new Injectable($packages, $inject["map"], $inject["events"]);
-$kconfigs = $inj->getConfigs();
-
-if(!empty($kconfigs))
-	foreach($kconfigs as $id=>$kconfig)
-		$kernel->inject($inj->getId($id), $kconfig);
-
-$kernel->providers($config->get("providers"));
-$kernel->middlewares($config->get("middlewares"));
-
-try{
-	
-	if(!class_exists(AppLoader::class))
-		throw new Exception(sprintf("%s does not exixst!", AppLoader::class));
-	
-	$loader = new AppLoader($kernel);
-	$app = $loader->getApp();
-
-	$moduleList = $app->getModuleList();
-
-	$app->run()->init();	
-}
-catch(\Exception $e){
-
-	$moduleList = null;
-}
-
-$console = new Console(array(
-
-	"labelStruktSect"=>true, 
-	/** "loadNativeCmds"=>true,**/
-	"appName"=>"Strukt Console",
-	"moduleList"=>$moduleList,
-	"appDir"=>"app",
-	"rootDir"=>__DIR__
-));
+$console = new Console();
 
 $pkgs = array(
 
@@ -516,7 +547,7 @@ $pkgs = array(
 	"pkg_tests"=>"PhpUnit"
 );
 
-foreach($config->get("commands") as $pkg=>$cmdset){
+foreach($kernel->getConfig()->get("commands") as $pkg=>$cmdset){
 
 	$console->addCmdSect(sprintf("\n%s", $pkgs[$pkg]));
 	foreach($cmdset as $cmd)
@@ -527,39 +558,17 @@ exit($console->run($_SERVER["argv"]));');
 
 Strukt\Fs::touchWrite("index.php",'<?php
 
+use Strukt\Env;
+
 require "bootstrap.php";
 $settings = require "cfg/settings.php";
 $inject = require "cfg/injectables.php";
 
-use Strukt\Framework\Configuration;
-use Strukt\Framework\Injectable;
-use Strukt\Framework\App as FrameworkApp;
-use Strukt\Router\Kernel;
-use Strukt\Http\Request;
-use Strukt\Env;
-
-$packages = FrameworkApp::packages("published");
-
-$config = new Configuration($settings, $packages);
-$inj = new Injectable($packages, $inject["map"], $inject["events"]);
-
 Env::withFile();
 Env::set("root_dir", getcwd());
-foreach($config->get("env") as $key=>$attr)
-	Env::set($key, $attr);
 
-$kernel = new Kernel(Request::createFromGlobals());
-
-$kconfigs = $inj->getConfigs();
-if(!empty($kconfigs))
-	foreach($kconfigs as $id=>$kconfig)
-		$kernel->inject($inj->getId($id), $kconfig);
-
-$kernel->providers($config->get("providers"));
-$kernel->middlewares($config->get("middlewares"));
-
-$loader = new App\Loader($kernel);
-$loader->getApp()->run()->init()->debug();');
+$kernel = new App\Kernel($settings, $inject);
+$kernel->run();');
 
 Strukt\Fs::touchWrite("cfg/injectables.php", '<?php
 
@@ -755,5 +764,9 @@ rel_db_ini = cfg/db.ini
 
 logger_name = Strukt Logger
 logger_file = logs/app.log
+
+cli_app_name = Strukt Console
+cli_label = Strukt
+cli_app_dir = app
 
 is_dev = true");
