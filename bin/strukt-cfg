@@ -456,6 +456,7 @@ use Strukt\Framework\App as FrameworkApp;
 use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Http\Request;
 use Strukt\Core\Registry;
+use Strukt\Raise;
 
 use App\Loader as AppLoader;
 
@@ -482,6 +483,9 @@ class Kernel{
 
 		$this->kernel->providers($this->config->get("providers"));
 		$this->kernel->middlewares($this->config->get("middlewares"));
+
+		if(!class_exists(AppLoader::class))
+			new Raise("App loader does not exist!");
 
 		$this->loader = new AppLoader($this->kernel);
 		$this->app =  $this->loader->getApp();
