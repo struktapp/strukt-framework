@@ -491,7 +491,7 @@ try{
 
 	$moduleList = $app->getModuleList();
 
-	$app->initialize();	
+	$app->run()->init();	
 }
 catch(\Exception $e){
 

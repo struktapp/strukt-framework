@@ -61,7 +61,7 @@ class KernelTest extends TestCase{
 
 		$loader = new \App\Loader($this->kernel);
 		$app = $loader->getApp(); 
-		$app->initialize();
+		$app->run()->init();
 
 		$_SERVER["REQUEST_URI"] = "/";
 

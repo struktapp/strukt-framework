@@ -43,7 +43,7 @@ class ApplicationTest extends TestCase{
 
 		$app = new Application(new Router(Request::createFromGlobals()));
 		$app->register($auth_mod);
-		$app->initialize();
+		$app->run()->init();
 
 		$nr = Registry::getSingleton()->get("nr");
 

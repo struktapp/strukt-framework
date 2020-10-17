@@ -113,8 +113,6 @@ class Application extends AbstractCore{
 		$this->nr->set(sprintf("%s.base.ns", $_alias), $baseNs);
 		$this->nr->set(sprintf("%s.dir", $_alias), $dir);
 
-		
-
 		foreach($this->mod_cfg["folder"] as $key=>$fldr){
 
 			$facet_dir = sprintf("%s/%s/", $dir, $fldr);
@@ -161,65 +159,86 @@ class Application extends AbstractCore{
 	}
 
 	/**
-	* Create router properties
-	* 
-	* @return array
-	*/
-	public function initialize(){
-
-		$core = $this->core();
-
-		$core->set("nr", $this->nr);
-		$core->set("core", new Core);
-
-		if($core->exists("app.service.annotations"))
-			$core->get("app.service.annotations")
-							->apply($this->getModuleList())
-							->exec();
-
-		if($core->exists("app.service.router"))
-			$core->get("app.service.router")
-							->apply($this->getModuleList())
-							->exec();
-	}
-
-	/**
-	* Execute router in debug mode
-	*
-	* @return void
-	*/
-	public function runDebug(){
-
-		$this->initialize();
-
-		$response = $this->router->run();
-		$response->sendHeaders();
-
-		exit($response->getContent());
-	}
-
-	/**
 	* Execute router
 	*
 	* @return void
 	*/
 	public function run(){
 
-		try{
+		$core = $this->core();
+		$modList = $this->getModuleList();
+		$nr = $this->nr;
+		$router = $this->router;
 
-			$this->initialize();
+		return new class($core, $router, $modList, $nr){
 
-			$response = $this->router->run();
-			$response->sendHeaders();
+			private $core, $router, $modList, $nr, $isInit;
 
-			exit($response->getContent());
-		}
-		catch(\Exception $e){
+			public function __construct($core, $router, $modList, $nr){
 
-			if($this->core()->exists("app.logger"))
-				$this->core()->get("app.logger")->error($e);
+				$this->core = $core;
+				$this->router = $router;
+				$this->modList = $modList;
+				$this->nr = $nr;
+				$this->isInit = false;
+			}
 
-			exit($e->getMessage());
-		}
+			/**
+			* Create router properties
+			* 
+			* @return array
+			*/
+			public function init(){
+
+				$this->core->set("nr", $this->nr);
+				$this->core->set("core", new Core);
+
+				if($this->core->exists("app.service.annotations"))
+					$this->core->get("app.service.annotations")
+									->apply($this->modList)
+									->exec();
+
+				if($this->core->exists("app.service.router"))
+					$this->core->get("app.service.router")
+									->apply($this->modList)
+									->exec();
+
+				$this->isInit = true;
+
+				return $this;
+			}
+
+			public function debug(){
+
+				try{
+
+					if(!$this->isInit)
+						$this->init();
+
+					$response = $this->router->run();
+					$response->sendHeaders();
+
+					exit($response->getContent());
+				}
+				catch(\Exception $e){
+
+					if($this->core->exists("app.logger"))
+						$this->core->get("app.logger")->error($e);
+
+					exit($e->getMessage());
+				}
+			}
+
+			public function noDebug(){
+
+				if(!$this->isInit)
+					new Raise("Strukt\Application::run@anonymous::init must be called first!");
+
+				$response = $this->router->run();
+				$response->sendHeaders();
+
+				exit($response->getContent());
+			}
+		};
 	}
 }
