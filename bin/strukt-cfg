@@ -326,6 +326,11 @@ use Strukt\Contract\AbstractMiddleware;
 
 class Cors extends AbstractMiddleware implements MiddlewareInterface{
 
+	public function __construct(){
+
+		//
+	}
+
 	public function __invoke(Request $request, ResponseInterface $response, callable $next){
 
     	// $response->headers->add([
@@ -484,14 +489,14 @@ class Kernel{
 		$this->kernel->providers($this->config->get("providers"));
 		$this->kernel->middlewares($this->config->get("middlewares"));
 
-		if(!class_exists(AppLoader::class))
-			new Raise("App loader does not exist!");
+		if(class_exists(AppLoader::class)){
 
-		$this->loader = new AppLoader($this->kernel);
-		$this->app =  $this->loader->getApp();
+			$this->loader = new AppLoader($this->kernel);
+			$this->app =  $this->loader->getApp();
 
-		$registry = Registry::getSingleton();
-		$registry->set("module-list", serialize($this->app->getModuleList()));
+			$registry = Registry::getSingleton();
+			$registry->set("module-list", serialize($this->app->getModuleList()));
+		}
 	}
 
 	public function getConfig():\Strukt\Framework\Configuration{
@@ -504,12 +509,12 @@ class Kernel{
 		return $this->kernel;
 	}
 
-	public function getLoader():\App\Loader{
+	public function getLoader():?\App\Loader{
 
 		return $this->loader;
 	}
 
-	public function getApp():\Strukt\Application{
+	public function getApp():?\Strukt\Application{
 
 		return $this->app;
 	}
@@ -539,7 +544,10 @@ $settings = require "cfg/settings.php";
 $inject = require "cfg/injectables.php"; 
 
 $kernel = new AppKernel($settings, $inject);
-$kernel->getApp()->run()->init();
+$app = $kernel->getApp();
+
+if(!is_null($app))
+	$app->run()->init();
 
 $console = new Console();
 

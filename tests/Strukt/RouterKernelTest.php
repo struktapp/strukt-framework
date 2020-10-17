@@ -10,7 +10,7 @@ use Strukt\Http\Session;
 use Strukt\Env;
 use Strukt\Core\Registry;
 
-class KernelTest extends TestCase{
+class RouterKernelTest extends TestCase{
 
 	public function setUp():void{
 
