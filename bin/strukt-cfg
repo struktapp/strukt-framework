@@ -472,11 +472,11 @@ class Kernel{
 	private $loader;
 	private $app;
 
-	public function __construct(array $settings, array $inject){
+	public function __construct(array $settings, array $inject, string $type = "index"){
 
 		$packages = FrameworkApp::packages("published");
 
-		$this->config = new Configuration($settings, $packages);
+		$this->config = new Configuration($settings, $packages, $type);
 		$inj = new Injectable($packages, $inject["map"], $inject["events"]);
 
 		$this->kernel = new RouterKernel(Request::createFromGlobals());
@@ -530,6 +530,7 @@ Strukt\Fs::touchWrite("console",'#!/usr/bin/php
 
 use Strukt\Console;
 use Strukt\Env;
+use Strukt\Framework\App as FrameworkApp;
 
 use App\Loader as AppLoader;
 use App\Kernel as AppKernel;
@@ -543,7 +544,7 @@ Env::set("root_dir", getcwd());
 $settings = require "cfg/settings.php"; 
 $inject = require "cfg/injectables.php"; 
 
-$kernel = new AppKernel($settings, $inject);
+$kernel = new AppKernel($settings, $inject, "console");
 $app = $kernel->getApp();
 
 if(!is_null($app))
@@ -563,7 +564,7 @@ foreach($kernel->getConfig()->get("commands") as $pkg=>$cmdset){
 
 	$console->addCmdSect(sprintf("\n%s", $pkgs[$pkg]));
 	foreach($cmdset as $cmd)
-		$console->add(App::newCls($cmd));
+		$console->add(FrameworkApp::newCls($cmd));
 }
 
 exit($console->run($_SERVER["argv"]));');
