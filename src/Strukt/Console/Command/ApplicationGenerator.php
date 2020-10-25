@@ -84,10 +84,8 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 			$outputfile = Str::create($file)
 				->replace("tpl/sgf/","")
-				->replace("\\App\\", sprintf("/%s/", $app_name->yield()))
-				->replace(".sgf", ".php")
-				->replace("/", "\\");
-				
+				->replace("/App/", sprintf("/%s/", $app_name->yield()))
+				->replace(".sgf", ".php");	
 
 			if($outputfile->contains("_AuthModule.php")){
 

@@ -782,4 +782,8 @@ cli_app_name = Strukt Console
 cli_label = Strukt
 cli_app_dir = app
 
-is_dev = true");
+is_dev = true
+migration_ns = Schema\Migration
+migration_home = database/schema/Schema/Migration
+seeder_home = database/seeder/Seed
+seeder_ns = Seed");

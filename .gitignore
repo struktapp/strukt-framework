@@ -5,13 +5,14 @@ database/
 fixtures/src/Payroll/HumanResourceModule
 fixtures/src/Payroll/PaymentModule
 composer.lock
-lib/App/Loader.php
+lib/App/
 test.php
 php_errors.log
 cfg/module.ini
 cfg/app.ini
 tpl/
 bin/clean
+bin/setup
 tasker.php
 backup
 console
