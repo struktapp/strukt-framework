@@ -24,11 +24,11 @@ use Strukt\Package\PkgTests;
 *
 * Usage:
 *
-*       publish:package <package>
+*       publish:package <pkg>
 *
 * Arguments:
 *
-*       package   package name
+*       pkg   package name
 */
 class PackagePublisher extends \Strukt\Console\Command{
 
@@ -46,7 +46,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$pkgname = $in->get("package");
+		$pkgname = $in->get("pkg");
 
 		$vendor_pkg = Str::create(Env::get("root_dir"))
 			->concat("/vendor/strukt/")

@@ -11,17 +11,17 @@ use Strukt\Framework\App;
 
 class Injectable{
 
-	private $packages;
 	private $map;
+	private $packages;
 	private $injectables;
 
 	public function __construct(array $packages, array $map, array $injectables){
 
-		$packages[] = "base";
+		$this->map = $map;
 
 		$this->packages = $packages;
 
-		$this->map = $map;
+		array_unshift($this->packages, "base");
 
 		$this->injectables = $injectables;
 	}
@@ -33,11 +33,11 @@ class Injectable{
 
 	public function getConfigs(){
 
-		$cnf = [];
+		$cfg = [];
 		foreach($this->packages as $package)
 			if(array_key_exists($package, $this->injectables))
-				$cnf = array_merge($cnf, $this->injectables[$package]);
-
-		return $cnf;
+				$cfg = array_merge($cfg, $this->injectables[$package]);
+			
+		return $cfg;
 	}
 }
