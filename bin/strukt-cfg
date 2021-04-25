@@ -1,6 +1,8 @@
 #!/usr/bin/env php
 <?php
 
+define('DS', DIRECTORY_SEPARATOR);
+
 $autoloadFiles = array(__DIR__ . '/../vendor/autoload.php',
                        __DIR__ . '/../../../autoload.php');
 
@@ -761,22 +763,22 @@ return array(
 	)
 );');
 
-Strukt\Fs::touchWrite(".env","rel_appsrc_dir = app/src/
-rel_tpl_dir = tpl/sgf
-rel_tplapp_dir = tpl/sgf/app/
-rel_tplappsrc_dir = tpl/sgf/app/src/
-rel_tplauthmod_dir = tpl/sgf/app/src/App/AuthModule/
-rel_apptpl_ini = tpl/sgf/cfg/app.sgf
-rel_loader_sgf = tpl/sgf/lib/App/Loader.sgf
-rel_app_lib = lib/App
-rel_static_dir = public/static
+Strukt\Fs::touchWrite(".env","rel_appsrc_dir = app".DS."src".DS."
+rel_tpl_dir = tpl".DS."sgf
+rel_tplapp_dir = tpl".DS."sgf".DS."app".DS."
+rel_tplappsrc_dir = tpl".DS."sgf".DS."app".DS."src".DS."
+rel_tplauthmod_dir = tpl".DS."sgf".DS."app".DS."src".DS."App".DS."AuthModule".DS."
+rel_apptpl_ini = tpl".DS."sgf".DS."cfg".DS."app.sgf
+rel_loader_sgf = tpl".DS."sgf".DS."lib".DS."App".DS."Loader.sgf
+rel_app_lib = lib".DS."App
+rel_static_dir = public".DS."static
 
-rel_app_ini = cfg/app.ini
-rel_mod_ini = /cfg/module.ini
-rel_db_ini = cfg/db.ini
+rel_app_ini = cfg".DS."app.ini
+rel_mod_ini = ".DS."cfg".DS."module.ini
+rel_db_ini = cfg".DS."db.ini
 
 logger_name = Strukt Logger
-logger_file = logs/app.log
+logger_file = logs".DS."app.log
 
 cli_app_name = Strukt Console
 cli_label = Strukt
@@ -784,6 +786,6 @@ cli_app_dir = app
 
 is_dev = true
 migration_ns = Schema\Migration
-migration_home = database/schema/Schema/Migration
-seeder_home = database/seeder/Seed
+migration_home = database".DS."schema".DS."Schema".DS."Migration
+seeder_home = database".DS."seeder".DS."Seed
 seeder_ns = Seed");

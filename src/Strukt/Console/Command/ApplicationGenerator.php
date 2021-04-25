@@ -40,12 +40,12 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 		$tpl_appsrc_dir = Env::get("rel_tplappsrc_dir");
 		$tpl_authmod_dir = Env::get("rel_tplauthmod_dir");
 
-		$auth_mod_path = sprintf("%s/%s%s/AuthModule", 
+		$auth_mod_path = sprintf("%s".DS."%s%s".DS."AuthModule", 
 								$root_dir, 
 								$app_dir,
 								$app_name);
 
-		$mod_ini_path = sprintf("%s/%s", $root_dir, $mod_ini);
+		$mod_ini_path = sprintf("%s".DS."%s", $root_dir, $mod_ini);
 
 		if(!Fs::isFile($mod_ini_path))
 			new Raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
@@ -54,7 +54,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 		if(in_array("folder", array_keys($mod_ini_contents)))
 			foreach($mod_ini_contents["folder"] as $folder)
-				Fs::mkdir(sprintf("%s/%s", $auth_mod_path, $folder));
+				Fs::mkdir(sprintf("%s".DS."%s", $auth_mod_path, $folder));
 
 		$authmod_dir = str_replace(array($tpl_appsrc_dir, "App"), 
 											array($app_dir, $app_name), 
@@ -83,8 +83,8 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				Fs::mkdir($base);
 
 			$outputfile = Str::create($file)
-				->replace("tpl/sgf/","")
-				->replace("/App/", sprintf("/%s/", $app_name->yield()))
+				->replace("tpl".DS."sgf".DS,"")
+				->replace(DS."App".DS, sprintf(DS."%s".DS, $app_name->yield()))
 				->replace(".sgf", ".php");	
 
 			if($outputfile->contains("_AuthModule.php")){
@@ -94,6 +94,8 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			}
 
 			$outputfile = $outputfile->yield();
+
+
 
 			if(!Fs::touchWrite($outputfile, $output))
 				new Raise(sprintf("%s did not generate!", $outputfile));
