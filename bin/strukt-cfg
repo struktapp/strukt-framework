@@ -774,7 +774,7 @@ rel_app_lib = lib".DS."App
 rel_static_dir = public".DS."static
 
 rel_app_ini = cfg".DS."app.ini
-rel_mod_ini = ".DS."cfg".DS."module.ini
+rel_mod_ini = cfg".DS."module.ini
 rel_db_ini = cfg".DS."db.ini
 
 logger_name = Strukt Logger
