@@ -41,7 +41,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 		$tpl_authmod_dir = Env::get("rel_tplauthmod_dir");
 
 		$auth_mod_path = sprintf("%s".DS."%s%s".DS."AuthModule", 
-								$root_dir, 
+								$root_dir,
 								$app_dir,
 								$app_name);
 
