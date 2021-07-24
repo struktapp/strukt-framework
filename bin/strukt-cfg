@@ -720,7 +720,21 @@ return array(
 
 			"commands"=>array(
 
-				"{{app}}\AccountsModule\Command\BooksShell"
+				"{{app}}\BookModule\Command\AllocList",
+				"{{app}}\BookModule\Command\TrxId",
+				"{{app}}\BookModule\Command\TrxPrep",
+				"{{app}}\BookModule\Command\TrxPay",
+				"{{app}}\BookModule\Command\TrxLast",
+				"{{app}}\BookModule\Command\TrxList",
+				"{{app}}\BookModule\Command\TrxBal",
+				"{{app}}\BookModule\Command\TrxAdjust",
+				"{{app}}\BookModule\Command\TrxEnd",
+				"{{app}}\BookModule\Command\EntryLast",
+				"{{app}}\BookModule\Command\EntryBal",
+				"{{app}}\BookModule\Command\EntryMake",
+				"{{app}}\BookModule\Command\EntryList",
+				"{{app}}\BookModule\Command\ContraEntry",
+				"{{app}}\BookModule\Command\EntryRev"
 			)
 		)
 	),
