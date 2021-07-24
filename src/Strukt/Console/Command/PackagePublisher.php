@@ -49,12 +49,12 @@ class PackagePublisher extends \Strukt\Console\Command{
 		$pkgname = $in->get("pkg");
 
 		$vendor_pkg = Str::create(Env::get("root_dir"))
-			->concat("/vendor/strukt/")
+			->concat(Fs::ds("/vendor/strukt/"))
 			->concat($pkgname)
 			->yield();
 
 		$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
-				->concat("/")
+				->concat(DS)
 				->concat(Env::get("rel_app_ini"))
 				->yield());
 
@@ -78,11 +78,11 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$vendor_appbase = Str::create(Env::get("rel_appsrc_dir"))->concat("App")->yield();
 
 			$qpath = Str::create(Env::get("root_dir"))
-				->concat("/")
+				->concat(DS)
 				->concat($relpath);
 
 			if($qpath->contains($vendor_appbase))
-				$qpath = $qpath->replace($vendor_appbase, sprintf("app/src/%s", $appname));
+				$qpath = $qpath->replace($vendor_appbase, Fs::ds(sprintf("app/src/%s", $appname)));
 
 			if($qpath->endsWith(".sgf"))
 				$qpath = $qpath->replace(".sgf", ".php");
@@ -90,7 +90,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$actual_path = $qpath->yield();
 
 			$vendor_file_path = Str::create($vendor_pkg)
-				->concat("/package/")
+				->concat(Fs::ds("/package/"))
 				->concat($relpath)
 				->yield();
 
@@ -107,7 +107,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			$file_content = Fs::cat($vendor_file_path);
 			if(Str::create($vendor_file_path)->endsWith(".sgf") &&
-				!Str::create($vendor_file_path)->contains("tpl/sgf"))
+				!Str::create($vendor_file_path)->contains(Fs::ds("tpl/sgf")))
 					$file_content = Templator::create($file_content, array(
 
 						"app"=>$appname
