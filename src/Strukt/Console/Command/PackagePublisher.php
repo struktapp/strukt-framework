@@ -75,14 +75,17 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 		Arr::create($pkg->getFiles())->each(function($key, $relpath) use ($vendor_pkg, $appname){
 
-			$vendor_appbase = Str::create(Env::get("rel_appsrc_dir"))->concat("App")->yield();
+			$vendor_appbase = Fs::ds(Str::create(Env::get("rel_appsrc_dir"))
+										->concat("App")
+										->yield());
 
 			$qpath = Str::create(Env::get("root_dir"))
 				->concat(DS)
-				->concat($relpath);
+				->concat(Fs::ds($relpath));
 
 			if($qpath->contains($vendor_appbase))
-				$qpath = $qpath->replace($vendor_appbase, Fs::ds(sprintf("app/src/%s", $appname)));
+				$qpath = $qpath->replace(Fs::ds($vendor_appbase), 
+											Fs::ds(sprintf("app/src/%s", $appname)));
 
 			if($qpath->endsWith(".sgf"))
 				$qpath = $qpath->replace(".sgf", ".php");
