@@ -18,7 +18,9 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 	public function register(){
 
-		$this->core()->set("app.service.router", new Event(function($module_list){
+		$core = $this->core();
+
+		$core->set("app.service.router", new Event(function($module_list) use($core){
 
 			// print_r($module_list);
 
@@ -60,7 +62,7 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 									$route = new Route($pattern, $route_func, $http_method, $name);
 
-									$this->core()->get("app.router")->addRoute($route);
+									$core->get("app.router")->addRoute($route);
 								}
 							}
 						}

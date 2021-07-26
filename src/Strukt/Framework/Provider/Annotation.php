@@ -18,7 +18,11 @@ class Annotation extends AbstractProvider implements ProviderInterface{
 
 	public function register(){
 
-		$this->core()->set("app.service.annotations", new Event(function($module_list){
+		$core = $this->core();
+
+		$core->set("app.service.annotations", new Event(
+
+			function($module_list) use($core){
 
 			$annotations = [];
 
@@ -58,7 +62,7 @@ class Annotation extends AbstractProvider implements ProviderInterface{
 				}
 			}
 
-			$this->core()->get("app.annotations", $annotations);
+			$core->get("app.annotations", $annotations);
 		}));
 	}
 }
