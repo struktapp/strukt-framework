@@ -16,7 +16,6 @@
         "strukt/generator": "1.0.0-alpha",
         "strukt/console": "1.0.0",
         "strukt/fs":"1.0.0",
-        "strukt/commons":"v1.0.3-alpha",
         "strukt/router":"1.0.0-alpha",
         "symfony/http-foundation": "^4.3",
         "phplucidframe/console-table": "^1.2",
@@ -31,5 +30,6 @@
 
         "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
     },
-    "bin":["bin/strukt-cfg"]
+    "bin":["bin/strukt-cfg"],
+    "minimum-stability":"dev"
 }
