@@ -16,11 +16,36 @@ use Strukt\Fs;
 abstract class Router extends AbstractService{
 
 	/**
-	* Request redirect
+	* Internal request redirect
 	*
+	* @param string $uri
+	* @param string $method
+	* @param array $params
+	*
+	* @return Strukt\Contract\ResponseInterface
+	*/
+	protected function redirect(string $uri, string $method="POST", array $params=[]){
+
+		$router = $this->core()->get("app.router");
+
+		$router = $router->getRoute($method, $uri);
+
+		foreach($params as $param)
+			$router->addParam($param);
+
+		return $router->exec();
+	}
+
+	/**
+	* External request redirect
+	* 
+	* @param string $url
+	* @param string $code
+	* @param array $headers
+	* 
 	* @return void
 	*/
-	protected function redirect($url, $code = 302, $headers = []){
+	protected function externalRedirect($url, $code = 302, $headers = []){
 
 		return new RedirectResponse($url, $code, $headers);
 	}
