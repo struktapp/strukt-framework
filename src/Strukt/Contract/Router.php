@@ -31,7 +31,7 @@ abstract class Router extends AbstractService{
 		$router = $router->getRoute($method, $uri);
 
 		foreach($params as $param)
-			$router->addParam($param);
+			$router = $router->addParam($param);
 
 		return $router->exec();
 	}
