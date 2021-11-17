@@ -3,6 +3,7 @@
 namespace Strukt\Contract;
 
 use Strukt\Http\Response;
+use Strukt\Http\Request;
 use Strukt\Http\RedirectResponse;
 use Strukt\Http\JsonResponse;
 use Strukt\Http\Exception\NotFoundException;
@@ -19,21 +20,28 @@ abstract class Router extends AbstractService{
 	* Internal request redirect
 	*
 	* @param string $uri
-	* @param string $method
-	* @param array $params
+	* @param \Strukt\Http\Request $request (optional)
 	*
 	* @return Strukt\Contract\ResponseInterface
 	*/
-	protected function redirect(string $uri, string $method="POST", array $params=[]){
+	protected function redirect(string $uri, Request $request = null){
+
+		$method = "POST";
+		if(preg_match("/\:/", $uri))
+			list($method, $uri) = explode(":", $uri);
 
 		$router = $this->core()->get("app.router");
 
-		$router = $router->getRoute($method, $uri);
+		$route = $router->getRoute($method, $uri);
 
-		foreach($params as $param)
-			$router = $router->addParam($param);
+		$params = $route->getEvent()->getParams();
 
-		return $router->exec();
+		if(!is_null($request))
+			foreach($params as $name=>$param)
+				if($param == Request::class)
+					$route->setParam($name, $request);
+
+		return $route->exec();
 	}
 
 	/**
