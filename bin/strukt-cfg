@@ -171,7 +171,8 @@ class Index extends \Strukt\Contract\Router{
 	*/
 	public function helloWorld(){
 
-		return self::htmlfile("public/static/index.html");
+		return $this->core()->get("assets")->get("/index.html");
+		//return self::htmlfile("public/static/index.html");
 	}
 	
 	/**
@@ -673,6 +674,7 @@ return array(
 			),
 			"middlewares"=>array(
 
+				Strukt\Middleware\Asset::class,
 				Strukt\Router\Middleware\Router::class
 			)
 		),
@@ -755,7 +757,7 @@ return array(
 				Strukt\Router\Middleware\Session::class,
 				Strukt\Router\Middleware\Authorization::class,
 				Strukt\Router\Middleware\Authentication::class,
-				Strukt\Router\Middleware\StaticFileFinder::class,
+				Strukt\Middleware\Asset::class,
 				Strukt\Router\Middleware\Router::class
 			)
 		),
