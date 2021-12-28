@@ -674,7 +674,6 @@ return array(
 			),
 			"middlewares"=>array(
 
-				//Strukt\Middleware\Asset::class,
 				Strukt\Router\Middleware\Router::class
 			)
 		),
@@ -743,11 +742,11 @@ return array(
 
 			"providers"=>array(
 
-				App\Provider\Asset::class
+				//App\Provider\Asset::class
 			),
 			"middlewares"=>array(
 
-				App\Middleware\Asset::class
+				//App\Middleware\Asset::class
 			)
 		)
 	),
@@ -768,7 +767,6 @@ return array(
 				Strukt\Router\Middleware\Session::class,
 				Strukt\Router\Middleware\Authorization::class,
 				Strukt\Router\Middleware\Authentication::class,
-				//Strukt\Middleware\Asset::class,
 				Strukt\Router\Middleware\Router::class
 			)
 		),
@@ -793,11 +791,11 @@ return array(
 
 			"providers"=>array(
 
-				App\Provider\Asset::class
+				//App\Provider\Asset::class
 			),
 			"middlewares"=>array(
 
-				App\Middleware\Asset::class
+				//App\Middleware\Asset::class
 			)
 		)
 	)
