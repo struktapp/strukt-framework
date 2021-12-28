@@ -8,7 +8,7 @@ use Strukt\Core\Registry;
 use LucidFrame\Console\ConsoleTable;
 
 /**
-* route:list     Route List
+* route:ls     Route List
 */
 class RouteList extends \Strukt\Console\Command{
 

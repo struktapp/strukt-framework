@@ -18,6 +18,7 @@ use Strukt\Package\PkgRoles;
 use Strukt\Package\PkgAudit;
 use Strukt\Package\PkgBooks;
 use Strukt\Package\PkgTests;
+use Strukt\Package\PkgAsset;
 
 /**
 * publish:package     Package Publisher
@@ -40,7 +41,8 @@ class PackagePublisher extends \Strukt\Console\Command{
 			"pkg-roles"=>PkgRoles::class,
 			"pkg-audit"=>PkgAudit::class,
 			"pkg-books"=>PkgBooks::class,
-			"pkg-tests"=>PkgTests::class
+			"pkg-tests"=>PkgTests::class,
+			"pkg-asset"=>PkgAsset::class
 		);
 	}
 
