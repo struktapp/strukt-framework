@@ -738,6 +738,17 @@ return array(
 				"{{app}}\BookModule\Command\ContraEntry",
 				"{{app}}\BookModule\Command\EntryRev"
 			)
+		),
+		"pkg_asset"=>array(
+
+			"providers"=>array(
+
+				App\Provider\Asset::class
+			),
+			"middlewares"=>array(
+
+				App\Middleware\Asset::class
+			)
 		)
 	),
 	"index"=>array(
@@ -776,6 +787,17 @@ return array(
 			"middlewares"=>array(
 
 				App\Middleware\Audit::class
+			)
+		),
+		"pkg_asset"=>array(
+
+			"providers"=>array(
+
+				App\Provider\Asset::class
+			),
+			"middlewares"=>array(
+
+				App\Middleware\Asset::class
 			)
 		)
 	)
