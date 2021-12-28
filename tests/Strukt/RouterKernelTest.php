@@ -55,7 +55,7 @@ class RouterKernelTest extends TestCase{
 			\Strukt\Router\Middleware\Session::class,
 			\Strukt\Router\Middleware\Authorization::class,
 			\Strukt\Router\Middleware\Authentication::class,
-			\Strukt\Middleware\Asset::class,
+			//\Strukt\Middleware\Asset::class,
 			\Strukt\Router\Middleware\Router::class
 		]);
 
