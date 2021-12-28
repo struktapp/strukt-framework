@@ -20,8 +20,7 @@
         "strukt/contract":"1.0.0-alpha",
         "symfony/http-foundation": "^4.3",
         "phplucidframe/console-table": "^1.2",
-        "psy/psysh": "^0.10.4",
-        "strukt/pkg-asset": "dev-master"
+        "psy/psysh": "^0.10.4"
     },
     "suggest":{
 

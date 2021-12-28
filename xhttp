@@ -1,0 +1,41 @@
+#!/usr/bin/php
+<?php
+
+use Strukt\Env;
+
+require "bootstrap.php";
+$settings = require "cfg/settings.php";
+$inject = require "cfg/injectables.php";
+
+$argv = $_SERVER["argv"];
+
+array_shift($argv);
+$method = array_shift($argv);
+$uri = array_shift($argv);
+$params = [];
+
+array_map(function($param) use(&$params){
+
+	list($key, $val) = explode("=", $param);
+
+	$params[$key] = $val;
+
+}, $argv);
+
+$_SERVER["REQUEST_URI"] = $uri;
+$_SERVER["REQUEST_METHOD"] = $method;
+$_REQUEST = $_POST = $params;
+
+// print_r(array(
+
+// 	"REQUEST_URI"=>$_SERVER["REQUEST_URI"],
+// 	"REQUEST_METHOD"=>$_SERVER["REQUEST_METHOD"],
+// 	"_REQUEST"=>$_REQUEST
+
+// ));exit;
+
+Env::withFile();
+Env::set("root_dir", getcwd());
+
+$kernel = new App\Kernel($settings, $inject);
+$kernel->run();
