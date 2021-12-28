@@ -16,6 +16,7 @@ use Strukt\Package\PkgRoles;
 use Strukt\Package\PkgAudit;
 use Strukt\Package\PkgBooks;
 use Strukt\Package\PkgTests;
+use Strukt\Package\PkgAsset;
 
 class App{
 
@@ -73,7 +74,8 @@ class App{
 			"pkg_audit"=>PkgAudit::class,
 			"pkg_books"=>PkgBooks::class,
 			"pkg_roles"=>PkgRoles::class,
-			"pkg_tests"=>PkgTests::class
+			"pkg_tests"=>PkgTests::class,
+			"pkg_asset"=>PkgAsset::class
 		))
 		->each(function($name, $cls) use(&$pkgs, $type){				
 
