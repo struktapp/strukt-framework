@@ -15,7 +15,7 @@ use Strukt\Core\Registry;
 
 
 /**
-* generate:router     Generate Module Router - ACCEPTS NO ARGS
+* make:router     Generate Module Router - ACCEPTS NO ARGS
 *
 * Usage:
 *

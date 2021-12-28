@@ -11,11 +11,11 @@ use Strukt\Type\Str;
 use Strukt\Core\Registry as Registry;
 
 /**
-* generate:module     Generate Application Module
+* make:module     Generate Application Module
 *
 * Usage:
 *
-*       generate:module <application_name> <module_name> <alias_name>
+*       make:module <application_name> <module_name> <alias_name>
 *
 * Arguments:
 *

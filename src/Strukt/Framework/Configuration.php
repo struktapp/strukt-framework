@@ -4,10 +4,11 @@ namespace Strukt\Framework;
 
 use Strukt\Core\Collection;
 use Strukt\Builder\Collection as CollectionBuilder;
+use Strukt\Framework\App as FrameworkApp;
 
 class Configuration{
 
-	public function __construct(array $settings, array $packages, string $type = "index"){
+	public function __construct(array $settings, array $packages){
 
 		$packages[] = "base";
 
@@ -15,7 +16,7 @@ class Configuration{
 
 		$cfg = CollectionBuilder::create()->fromAssoc($settings);
 
-		$this->configs = $cfg->get($type);
+		$this->configs = $cfg->get(FrameworkApp::getType());
 	}
 
 	public function get(string $key){

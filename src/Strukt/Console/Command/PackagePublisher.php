@@ -12,13 +12,7 @@ use Strukt\Type\Arr;
 use Strukt\Templator;
 use Strukt\Raise;
 use Strukt\Ref;
-
-use Strukt\Package\PkgDo;
-use Strukt\Package\PkgRoles;
-use Strukt\Package\PkgAudit;
-use Strukt\Package\PkgBooks;
-use Strukt\Package\PkgTests;
-use Strukt\Package\PkgAsset;
+use Strukt\Framework\App as FrameworkApp;
 
 /**
 * publish:package     Package Publisher
@@ -35,15 +29,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 	public function __construct(){
 
-		$this->packages = array(
-
-			"pkg-do"=>PkgDo::class,
-			"pkg-roles"=>PkgRoles::class,
-			"pkg-audit"=>PkgAudit::class,
-			"pkg-books"=>PkgBooks::class,
-			"pkg-tests"=>PkgTests::class,
-			"pkg-asset"=>PkgAsset::class
-		);
+		$this->packages = FrameworkApp::getRepo();
 	}
 
 	public function execute(Input $in, Output $out){

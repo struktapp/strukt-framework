@@ -11,20 +11,32 @@ use Strukt\Type\Arr;
 use Strukt\Type\Json;
 // use Strukt\Ref;
 
-use Strukt\Package\PkgDo;
-use Strukt\Package\PkgRoles;
-use Strukt\Package\PkgAudit;
-use Strukt\Package\PkgBooks;
-use Strukt\Package\PkgTests;
-use Strukt\Package\PkgAsset;
-
 class App{
 
-	private $cls;
+	public static $app_type;
+	public static $repo_pkgs;
 
-	public function __construct(){
+	public static function create(string $app_type){
 
-		//
+		if(!in_array($app_type, array("App:Cli", "App:Idx")))
+			new Raise("Invalid application type must be either [App:Cli|App:Idx]!");
+
+		static::$app_type = $app_type;
+	}
+
+	public static function getType():string{
+
+		return static::$app_type;
+	}
+
+	public static function mayBeRepo(array $packages){
+
+		static::$repo_pkgs = $packages;
+	}
+
+	public static function getRepo():array{
+
+		return static::$repo_pkgs;
 	}
 
 	public static function getCls(string $class){
@@ -68,16 +80,7 @@ class App{
 
 		$type = Str::create($type);
 
-		Arr::create(array(
-
-			"pkg_do"=>PkgDo::class,
-			"pkg_audit"=>PkgAudit::class,
-			"pkg_books"=>PkgBooks::class,
-			"pkg_roles"=>PkgRoles::class,
-			"pkg_tests"=>PkgTests::class,
-			"pkg_asset"=>PkgAsset::class
-		))
-		->each(function($name, $cls) use(&$pkgs, $type){				
+		Arr::create(static::getRepo())->each(function($name, $cls) use(&$pkgs, $type){
 
 			if($type->equals("installed")){
 

@@ -447,7 +447,7 @@ $loader = require "vendor/autoload.php";
 $loader->add("App", __DIR__."/lib/");
 $loader->add("Strukt", __DIR__."/src/");
 
-//pkg_do
+//pkg-do
 $loader->add("Seed", __DIR__."/database/seeder/");
 
 if(!is_null($cfg_app))
@@ -547,7 +547,11 @@ Env::withFile();
 Env::set("root_dir", getcwd());
 
 $settings = require "cfg/settings.php"; 
-$inject = require "cfg/injectables.php"; 
+$inject = require "cfg/injectables.php";
+$repo = require "cfg/repo.php";
+
+FrameworkApp::create("App:Cli");
+FrameworkApp::mayBeRepo($repo); 
 
 $kernel = new AppKernel($settings, $inject, "console");
 $app = $kernel->getApp();
@@ -577,13 +581,18 @@ exit($console->run($_SERVER["argv"]));');
 Strukt\Fs::touchWrite("index.php",'<?php
 
 use Strukt\Env;
+use Strukt\Framework\App as FrameworkApp;
 
 require "bootstrap.php";
 $settings = require "cfg/settings.php";
 $inject = require "cfg/injectables.php";
+$repo = require "cfg/repo.php";
 
 Env::withFile();
 Env::set("root_dir", getcwd());
+
+FrameworkApp::create("App:Idx");
+FrameworkApp::mayBeRepo($repo);
 
 $kernel = new App\Kernel($settings, $inject);
 $kernel->run();');
@@ -632,7 +641,7 @@ return array(
 				return new Session;
 			}
 		),
-		"pkg_do"=>array(
+		"pkg-do"=>array(
 
 			"logger"=>function(){
 
@@ -641,7 +650,7 @@ return array(
 				return new Monologer(null, null, $log_dir);
 			}
 		),
-		"pkg_roles"=>array(
+		"pkg-roles"=>array(
 
 			"author"=>function(Session $session){
 
@@ -659,11 +668,23 @@ return array(
 	)
 );');
 
+Strukt\Fs::touchWrite("cfg/repo.php",'<?php
+
+return array(
+
+	"pkg-do"=>Strukt\Package\PkgDo::class,
+	"pkg-roles"=>Strukt\Package\PkgRoles::class,
+	"pkg-audit"=>Strukt\Package\PkgAudit::class,
+	"pkg-books"=>Strukt\Package\PkgBooks::class,
+	"pkg-tests"=>Strukt\Package\PkgTests::class,
+	"pkg-asset"=>Strukt\Package\PkgAsset::class
+);');
+
 Strukt\Fs::touchWrite("cfg/settings.php",'<?php
 
 return array(
 
-	"console"=>array(
+	"App:Cli"=>array(
 
 		"base"=>array( 
 
@@ -677,7 +698,7 @@ return array(
 				Strukt\Router\Middleware\Router::class
 			)
 		),
-		"pkg_tests"=>array(
+		"pkg-tests"=>array(
 
 			"commands"=>array(
 
@@ -685,7 +706,7 @@ return array(
 				App\Command\Tests\ListCmd::class
 			)
 		),
-		"pkg_do"=>array(
+		"pkg-do"=>array(
 
 			"providers"=>array(
  
@@ -705,7 +726,7 @@ return array(
 				App\Command\Doctrine\SqlExec::class
 			)
 		),
-		"pkg_roles"=>array(
+		"pkg-roles"=>array(
 
 			"commands"=>array(
 
@@ -717,7 +738,7 @@ return array(
 				"{{app}}\AuthModule\Command\UserResetPassword"
 			)
 		),
-		"pkg_books"=>array(
+		"pkg-books"=>array(
 
 			"commands"=>array(
 
@@ -738,7 +759,7 @@ return array(
 				"{{app}}\BookModule\Command\EntryRev"
 			)
 		),
-		"pkg_asset"=>array(
+		"pkg-asset"=>array(
 
 			"providers"=>array(
 
@@ -750,7 +771,7 @@ return array(
 			)
 		)
 	),
-	"index"=>array(
+	"App:Idx"=>array(
 
 		"base"=>array(
 
@@ -770,7 +791,7 @@ return array(
 				Strukt\Router\Middleware\Router::class
 			)
 		),
-		"pkg_do"=>array(
+		"pkg-do"=>array(
 
 			"providers"=>array(
 
@@ -780,14 +801,14 @@ return array(
 				App\Provider\Normalizer::class
 			)
 		),
-		"pkg_audit"=>array(
+		"pkg-audit"=>array(
 
 			"middlewares"=>array(
 
 				App\Middleware\Audit::class
 			)
 		),
-		"pkg_asset"=>array(
+		"pkg-asset"=>array(
 
 			"providers"=>array(
 
