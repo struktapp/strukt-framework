@@ -546,14 +546,13 @@ $loader->add("Schema", __DIR__."/database/schema");
 Env::withFile();
 Env::set("root_dir", getcwd());
 
-$settings = require "cfg/settings.php"; 
 $inject = require "cfg/inject.php";
 $repo = require "cfg/repo.php";
 
 FrameworkApp::create("App:Cli");
 FrameworkApp::mayBeRepo($repo); 
 
-$kernel = new AppKernel($settings, $inject, "console");
+$kernel = new AppKernel($inject);
 $app = $kernel->getApp();
 
 if(!is_null($app))
@@ -584,7 +583,6 @@ use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 
 require "bootstrap.php";
-$settings = require "cfg/settings.php";
 $inject = require "cfg/inject.php";
 $repo = require "cfg/repo.php";
 
@@ -594,7 +592,7 @@ Env::set("root_dir", getcwd());
 FrameworkApp::create("App:Idx");
 FrameworkApp::mayBeRepo($repo);
 
-$kernel = new App\Kernel($settings, $inject);
+$kernel = new App\Kernel($inject);
 $kernel->run();');
 
 Strukt\Fs::touchWrite("cfg/inject.php", '<?php
