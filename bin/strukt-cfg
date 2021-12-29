@@ -21,8 +21,6 @@ Strukt\Fs::mkdir("lib/App/Contract");
 Strukt\Fs::mkdir("lib/App/Middleware");
 Strukt\Fs::mkdir("lib/App/Provider");
 
-// Strukt\Fs::touchWrite("app.ini", "");
-
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",'<?php
 namespace {{app}}\AuthModule\Controller;
 
