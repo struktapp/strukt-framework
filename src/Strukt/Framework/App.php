@@ -41,9 +41,12 @@ class App{
 
 	public static function getCls(string $class){
 
-		return Str::create($class)
-						->replace("{{app}}", self::getName())
-						->yield();
+		$cls_name = Str::create($class);
+
+		if($cls_name->contains("{{app}}"))
+			$cls_name->replace("{{app}}", self::getName());
+
+		return $cls_name->yield();
 	}
 
 	public static function newCls(string $class){
