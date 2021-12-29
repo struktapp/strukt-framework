@@ -2,60 +2,77 @@
 
 namespace Strukt\Framework;
 
-use Strukt\Core\Collection;
-use Strukt\Builder\Collection as CollectionBuilder;
 use Strukt\Framework\App as FrameworkApp;
 
 class Configuration{
 
-	public function __construct(array $settings, array $packages){
+	public function __construct(){
 
-		$packages[] = "base";
-
-		$this->packages = $packages;
-
-		$cfg = CollectionBuilder::create()->fromAssoc($settings);
-
-		$this->configs = $cfg->get(FrameworkApp::getType());
+		$this->packages = FrameworkApp::getRepo();
+		$this->settings = $this->getSetup();
 	}
 
-	public function get(string $key){
+	public function getSetup(){
 
-		$facets = array(
-			
-			"providers",
-			"middlewares",
-			"commands"
-		);
+		$providers = [];
+		$middlewares = [];
+		$commands = [];
 
-		$cfgs = [];
+		$app_type = FrameworkApp::getType();
 
-		foreach($this->packages as $package){
+		$published = FrameworkApp::packages("published");
 
-			if(in_array($key, $facets)){
+		foreach($this->packages as $name=>$cls){
 
-				$keyMap = sprintf("%s.%s", $package, $key);			
+			if(class_exists($cls) && in_array($name, $published)){
 
-				if($this->configs->exists($keyMap)){
+				$pkg = FrameworkApp::newCls($cls);
 
-					$cfg = $this->configs->get($keyMap);
-						
-					if(is_array($cfg)){
+				$settings = $pkg->getSettings($app_type);
 
-						if($key == "commands")
-							$cfgs[$package] = $cfg;
-						else
-							$cfgs = array_merge($cfgs, $cfg);
-					}
-					elseif($cfg instanceof Collection){
+				// $this->pkg_ls[$name] = $settings; 
 
-						foreach($cfg->getKeys() as $cfgKey)
-							$cfgs[$cfgKey] = $cfg->get($cfgKey);
-					}
-				}
+				if(array_key_exists("providers", $settings))
+					foreach($settings["providers"] as $provider)
+						if(class_exists($provider))
+							$providers[] = $provider;
+
+				if(array_key_exists("middlewares", $settings))
+					foreach($settings["middlewares"] as $middleware)
+						if(class_exists($middleware))
+							$middlewares[] = $middleware;
+
+				if(array_key_exists("commands", $settings))
+					foreach($settings["commands"] as $command)
+						if(class_exists($command))
+							$commands[] = $command;
 			}
 		}
 
+		if(!empty($providers))
+			$cfgs["providers"] = $providers;
+
+		if(!empty($middlewares))
+			$cfgs["middlewares"] = $middlewares;
+
+		if(!empty($commands))
+			$cfgs["commands"] = $commands;
+
 		return $cfgs;
+	}
+
+	/**
+	 * @param $key
+	 * 
+	 * - commands
+	 * - providers
+	 * - middlewares
+	 */
+	public function get(string $key){
+
+		if(array_key_exists($key, $this->settings))
+			return $this->settings[$key];
+
+		return null;
 	}
 }

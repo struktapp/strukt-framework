@@ -458,6 +458,8 @@ return $loader;
 
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 
+<?php
+
 namespace App;
 
 use Strukt\Framework\Configuration;
@@ -477,12 +479,10 @@ class Kernel{
 	private $loader;
 	private $app;
 
-	public function __construct(array $settings, array $inject, string $type = "index"){
+	public function __construct(array $inject){
 
-		$packages = FrameworkApp::packages("published");
-
-		$this->config = new Configuration($settings, $packages, $type);
-		$inj = new Injectable($packages, $inject["map"], $inject["events"]);
+		$this->config = new Configuration();
+		$inj = new Injectable($inject["map"], $inject["events"]);
 
 		$this->kernel = new RouterKernel(Request::createFromGlobals());
 
@@ -490,7 +490,7 @@ class Kernel{
 		if(!empty($kconfigs))
 			foreach($kconfigs as $id=>$kconfig)
 				$this->kernel->inject($inj->getId($id), $kconfig);
-
+			
 		$this->kernel->providers($this->config->get("providers"));
 		$this->kernel->middlewares($this->config->get("middlewares"));
 
@@ -547,7 +547,7 @@ Env::withFile();
 Env::set("root_dir", getcwd());
 
 $settings = require "cfg/settings.php"; 
-$inject = require "cfg/injectables.php";
+$inject = require "cfg/inject.php";
 $repo = require "cfg/repo.php";
 
 FrameworkApp::create("App:Cli");
@@ -585,7 +585,7 @@ use Strukt\Framework\App as FrameworkApp;
 
 require "bootstrap.php";
 $settings = require "cfg/settings.php";
-$inject = require "cfg/injectables.php";
+$inject = require "cfg/inject.php";
 $repo = require "cfg/repo.php";
 
 Env::withFile();
@@ -597,7 +597,7 @@ FrameworkApp::mayBeRepo($repo);
 $kernel = new App\Kernel($settings, $inject);
 $kernel->run();');
 
-Strukt\Fs::touchWrite("cfg/injectables.php", '<?php
+Strukt\Fs::touchWrite("cfg/inject.php", '<?php
 
 use Strukt\User; 
 use App\Service\Logger\Monologer;
@@ -672,6 +672,7 @@ Strukt\Fs::touchWrite("cfg/repo.php",'<?php
 
 return array(
 
+	"core"=>Strukt\Package\Core::class,
 	"pkg-do"=>Strukt\Package\PkgDo::class,
 	"pkg-roles"=>Strukt\Package\PkgRoles::class,
 	"pkg-audit"=>Strukt\Package\PkgAudit::class,
@@ -680,147 +681,6 @@ return array(
 	"pkg-asset"=>Strukt\Package\PkgAsset::class
 );');
 
-Strukt\Fs::touchWrite("cfg/settings.php",'<?php
-
-return array(
-
-	"App:Cli"=>array(
-
-		"base"=>array( 
-
-			"providers"=>array(
-
-				Strukt\Framework\Provider\Annotation::class,
-				Strukt\Framework\Provider\Router::class
-			),
-			"middlewares"=>array(
-
-				Strukt\Router\Middleware\Router::class
-			)
-		),
-		"pkg-tests"=>array(
-
-			"commands"=>array(
-
-				App\Command\Tests\Exec::class,
-				App\Command\Tests\ListCmd::class
-			)
-		),
-		"pkg-do"=>array(
-
-			"providers"=>array(
- 
-				App\Provider\Logger::class,
-				App\Provider\EntityManager::class,
-				App\Provider\EntityManagerAdapter::class,
-				App\Provider\Normalizer::class,
-				App\Provider\SchemaMeta::class
-			),
-			"commands"=>array(
-
-				App\Command\Doctrine\GenerateModels::class,
-				App\Command\Doctrine\Migration\GenerateMigration::class,
-				App\Command\Doctrine\Seeder\GenerateSeeder::class,
-				App\Command\Doctrine\Migration\MigrateExec::class,
-				App\Command\Doctrine\Seeder\SeederExec::class,
-				App\Command\Doctrine\SqlExec::class
-			)
-		),
-		"pkg-roles"=>array(
-
-			"commands"=>array(
-
-				"{{app}}\AuthModule\Command\PermissionAdd",
-				"{{app}}\AuthModule\Command\RoleAdd",
-				"{{app}}\AuthModule\Command\RoleAddPermission",
-				"{{app}}\AuthModule\Command\UserAdd",
-				"{{app}}\AuthModule\Command\UserDumpCredentials",
-				"{{app}}\AuthModule\Command\UserResetPassword"
-			)
-		),
-		"pkg-books"=>array(
-
-			"commands"=>array(
-
-				"{{app}}\BookModule\Command\AllocList",
-				"{{app}}\BookModule\Command\TrxId",
-				"{{app}}\BookModule\Command\TrxPrep",
-				"{{app}}\BookModule\Command\TrxPay",
-				"{{app}}\BookModule\Command\TrxLast",
-				"{{app}}\BookModule\Command\TrxList",
-				"{{app}}\BookModule\Command\TrxBal",
-				"{{app}}\BookModule\Command\TrxAdjust",
-				"{{app}}\BookModule\Command\TrxEnd",
-				"{{app}}\BookModule\Command\EntryLast",
-				"{{app}}\BookModule\Command\EntryBal",
-				"{{app}}\BookModule\Command\EntryMake",
-				"{{app}}\BookModule\Command\EntryList",
-				"{{app}}\BookModule\Command\ContraEntry",
-				"{{app}}\BookModule\Command\EntryRev"
-			)
-		),
-		"pkg-asset"=>array(
-
-			"providers"=>array(
-
-				//App\Provider\Asset::class
-			),
-			"middlewares"=>array(
-
-				//App\Middleware\Asset::class
-			)
-		)
-	),
-	"App:Idx"=>array(
-
-		"base"=>array(
-
-			"providers"=>array(
-
-				Strukt\Framework\Provider\Validator::class,
-				Strukt\Framework\Provider\Annotation::class,
-				Strukt\Framework\Provider\Router::class
-			),
-			"middlewares"=>array(
-
-				App\Middleware\Cors::class,
-				Strukt\Router\Middleware\ExceptionHandler::class,
-				Strukt\Router\Middleware\Session::class,
-				Strukt\Router\Middleware\Authorization::class,
-				Strukt\Router\Middleware\Authentication::class,
-				Strukt\Router\Middleware\Router::class
-			)
-		),
-		"pkg-do"=>array(
-
-			"providers"=>array(
-
-				App\Provider\Logger::class,
-				App\Provider\EntityManager::class,
-				App\Provider\EntityManagerAdapter::class,
-				App\Provider\Normalizer::class
-			)
-		),
-		"pkg-audit"=>array(
-
-			"middlewares"=>array(
-
-				App\Middleware\Audit::class
-			)
-		),
-		"pkg-asset"=>array(
-
-			"providers"=>array(
-
-				//App\Provider\Asset::class
-			),
-			"middlewares"=>array(
-
-				//App\Middleware\Asset::class
-			)
-		)
-	)
-);');
 
 Strukt\Fs::touchWrite(".env","rel_appsrc_dir = app".DS."src".DS."
 rel_tpl_dir = tpl".DS."sgf

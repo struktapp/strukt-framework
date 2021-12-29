@@ -5,7 +5,6 @@ use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 
 require "bootstrap.php";
-$settings = require "cfg/settings.php";
 $inject = require "cfg/injectables.php";
 $repo = require "cfg/repo.php";
 
@@ -42,5 +41,5 @@ Env::set("root_dir", getcwd());
 FrameworkApp::create("App:Idx");
 FrameworkApp::mayBeRepo($repo);
 
-$kernel = new App\Kernel($settings, $inject);
+$kernel = new App\Kernel($inject);
 $kernel->run();

@@ -2,12 +2,11 @@
 
 namespace Strukt\Framework;
 
-use Cobaia\Doctrine\MonologSQLLogger;
+use Strukt\Env;
 use Strukt\Core\Map;
 use Strukt\Http\Session;
 use Strukt\Builder\Collection as CollectionBuilder;
-use Strukt\Env;
-use Strukt\Framework\App;
+use Strukt\Framework\App as FrameworkApp;
 
 class Injectable{
 
@@ -15,13 +14,11 @@ class Injectable{
 	private $packages;
 	private $injectables;
 
-	public function __construct(array $packages, array $map, array $injectables){
+	public function __construct(array $map, array $injectables){
 
 		$this->map = $map;
 
-		$this->packages = $packages;
-
-		array_unshift($this->packages, "base");
+		$this->packages = FrameworkApp::packages("published");
 
 		$this->injectables = $injectables;
 	}
