@@ -13,7 +13,7 @@ Below components are included in this package for overall build up of [strukt-st
 - [strukt-commons](https://github.com/pitsolu/strukt-commons)
 - [strukt-generator](https://github.com/pitsolu/strukt-generator)
 - [strukt-fs](https://github.com/pitsolu/strukt-fs)
-- [strukt-console](https://github.com/pitsolu/strukt-console)) 
+- [strukt-console](https://github.com/pitsolu/strukt-console)
 
 Rarely should anyone use this on its own.
 
@@ -47,19 +47,19 @@ FrameworkApp::getRepo();
 ### Some application methods
 
 ```php
-//	The line below sets up namespace for with application name
+//The line below sets up namespace for with application name
 //	the ns will translate into Payroll\AuthModule\Command\PermissionAdd
 //	if your app's name is payroll
 $cls = FrameworkApp::newCls("{{app}}\AuthModule\Command\PermissionAdd");
 
-//	Get app_name from cfg/app.ini file
+//Get app_name from cfg/app.ini file
 $app_name = FrameworkApp::getName(); //payroll
 ```
 
 ### Packages
 
 ```php
-//	Get installed and published packages
+//Get installed and published packages
 FrameworkApp::packages("installed"); 
 FrameworkApp::packages("published"); 
 ```
@@ -78,7 +78,7 @@ $cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
 $core = new Strukt\Package\Core();//implements Strukt\Package\Pkg
 
 //returns array of middlewares, commands and providers
-$core->getSettings($type);//type is "App:idx" or "App:Cli"
+$core->getSettings($type);//type is "App:Idx" or "App:Cli"
 
 $core->getName();//core
 $core->getCmdName();//null
