@@ -458,8 +458,6 @@ return $loader;
 
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 
-<?php
-
 namespace App;
 
 use Strukt\Framework\Configuration;
