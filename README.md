@@ -86,3 +86,16 @@ $core->getFiles();//null
 $core->getModules();//null
 $core->isPublished();//true by default
 ```
+
+The above methods are in abstract class `Strukt\Package\Pkg` you can use them to create your package.
+
+### Environment setup
+
+This class is defaultly found in [strukt-commons](github.com/pitsolu/strukt-commons)
+
+```php
+Strukt\Env::withFile();//default .env file in your root folder
+Strukt\Env::withFile(".env-dev");
+Strukt\Env::set("root_dir", getcwd());//custom environment variable
+Strukt\Env::get("root_dir");
+```
