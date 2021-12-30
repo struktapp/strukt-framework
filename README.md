@@ -32,12 +32,12 @@ FrameworkApp::getType(); //get application type
 $repo = array(
 
 	"core"=>Strukt\Package\Core::class, //Default in built package for default middlewares and providers
-	"pkg-do"=>Strukt\Package\PkgDo::class,
-	"pkg-roles"=>Strukt\Package\PkgRoles::class,
-	"pkg-audit"=>Strukt\Package\PkgAudit::class,
-	"pkg-books"=>Strukt\Package\PkgBooks::class,
-	"pkg-tests"=>Strukt\Package\PkgTests::class,
-	"pkg-asset"=>Strukt\Package\PkgAsset::class
+	"pkg-do"=>Strukt\Package\PkgDo::class,//https://github.com/pitsolu/pkg-do
+	"pkg-roles"=>Strukt\Package\PkgRoles::class,//https://github.com/pitsolu/pkg-roles
+	"pkg-audit"=>Strukt\Package\PkgAudit::class,//https://github.com/pitsolu/pkg-audit
+	"pkg-books"=>Strukt\Package\PkgBooks::class,//https://github.com/pitsolu/pkg-books
+	"pkg-tests"=>Strukt\Package\PkgTests::class,//https://github.com/pitsolu/pkg-tests
+	"pkg-asset"=>Strukt\Package\PkgAsset::class//https://github.com/pitsolu/pkg-asset
 );
 
 FrameworkApp::mayBeRepo($repo);
