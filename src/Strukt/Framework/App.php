@@ -44,7 +44,7 @@ class App{
 		$cls_name = Str::create($class);
 
 		if($cls_name->contains("{{app}}"))
-			$cls_name->replace("{{app}}", self::getName());
+			$cls_name = $cls_name->replace("{{app}}", self::getName());
 
 		return $cls_name->yield();
 	}
