@@ -480,7 +480,7 @@ class Kernel{
 	public function __construct(array $inject){
 
 		$this->config = new Configuration();
-		$inj = new Injectable($inject["events"]);
+		$inj = new Injectable($inject);
 
 		$this->kernel = new RouterKernel(Request::createFromGlobals());
 
