@@ -558,17 +558,22 @@ if(!is_null($app))
 
 $console = new Console();
 
-$pkgs = array(
+$published = FrameworkApp::packages("published");
+unset($published["core"]);
+unset($repo["core"]);
 
-	"pkg_do"=>"Doctrine",
-	"pkg_books"=>"Accounts",
-	"pkg_roles"=>"RBAC",
-	"pkg_tests"=>"PhpUnit"
-);
+foreach($repo as $pkg_name=>$pkg_cls)
+	if(!in_array($pkg_name, $published))
+		unset($repo[$pkg_name]);
 
-foreach($kernel->getConfig()->get("commands") as $pkg=>$cmdset){
+foreach($repo as $name=>$cls){
 
-	$console->addCmdSect(sprintf("\n%s", $pkgs[$pkg]));
+	$pkg = new $cls;
+
+	$settings = $pkg->getSettings("App:Cli");
+	$cmdset = $settings["commands"];
+
+	$console->addCmdSect(sprintf("\n%s", $pkg->getCmdName()));
 	foreach($cmdset as $cmd)
 		$console->add(FrameworkApp::newCls($cmd));
 }
