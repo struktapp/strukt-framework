@@ -480,14 +480,14 @@ class Kernel{
 	public function __construct(array $inject){
 
 		$this->config = new Configuration();
-		$inj = new Injectable($inject["map"], $inject["events"]);
+		$inj = new Injectable($inject["events"]);
 
 		$this->kernel = new RouterKernel(Request::createFromGlobals());
 
 		$kconfigs = $inj->getConfigs();
 		if(!empty($kconfigs))
-			foreach($kconfigs as $id=>$kconfig)
-				$this->kernel->inject($inj->getId($id), $kconfig);
+			foreach($kconfigs as $key=>$kconfig)
+				$this->kernel->inject($key, $kconfig);
 			
 		$this->kernel->providers($this->config->get("providers"));
 		$this->kernel->middlewares($this->config->get("middlewares"));
