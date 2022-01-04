@@ -477,10 +477,9 @@ class Kernel{
 	private $loader;
 	private $app;
 
-	public function __construct(array $inject){
+	public function __construct(Configuration $config, Injectable $inj){
 
-		$this->config = new Configuration();
-		$inj = new Injectable($inject);
+		$this->config = $config;
 
 		$this->kernel = new RouterKernel(Request::createFromGlobals());
 
@@ -534,6 +533,8 @@ Strukt\Fs::touchWrite("console",'#!/usr/bin/php
 use Strukt\Console;
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
+use Strukt\Framework\Configuration;
+use Strukt\Framework\Injectable;
 
 use App\Loader as AppLoader;
 use App\Kernel as AppKernel;
@@ -550,7 +551,7 @@ $repo = require "cfg/repo.php";
 FrameworkApp::create("App:Cli");
 FrameworkApp::mayBeRepo($repo); 
 
-$kernel = new AppKernel($inject);
+$kernel = new App\Kernel(new Configuration(), new Injectable($inject));
 $app = $kernel->getApp();
 
 if(!is_null($app))
@@ -584,6 +585,8 @@ Strukt\Fs::touchWrite("index.php",'<?php
 
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
+use Strukt\Framework\Configuration;
+use Strukt\Framework\Injectable;
 
 require "bootstrap.php";
 $inject = require "cfg/inject.php";
@@ -595,7 +598,9 @@ Env::set("root_dir", getcwd());
 FrameworkApp::create("App:Idx");
 FrameworkApp::mayBeRepo($repo);
 
-$kernel = new App\Kernel($inject);
+$inj = new
+
+$kernel = new App\Kernel(new Configuration(), new Injectable($inject));
 $kernel->run();');
 
 Strukt\Fs::touchWrite("cfg/inject.php", '<?php

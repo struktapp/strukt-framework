@@ -62,7 +62,21 @@ class Configuration{
 	}
 
 	/**
-	 * @param $key
+	 * @param string $key
+	 * 
+	 * - commands
+	 * - providers
+	 * - middlewares
+	 * 
+	 * @param array $settings
+	 */
+	public function set(string $key, array $settings){
+
+		$this->settings[$key] = $settings;
+	}
+
+	/**
+	 * @param string $key
 	 * 
 	 * - commands
 	 * - providers
