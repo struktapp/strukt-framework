@@ -598,8 +598,6 @@ Env::set("root_dir", getcwd());
 FrameworkApp::create("App:Idx");
 FrameworkApp::mayBeRepo($repo);
 
-$inj = new
-
 $kernel = new App\Kernel(new Configuration(), new Injectable($inject));
 $kernel->run();');
 
