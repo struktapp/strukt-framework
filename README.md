@@ -17,7 +17,7 @@ Below components are included in this package for overall build up of [strukt-st
 
 Rarely should anyone use this on its own.
 
-### Setting a application type
+## Setting Application Type
 
 ```php
 use Strukt\Framework\App as FrameworkApp;
@@ -26,7 +26,7 @@ FrameworkApp::create($type); //Can only be "App:Idx" for web or "App:Cli" for co
 FrameworkApp::getType(); //get application type
 ```
 
-### Setting up registry for packages 
+## Setup Registry Packages 
 
 ```php
 $repo = array(
@@ -44,7 +44,7 @@ FrameworkApp::mayBeRepo($repo);
 FrameworkApp::getRepo();
 ```
 
-### Some application methods
+## Some Application Methods
 
 ```php
 //The line below sets up namespace for with application name
@@ -56,7 +56,7 @@ $cls = FrameworkApp::newCls("{{app}}\AuthModule\Command\PermissionAdd");
 $app_name = FrameworkApp::getName(); //payroll
 ```
 
-### Packages
+## Packages
 
 ```php
 //Get installed and published packages
@@ -64,7 +64,7 @@ FrameworkApp::packages("installed");
 FrameworkApp::packages("published"); 
 ```
 
-### Configuration
+## Configuration
 
 ```php
 $cfg = new Strukt\Framework\Configuration();
@@ -72,7 +72,7 @@ $cfg->getSetup();//Already called in instance above
 $cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
 ```
 
-### Default package
+## Default Package
 
 ```php
 $core = new Strukt\Package\Core();//implements Strukt\Package\Pkg
@@ -89,7 +89,7 @@ $core->isPublished();//true by default
 
 The above methods are in abstract class `Strukt\Package\Pkg` you can use them to create your package.
 
-### Environment setup
+## Environment Setup
 
 This class is defaultly found in [strukt-commons](github.com/pitsolu/strukt-commons)
 
@@ -99,3 +99,67 @@ Strukt\Env::withFile(".env-dev");
 Strukt\Env::set("root_dir", getcwd());//custom environment variable
 Strukt\Env::get("root_dir");
 ```
+
+## Validator
+
+### Example
+
+```php
+$loginFrm = new class($request) extends \Strukt\Contract\Form{
+
+	protected function validation(){
+
+		$service = $this->getValidatorService();
+
+		$this->setMessage("email", $service->getNew($this->get("email"))
+										->isNotEmpty()
+										->isEmail());
+
+		$this->setMessage("password", $service->getNew($this->get("password"))
+										->isNotEmpty()
+										->isLen(8));
+
+		$this->setMessage("confirm_password", $service->getNew($this->get("confirm_password"))
+												->isNotEmpty()
+												->equalTo($this->get("password")));
+	}
+};
+
+$messages = $loginFrm->validate();
+```
+
+The `$request` above is `Strukt\Http\Request`
+
+
+### Validator Methods
+
+```php
+Strukt\Validator::isAlpha()
+Strukt\Validator::isAlphaNum()
+Strukt\Validator::isNumeric()
+Strukt\Validator::isEmail()
+Strukt\Validator::isDate(string $format="Y-m-d")
+Strukt\Validator::isNotEmpty()
+Strukt\Validator::isIn(array $enum)
+Strukt\Validator::equalsTo($val)
+Strukt\Validator::isLen($len)
+```
+
+### Adding Validators
+
+```php
+$customValidator = new class extends \Strukt\Contract\Validator{
+
+		public function isLenGt($len){
+
+			$this->message["is_gt"] = false;
+			if(strlen($this->getVal()) > $len)
+				$this->message["is_gt"] = true;
+		}
+	});
+}
+```
+
+New validators can be added is various ways if you are creative enough.
+I suggest you add the custom validator above via `Strukt\Core\Registry`
+with identifier `set` as `app.service.validator-extras`
