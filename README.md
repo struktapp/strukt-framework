@@ -7,13 +7,8 @@ Strukt Framework
 [![Latest Unstable Version](https://poser.pugx.org/strukt/framework/v/unstable)](https://packagist.org/packages/strukt/framework)
 [![License](https://poser.pugx.org/strukt/framework/license)](https://packagist.org/packages/strukt/framework)
 
-Below components are included in this package for overall build up of [strukt-strukt](https://github.com/pitsolu/strukt-strukt):
-
-- [strukt-router](https://github.com/pitsolu/strukt-router)
-- [strukt-commons](https://github.com/pitsolu/strukt-commons)
-- [strukt-generator](https://github.com/pitsolu/strukt-generator)
-- [strukt-fs](https://github.com/pitsolu/strukt-fs)
-- [strukt-console](https://github.com/pitsolu/strukt-console)
+The is the package that unifies all [strukt-strukt](https://github.com/pitsolu/strukt-strukt)
+components under the framework.
 
 Rarely should anyone use this on its own.
 
