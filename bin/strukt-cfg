@@ -228,6 +228,7 @@ class Index extends \Strukt\Contract\Router{
 	/**
 	* @Route(/user)
 	* @Method(GET)
+	* @Auth()
 	*/
 	public function getUser(Request $request){
 
@@ -644,16 +645,17 @@ return array(
 
 	"core"=>array(
 
-		"app.dep.author"=>function(){
+		"app.dep.author"=>function(Session $session){
 
-			return array(
+			$perms["permissions"] = [];
 
-				"permissions" => array(
+			/**
+			 * This permission enables Strukt\'s Auth Annotation
+			 */
+			if($session->has("username"))
+				$perms["permissions"][] = "strukt:auth"; 
 
-					/** "show_secrets"**/
-					/** "user_all"**/
-				)
-			);
+			return $perms;
 		},
 		"app.dep.authentic"=>function(Session $session){
 
@@ -680,15 +682,16 @@ return array(
 
 		"app.dep.author"=>function(Session $session){
 
+			$permissions["permissions"] = [];
+
 			if($session->has("username")){
 
 				$userC = App::newCls("{{app}}\AuthModule\Controller\User");
-				$permissions = $userC->findPermissionsByUsername($session->get("username"));
-
-				return $permissions;
+				$username = $session->get("username");
+				$permissions["permissions"] = $userC->findPermissionsByUsername($username);
 			}
 
-			return array();
+			return $permissions;
 		}
 	)
 );');

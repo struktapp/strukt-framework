@@ -22,8 +22,6 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 		$core->set("app.service.router", new Event(function($module_list) use($core){
 
-			// print_r($module_list);
-
 				foreach($module_list as $module){
 
 					foreach($module["Router"] as $router){
@@ -36,13 +34,9 @@ class Router extends AbstractProvider implements ProviderInterface{
 						$parser = new BasicAnnotationParser(new \ReflectionClass($class_name));
 						$annotations = $parser->getAnnotations();
 
-						// print_r($annotations);
-
 						foreach($annotations as $annotation){
 
 							foreach($annotation as $methodName=>$methodItems){
-
-								// print_r(array($methodName, $methodItems));
 
 								if(array_key_exists("Method", $methodItems)){
 
@@ -54,13 +48,18 @@ class Router extends AbstractProvider implements ProviderInterface{
 									if(array_key_exists("Permission", $methodItems))
 										$name = $methodItems["Permission"]["item"];
 
+									if(empty($name))
+										if(array_key_exists("Auth", $methodItems))
+											$name = "strukt:auth";
+
 									$rClass = new \ReflectionClass($class);
-		 							$route_func = $rClass->getMethod($methodName)
-		 													->getClosure($rClass->newInstance());
+									$rMethod = $rClass->getMethod($methodName);
+		 							$route_func = $rMethod->getClosure($rClass->newInstance());
 
-		 							// print_r(array($pattern, $route_func, $http_method, $name));
-
-									$route = new Route($pattern, $route_func, $http_method, $name);
+									$route = new Route($pattern, 
+														$route_func, 
+														$http_method, 
+														$name);
 
 									$core->get("app.router")->addRoute($route);
 								}
