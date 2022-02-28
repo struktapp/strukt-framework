@@ -105,6 +105,7 @@ class User{
 }');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",'<?php
+<?php
 namespace {{app}}\AuthModule\Router;
 
 use Strukt\Http\Request;
@@ -124,26 +125,56 @@ class Auth extends \Strukt\Contract\Router{
 		$userForm = $this->get("au.frm.User", [$request]);
 		$messages = $userForm->validate();
 
-		if($messages["is_valid"])
-		    if($this->get("au.ctr.User")->doAuthentication($username, $password))
-		       return self::json(array(
+		if($messages["is_valid"]){
+
+		    if($this->get("au.ctr.User")->doAuthentication($username, $password)){
+
+		    	new \Strukt\Auth($username);
+		    	// new \Strukt\Auth($username, "user_type:admin|status:chilled-out");
+
+		       	return self::json(array(
 
 		            "success"=>true, 
 		            "message"=>"User successfully authenticated."
 		        ));
-		    else 
-		        return self::json(array(
+		    }
+		
+	        return self::json(array(
 
-		            "success"=>false,
-		            "message"=>"Failed to authenticate user!"
-		        ));
-		else
-		    return self::json(array(
+	            "success"=>false,
+	            "message"=>"Failed to authenticate user!"
+	        ));
+		}
 
-		        "success"=>false,
-		        "message"=>"Invalid input!",
-		        "form"=>$messages,
-		    ));
+	    return self::json(array(
+
+	        "success"=>false,
+	        "message"=>"Invalid input!",
+	        "form"=>$messages,
+	    ));
+	}
+
+	/**
+	* @Route(/current/user)
+	* @Method(POST)
+	*/
+	public function currentUser(Request $request){
+
+		$user = $request->getUser();
+
+		return new Response($user->getUsername());
+		// return new Response(sprintf("%s %s", $user->getUsername(), $user->getToken());
+	}
+
+	/**
+	* @Route(/logout)
+	* @Method(POST)
+	*/
+	public function logout(Request $request){
+
+		$request->getSession()->invalidate();
+
+		return "Successfully logged out.";
 	}
 }');
 
