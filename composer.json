@@ -16,7 +16,7 @@
         "strukt/generator": "1.0.0-alpha",
         "strukt/console": "1.0.0",
         "strukt/fs":"1.0.0",
-        "strukt/router":"1.0.0-alpha",
+        "strukt/router":"1.0.1-alpha",
         "strukt/contract":"1.0.0-alpha",
         "symfony/http-foundation": "^4.3",
         "phplucidframe/console-table": "^1.2",
