@@ -684,7 +684,7 @@ class Injectable{
 	 */
 	public function getPkgCoreVerify(Session $session){
 
-		$user = new Strukt\User();
+		$user = new \Strukt\User();
 		$user->setUsername($session->get("username"));
 
 		return $user;

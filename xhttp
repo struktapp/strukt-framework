@@ -7,7 +7,6 @@ use Strukt\Framework\Configuration;
 use Strukt\Framework\Injectable;
 
 require "bootstrap.php";
-$inject = require "cfg/inject.php";
 $repo = require "cfg/repo.php";
 
 $argv = $_SERVER["argv"];
@@ -29,19 +28,28 @@ $_SERVER["REQUEST_URI"] = $uri;
 $_SERVER["REQUEST_METHOD"] = $method;
 $_REQUEST = $_POST = $params;
 
-// print_r(array(
-
-// 	"REQUEST_URI"=>$_SERVER["REQUEST_URI"],
-// 	"REQUEST_METHOD"=>$_SERVER["REQUEST_METHOD"],
-// 	"_REQUEST"=>$_REQUEST
-
-// ));exit;
-
 Env::withFile();
 Env::set("root_dir", getcwd());
 
 FrameworkApp::create("App:Cli");
 FrameworkApp::mayBeRepo($repo);
 
-$kernel = new App\Kernel(new Configuration(), new Injectable($inject));
-$kernel->run();
+App\Middleware\XSession::create(array(
+
+		"username"=>"admin"
+	),
+	array(
+
+		"strukt:auth"
+));
+
+$config = new Configuration();
+$middlewares = $config->get("middlewares");
+$middlewares = array_merge([App\Middleware\XSession::class], $middlewares);
+$config->set("middlewares", $middlewares);
+
+$kernel = new App\Kernel($config, new Injectable());
+$runner = $kernel->getApp()->run();
+$runner = $runner->init();
+$response = $kernel->getRouter()->run();
+exit(sprintf("%s\n", $response->getContent()));
