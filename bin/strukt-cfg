@@ -415,7 +415,7 @@ class Logger extends AbstractProvider implements ProviderInterface{
 
 	public function register(){
 
-		$this->core()->set("app.service.logger", new Event(function(
+		$this->core()->set("strukt.service.logger", new Event(function(
 														$logger_name, 
 														$log_file, 
 														$log_type = Monolog::INFO){
@@ -426,11 +426,11 @@ class Logger extends AbstractProvider implements ProviderInterface{
 			return $logger;
 		}));
 
-		$this->core()->set("app.logger", new class extends AbstractProvider{
+		$this->core()->set("strukt.logger", new class extends AbstractProvider{
 
 			public function info($message, array $context = []){
 
-				$logger = $this->core()->get("app.service.logger")
+				$logger = $this->core()->get("strukt.service.logger")
 									->apply(Env::get("logger_name"), 
 											Env::get("logger_file"))
 									->exec();
@@ -440,7 +440,7 @@ class Logger extends AbstractProvider implements ProviderInterface{
 
 			public function error($message, array $context = []){
 
-				$logger = $this->core()->get("app.service.logger")
+				$logger = $this->core()->get("strukt.service.logger")
 									->apply(Env::get("logger_name"), 
 											Env::get("logger_file"),
 											Monolog::ERROR)
@@ -577,13 +577,12 @@ $loader->add("Schema", __DIR__."/database/schema");
 Env::withFile();
 Env::set("root_dir", getcwd());
 
-$inject = require "cfg/inject.php";
 $repo = require "cfg/repo.php";
 
 FrameworkApp::create("App:Cli");
 FrameworkApp::mayBeRepo($repo); 
 
-$kernel = new App\Kernel(new Configuration(), new Injectable($inject));
+$kernel = new App\Kernel(new Configuration(), new Injectable());
 $app = $kernel->getApp();
 
 if(!is_null($app))
@@ -621,7 +620,6 @@ use Strukt\Framework\Configuration;
 use Strukt\Framework\Injectable;
 
 require "bootstrap.php";
-$inject = require "cfg/inject.php";
 $repo = require "cfg/repo.php";
 
 Env::withFile();
@@ -630,10 +628,12 @@ Env::set("root_dir", getcwd());
 FrameworkApp::create("App:Idx");
 FrameworkApp::mayBeRepo($repo);
 
-$kernel = new App\Kernel(new Configuration(), new Injectable($inject));
+$kernel = new App\Kernel(new Configuration(), new Injectable());
 $kernel->run();');
 
-Strukt\Fs::touchWrite("cfg/inject.php", '<?php
+Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
+
+namespace App;
 
 use Strukt\User; 
 use App\Service\Logger\Monologer;
@@ -641,60 +641,75 @@ use Strukt\Http\Session;
 use Strukt\Env;
 use Strukt\Framework\App;
 
-return array(
+class Injectable{
 
-	"core"=>array(
+	/**
+	 * @Package(core)
+	 * @Inject(permissions)
+	 */
+	public function getPkgCorePermissons(Session $session){
 
-		"app.dep.author"=>function(Session $session){
+		$perms["permissions"] = [];
 
-			$perms["permissions"] = [];
+		/**
+		 * This permission enables Strukt\'s Auth Annotation
+		 */
+		if($session->has("username"))
+			$perms["permissions"][] = "strukt:auth"; 
 
-			/**
-			 * This permission enables Strukt\'s Auth Annotation
-			 */
-			if($session->has("username"))
-				$perms["permissions"][] = "strukt:auth"; 
+		return $perms;
+	}
 
-			return $perms;
-		},
-		"app.dep.authentic"=>function(Session $session){
+	/**
+	 * @Package(pkg-roles)
+	 * @Inject(permissions)
+	 */
+	public function getPkgRolesPermissions(Session $session){
 
-			$user = new Strukt\User();
-			$user->setUsername($session->get("username"));
+		$permissions["permissions"] = [];
 
-			return $user;
-		},
-		"app.dep.session"=>function(){
+		if($session->has("username")){
 
-			return new Session;
+			$userC = App::newCls("{{app}}\AuthModule\Controller\User");
+			$username = $session->get("username");
+			$permissions["permissions"] = $userC->findPermissionsByUsername($username);
 		}
-	),
-	"pkg-do"=>array(
 
-		"app.dep.logger.sqllogger"=>function(){
+		return $permissions;
+	}
 
-			$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
+	/**
+	 * @Package(core)
+	 * @Inject(verify)
+	 */
+	public function getPkgCoreVerify(Session $session){
 
-			return new Monologer(null, null, $log_dir);
-		}
-	),
-	"pkg-roles"=>array(
+		$user = new Strukt\User();
+		$user->setUsername($session->get("username"));
 
-		"app.dep.author"=>function(Session $session){
+		return $user;
+	}
 
-			$permissions["permissions"] = [];
+	/**
+	 * @Package(core)
+	 * @Inject(session)
+	 */
+	public function getPkgCoreSession(){
 
-			if($session->has("username")){
+		return new Session;
+	}
 
-				$userC = App::newCls("{{app}}\AuthModule\Controller\User");
-				$username = $session->get("username");
-				$permissions["permissions"] = $userC->findPermissionsByUsername($username);
-			}
+	/**
+	 * @Package(pkg-do)
+	 * @Inject(sqllogger)
+	 */
+	public function getPkgDoSqlLogger(){
 
-			return $permissions;
-		}
-	)
-);');
+		$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
+
+		return new Monologer(null, null, $log_dir);
+	}
+}');
 
 Strukt\Fs::touchWrite("cfg/repo.php",'<?php
 

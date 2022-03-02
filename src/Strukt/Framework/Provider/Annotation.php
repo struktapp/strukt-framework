@@ -13,14 +13,14 @@ class Annotation extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){
 
-		$this->core()->set("app.annotations", new RouteCollection());
+		$this->core()->set("strukt.annotations", new RouteCollection());
 	}
 
 	public function register(){
 
 		$core = $this->core();
 
-		$core->set("app.service.annotations", new Event(
+		$core->set("strukt.service.annotations", new Event(
 
 			function($module_list) use($core){
 
@@ -62,7 +62,7 @@ class Annotation extends AbstractProvider implements ProviderInterface{
 				}
 			}
 
-			$core->get("app.annotations", $annotations);
+			$core->get("strukt.annotations", $annotations);
 		}));
 	}
 }

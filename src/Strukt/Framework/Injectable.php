@@ -10,11 +10,24 @@ class Injectable{
 	private $packages;
 	private $injectables;
 
-	public function __construct(array $injectables){
+	public function __construct(){
 
 		$this->packages = FrameworkApp::packages("published");
 
-		$this->injectables = $injectables;
+		$rInj = new \ReflectionClass(\App\Injectable::class);
+		$parser = new \Strukt\Annotation\Parser\Basic($rInj);
+		$notes = $parser->getAnnotations();
+
+		$refCls = \Strukt\Ref::create($notes["class_name"]);
+
+		foreach($notes["methods"] as $method_name=>$note){
+
+			$method = $refCls->noMake()->method($method_name)->getClosure();
+			$key = sprintf("@inject.%s", $note["Inject"]["item"]);
+			$inj[$note["Package"]["item"]][$key] = $method;
+		}
+
+		$this->injectables = $inj;
 	}
 
 	public function getConfigs(){

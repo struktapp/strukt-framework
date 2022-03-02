@@ -50,7 +50,7 @@ abstract class Form extends AbstractCore{
 	*/
 	protected function getValidatorService(){
 
-		return $this->core()->get("app.service.validator");
+		return $this->core()->get("strukt.service.validator");
 	}
 
 	/**

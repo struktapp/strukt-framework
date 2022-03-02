@@ -14,7 +14,7 @@ class RouteList extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$routeCollection = Registry::getSingleton()->get("app.router");
+		$routeCollection = Registry::getSingleton()->get("strukt.router");
 		$routes = $routeCollection->getRoutes();
 
 		$table = new ConsoleTable();

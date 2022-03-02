@@ -193,13 +193,13 @@ class Application extends AbstractCore{
 				$this->core->set("nr", $this->nr);
 				$this->core->set("core", new Core);
 
-				if($this->core->exists("app.service.annotations"))
-					$this->core->get("app.service.annotations")
+				if($this->core->exists("strukt.service.annotations"))
+					$this->core->get("strukt.service.annotations")
 									->apply($this->modList)
 									->exec();
 
-				if($this->core->exists("app.service.router"))
-					$this->core->get("app.service.router")
+				if($this->core->exists("strukt.service.router"))
+					$this->core->get("strukt.service.router")
 									->apply($this->modList)
 									->exec();
 
@@ -222,8 +222,8 @@ class Application extends AbstractCore{
 				}
 				catch(\Exception $e){
 
-					if($this->core->exists("app.logger"))
-						$this->core->get("app.logger")->error($e);
+					if($this->core->exists("strukt.logger"))
+						$this->core->get("strukt.logger")->error($e);
 
 					exit($e->getMessage());
 				}

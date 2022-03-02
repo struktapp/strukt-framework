@@ -31,12 +31,12 @@ class RouterKernelTest extends TestCase{
 			\Strukt\Framework\Provider\Router::class
 		]);
 
-		$this->kernel->inject("app.dep.author", function(){
+		$this->kernel->inject("@inject.permissions", function(){
 
 			return array();
 		});
 
-		$this->kernel->inject("app.dep.authentic", function(Session $session){
+		$this->kernel->inject("@inject.verify", function(Session $session){
 
 			$user = new Strukt\User();
 			$user->setUsername($session->get("username"));
@@ -44,7 +44,7 @@ class RouterKernelTest extends TestCase{
 			return $user;
 		});
 
-		$this->kernel->inject("app.dep.session", function(){
+		$this->kernel->inject("@inject.session", function(){
 
 			return new Session;
 		});

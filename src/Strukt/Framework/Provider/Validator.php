@@ -15,7 +15,7 @@ class Validator extends AbstractProvider implements ProviderInterface{
 
 	public function register(){
 
-		$this->core()->set("app.service.validator", new class{
+		$this->core()->set("strukt.service.validator", new class{
 
 		    public function getNew(string $value) {
 		        

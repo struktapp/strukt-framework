@@ -158,9 +158,9 @@ class Validator extends ValidatorContract{
 
 		$registry = $this->core();
 
-		if($registry->exists("app.service.validator-extras")){
+		if($registry->exists("@inject.service.validator-extras")){
 
-			$validator = $registry->get("app.service.validator-extras");
+			$validator = $registry->get("@inject.service.validator-extras");
 
 			$validator->setVal($this->getVal());
 
@@ -181,14 +181,14 @@ class Validator extends ValidatorContract{
 						return $this;
 					}
 
-					new Raise(sprintf("%s does not exists in [app...validator-extras]!", $name)); 
+					new Raise(sprintf("%s does not exists in [validator-extras]!", $name)); 
 				}
 			}
 
-			new Raise(sprintf("[app...validator-extras] must inherit abstract class %s!", 
+			new Raise(sprintf("[validator-extras] must inherit abstract class %s!", 
 								ValidatorContract::class));
 		}
 
-		new Raise("[app.service.validator-extras] does not exist!");
+		new Raise("Service [validator-extras] does not exist!");
 	}
 }

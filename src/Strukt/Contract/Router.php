@@ -30,7 +30,7 @@ abstract class Router extends AbstractService{
 		if(preg_match("/\:/", $uri))
 			list($method, $uri) = explode(":", $uri);
 
-		$router = $this->core()->get("app.router");
+		$router = $this->core()->get("strukt.router");
 
 		$route = $router->getRoute($method, $uri);
 

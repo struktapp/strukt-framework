@@ -13,9 +13,9 @@ class FormValidatorTest extends TestCase{
 
 		$registry = Registry::getSingleton();
 
-		if(!$registry->exists("app.service.validator-extras")){
+		if(!$registry->exists("@inject.service.validator-extras")){
 
-			$registry->set("app.service.validator-extras", new class extends \Strukt\Contract\Validator{
+			$registry->set("@inject.service.validator-extras", new class extends \Strukt\Contract\Validator{
 
 				public function isLenGt($len){
 
@@ -26,7 +26,7 @@ class FormValidatorTest extends TestCase{
 			});
 		}
 
-		$this->service = $registry->get("app.service.validator");
+		$this->service = $registry->get("strukt.service.validator");
 	}
 
 	/**

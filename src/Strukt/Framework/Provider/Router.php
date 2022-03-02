@@ -13,14 +13,14 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){
 
-		$this->core()->set("app.router", new RouteCollection());
+		$this->core()->set("strukt.router", new RouteCollection());
 	}
 
 	public function register(){
 
 		$core = $this->core();
 
-		$core->set("app.service.router", new Event(function($module_list) use($core){
+		$core->set("strukt.service.router", new Event(function($module_list) use($core){
 
 				foreach($module_list as $module){
 
@@ -61,7 +61,7 @@ class Router extends AbstractProvider implements ProviderInterface{
 														$http_method, 
 														$name);
 
-									$core->get("app.router")->addRoute($route);
+									$core->get("strukt.router")->addRoute($route);
 								}
 							}
 						}
