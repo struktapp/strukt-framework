@@ -142,19 +142,5 @@ Strukt\Validator::isLen($len)
 
 ### Adding Validators
 
-```php
-$customValidator = new class extends \Strukt\Contract\Validator{
-
-		public function isLenGt($len){
-
-			$this->message["is_gt"] = false;
-			if(strlen($this->getVal()) > $len)
-				$this->message["is_gt"] = true;
-		}
-	});
-}
-```
-
-New validators can be added is various ways if you are creative enough.
-I suggest you add the custom validator above via `Strukt\Core\Registry`
-with identifier `set` as `app.service.validator-extras`
+New validators can be added is in your `lib/App/Validator/Extra.php`
+There you can find an example `App\Validator\Extra::isLenGt`
