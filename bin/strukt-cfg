@@ -396,6 +396,51 @@ class Cors extends AbstractMiddleware implements MiddlewareInterface{
 	}
 }');
 
+Strukt\Fs::touchWrite("lib/App/Middleware/XSession.php", '<?php
+
+namespace App\Middleware;
+
+use Strukt\Contract\AbstractMiddleware;
+use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\ResponseInterface;
+use Strukt\Http\Request;
+
+class XSession extends AbstractMiddleware implements MiddlewareInterface{
+
+	private $session;
+	private static $map;
+
+	public function __construct(){
+
+		$this->session = $this->core()->get("@inject.session")->exec();
+	}
+
+	public static function create(array $map, array $perms = null){
+
+		self::$map = $map;
+		
+		$permissions = ["permissions"=>[]];	
+		if(!is_null($perms))
+			$permissions["permissions"] = $perms;
+
+		self::core()->set("@strukt", $permissions);
+	}
+
+	public function __invoke(Request $request, ResponseInterface $response, callable $next){
+
+		$this->session->start();
+		foreach(self::$map as $key=>$val)
+			$this->session->set($key, $val);
+
+		if($this->session->has("username"));
+			$request->setUser(new \Strukt\User(self::$map["username"]));
+
+		$request->setSession($this->session);
+
+		return $next($request, $response);
+	}
+}')
+
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php",'<?php
 
 namespace App\Provider;
@@ -454,7 +499,6 @@ class Logger extends AbstractProvider implements ProviderInterface{
 }');
 
 Strukt\Fs::touchWrite("lib/App/Validator/Extra.php",'<?php
-<?php
 
 namespace App\Validator;
 
