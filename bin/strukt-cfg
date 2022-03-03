@@ -452,6 +452,28 @@ class Logger extends AbstractProvider implements ProviderInterface{
 	}
 }');
 
+Strukt\Fs::touchWrite("lib/App/Validator/Extra.php",'<?php
+<?php
+
+namespace App\Validator;
+
+/**
+* Validator Extra
+* 
+* This as class you can use to add your custom validators
+*
+* @author Moderator <pitsolu@gmail.com>
+*/
+class Extra extends \Strukt\Contract\Validator{
+
+	public function isLenGt($len){
+
+		$this->message["is_gt"] = false;
+		if(strlen($this->getVal()) > $len)
+			$this->message["is_gt"] = true;
+	}
+}');
+
 
 Strukt\Fs::touchWrite("cfg/module.ini",
 '[folders]
@@ -502,6 +524,9 @@ use Strukt\Raise;
 
 use App\Loader as AppLoader;
 
+// use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+
 class Kernel{
 
 	private $kernel;
@@ -509,11 +534,16 @@ class Kernel{
 	private $loader;
 	private $app;
 
-	public function __construct(Configuration $config, Injectable $inj){
+	public function __construct(Configuration $config, 
+									Injectable $inj,
+									ServerRequestInterface $request = null){
 
 		$this->config = $config;
 
-		$this->kernel = new RouterKernel(Request::createFromGlobals());
+		if(is_null($request))
+			$request = Request::createFromGlobals();
+
+		$this->kernel = new RouterKernel($request);
 
 		$kconfigs = $inj->getConfigs();
 		if(!empty($kconfigs))

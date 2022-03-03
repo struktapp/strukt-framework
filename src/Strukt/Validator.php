@@ -2,9 +2,11 @@
 
 namespace Strukt;
 
+use Strukt\Ref;
 use Strukt\Raise;
 use Strukt\Core\Registry;
 use Strukt\Contract\Validator as ValidatorContract;
+use App\Validator\Extra as ValidatorExtra;
 
 /**
 * Validator class
@@ -156,39 +158,19 @@ class Validator extends ValidatorContract{
 
 	public function __call($name, $args){
 
-		$registry = $this->core();
+		$rExtra = Ref::create(ValidatorExtra::class);
+		
+		if(!$rExtra->getRef()->hasMethod($name))
+			new Raise(sprintf("%s::%s doesn't exist!", ValidatorExtra::class, $name));
 
-		if($registry->exists("@inject.service.validator-extras")){
+		$extra = $rExtra->noMake()->getInstance();
 
-			$validator = $registry->get("@inject.service.validator-extras");
+		$extra->setVal($this->getVal());
 
-			$validator->setVal($this->getVal());
+		$rExtra->method($name)->getRef()->invokeArgs($extra, $args);
 
-			$oRef = new \ReflectionObject($validator);
+		$this->message = array_merge($this->message, $extra->getMessage());
 
-			$parentCls = $oRef->getParentClass();
-
-			if($parentCls){
-				
-				if($parentCls->getName() == ValidatorContract::class){
-
-					if($oRef->hasMethod($name)){
-
-						$oRef->getMethod($name)->invokeArgs($validator, $args);
-
-						$this->message = array_merge($this->message, $validator->getMessage());
-
-						return $this;
-					}
-
-					new Raise(sprintf("%s does not exists in [validator-extras]!", $name)); 
-				}
-			}
-
-			new Raise(sprintf("[validator-extras] must inherit abstract class %s!", 
-								ValidatorContract::class));
-		}
-
-		new Raise("Service [validator-extras] does not exist!");
+		return $this;
 	}
 }
