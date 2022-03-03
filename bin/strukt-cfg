@@ -439,7 +439,7 @@ class XSession extends AbstractMiddleware implements MiddlewareInterface{
 
 		return $next($request, $response);
 	}
-}')
+}');
 
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php",'<?php
 
