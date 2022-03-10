@@ -2,11 +2,11 @@
 
 namespace Strukt\Contract;
 
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 use Strukt\Http\Request;
-use Strukt\Http\RedirectResponse;
-use Strukt\Http\JsonResponse;
-use Strukt\Http\Exception\NotFoundException;
+use Strukt\Http\Response\Redirect as RedirectResponse;
+use Strukt\Http\Response\Json as JsonResponse;
+use Strukt\Http\Exception\NotFound as NotFoundException;
 use Strukt\Fs;
 
 /**

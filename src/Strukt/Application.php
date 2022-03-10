@@ -11,7 +11,7 @@ use Strukt\Env;
 use Strukt\Raise;
 use Strukt\Fs;
 use Strukt\Contract\AbstractCore;
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 use Strukt\Http\Request;
 use Strukt\Framework\Module\Core;
 

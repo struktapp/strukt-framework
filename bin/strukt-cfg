@@ -110,7 +110,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",'<?php
 namespace {{app}}\AuthModule\Router;
 
 use Strukt\Http\Request;
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 
 class Auth extends \Strukt\Contract\Router{
 
@@ -184,7 +184,7 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",'<?php
 namespace {{app}}\AuthModule\Router;
 
 use Strukt\Http\Request;
-use Strukt\Http\Response;
+use Strukt\Http\Response\Plain as Response;
 
 class Index extends \Strukt\Contract\Router{
 
@@ -355,10 +355,11 @@ Strukt\Fs::touchWrite("lib/App/Middleware/Cors.php",'<?php
 
 namespace App\Middleware;
 
-use Strukt\Contract\ResponseInterface;
-use Strukt\Http\Request;
-use Strukt\Contract\MiddlewareInterface;
-use Strukt\Contract\AbstractMiddleware;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
+//use Strukt\Http\Request;
+use Strukt\Contract\Middleware\MiddlewareInterface;
+use Strukt\Contract\Middleware\AbstractMiddleware;
 
 class Cors extends AbstractMiddleware implements MiddlewareInterface{
 
@@ -367,7 +368,7 @@ class Cors extends AbstractMiddleware implements MiddlewareInterface{
 		//
 	}
 
-	public function __invoke(Request $request, ResponseInterface $response, callable $next){
+	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
 
     	// $response->headers->add([
 
@@ -400,10 +401,11 @@ Strukt\Fs::touchWrite("lib/App/Middleware/XSession.php", '<?php
 
 namespace App\Middleware;
 
-use Strukt\Contract\AbstractMiddleware;
-use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\Middlware\AbstractMiddleware;
+use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\ResponseInterface;
-use Strukt\Http\Request;
+use Strukt\Contract\RequestInterface;
+//use Strukt\Http\Request;
 
 class XSession extends AbstractMiddleware implements MiddlewareInterface{
 
@@ -426,7 +428,7 @@ class XSession extends AbstractMiddleware implements MiddlewareInterface{
 		self::core()->set("@strukt", $permissions);
 	}
 
-	public function __invoke(Request $request, ResponseInterface $response, callable $next){
+	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
 
 		$this->session->start();
 		foreach(self::$map as $key=>$val)
@@ -448,8 +450,8 @@ namespace App\Provider;
 use Monolog\Logger as Monolog;
 use Monolog\Handler\StreamHandler;
 use Strukt\Event;
-use Strukt\Contract\AbstractProvider;
-use Strukt\Contract\ProviderInterface;
+use Strukt\Contract\Provider\AbstractProvider;
+use Strukt\Contract\Provider\ProviderInterface;
 use Strukt\Env;
 
 class Logger extends AbstractProvider implements ProviderInterface{ 
@@ -712,7 +714,7 @@ namespace App;
 
 use Strukt\User; 
 use App\Service\Logger\Monologer;
-use Strukt\Http\Session;
+use Strukt\Http\Session\Native as Session;
 use Strukt\Env;
 use Strukt\Framework\App;
 

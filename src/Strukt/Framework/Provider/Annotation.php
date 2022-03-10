@@ -5,8 +5,8 @@ namespace Strukt\Framework\Provider;
 use Strukt\Router\RouteCollection;
 use Strukt\Router\Route;
 use Strukt\Event;
-use Strukt\Contract\AbstractProvider;
-use Strukt\Contract\ProviderInterface;
+use Strukt\Contract\Provider\AbstractProvider;
+use Strukt\Contract\Provider\ProviderInterface;
 use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 
 class Annotation extends AbstractProvider implements ProviderInterface{

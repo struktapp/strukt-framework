@@ -6,7 +6,7 @@ use Strukt\Framework\Injectable;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Router\Kernel;
 use Strukt\Http\Request;
-use Strukt\Http\Session;
+use Strukt\Http\Session\Native as Session;
 use Strukt\Env;
 use Strukt\Core\Registry;
 

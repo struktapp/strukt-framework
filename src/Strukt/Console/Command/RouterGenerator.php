@@ -7,7 +7,7 @@ use Strukt\Console\Output;
 use Strukt\Generator\ClassBuilder;
 use Strukt\Generator\Annotation\Basic as BasicAnnotations;
 use Strukt\Http\Request as HttpRequest;
-use Strukt\Http\Reponse as HttpResponse;
+use Strukt\Http\Reponse\Plain as HttpResponse;
 use Strukt\Fs;
 use Strukt\Env;
 use Strukt\Contract\Router as AbstractRouter;

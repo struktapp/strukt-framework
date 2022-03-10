@@ -3,8 +3,8 @@
 namespace Strukt\Framework\Provider;
 
 use Strukt\Event;
-use Strukt\Contract\AbstractProvider;
-use Strukt\Contract\ProviderInterface;
+use Strukt\Contract\Provider\AbstractProvider;
+use Strukt\Contract\Provider\ProviderInterface;
 
 class Validator extends AbstractProvider implements ProviderInterface{
 
