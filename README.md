@@ -109,7 +109,7 @@ See structure of packages below.
 └── src
     └── Strukt
         └── Package
-            └── Pkg<Package Name>.php #Identify your package resources here
+            └── Pkg{{Package Name}}.php #Identify your package resources here
 
 ```
 
