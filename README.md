@@ -12,6 +12,27 @@ components under the framework.
 
 Rarely should anyone use this on its own.
 
+# Setup, Configuration & Environment
+
+## Configuration
+
+```php
+$cfg = new Strukt\Framework\Configuration();
+$cfg->getSetup();//Already called in instance above
+$cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
+```
+
+## Environment Setup
+
+This class is defaultly found in [strukt-commons](github.com/pitsolu/strukt-commons)
+
+```php
+Strukt\Env::withFile();//default .env file in your root folder
+Strukt\Env::withFile(".env-dev");
+Strukt\Env::set("root_dir", getcwd());//custom environment variable
+Strukt\Env::get("root_dir");
+```
+
 ## Setting Application Type
 
 ```php
@@ -51,20 +72,12 @@ $cls = FrameworkApp::newCls("{{app}}\AuthModule\Command\PermissionAdd");
 $app_name = FrameworkApp::getName(); //payroll
 ```
 
-## Packages
+# Packages
 
 ```php
 //Get installed and published packages
 FrameworkApp::packages("installed"); 
 FrameworkApp::packages("published"); 
-```
-
-## Configuration
-
-```php
-$cfg = new Strukt\Framework\Configuration();
-$cfg->getSetup();//Already called in instance above
-$cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
 ```
 
 ## Default Package
@@ -84,20 +97,42 @@ $core->isPublished();//true by default
 
 The above methods are in abstract class `Strukt\Package\Pkg` you can use them to create your package.
 
-## Environment Setup
+## Building Packages
 
-This class is defaultly found in [strukt-commons](github.com/pitsolu/strukt-commons)
+See structure of packages below.
 
-```php
-Strukt\Env::withFile();//default .env file in your root folder
-Strukt\Env::withFile(".env-dev");
-Strukt\Env::set("root_dir", getcwd());//custom environment variable
-Strukt\Env::get("root_dir");
+```
+├── composer.json
+├── LICENSE
+├── package #Place all your packages files here
+├── README.md
+└── src
+    └── Strukt
+        └── Package
+            └── Pkg<Package Name>.php #Identify your package resources here
+
 ```
 
-## Validator
+Your package class in `src/Strukt/Package/Pkg<Package Name>.php` will have methods
+listed in the `Default Package` that is it should implement the 
+interface `Strukt\Contract\Package`
 
-### Example
+### Package Autoloading
+
+You may require to autoload libraries both from your root directory and package resources.
+
+```php
+$loader = require "vendor/autoload.php";
+$loader->addPsr4("App\\", [
+
+	__DIR__."/lib/App",
+	__DIR__."/packages/lib/App"
+]);
+```
+
+# Validator
+
+## Example
 
 ```php
 $loginFrm = new class($request) extends \Strukt\Contract\Form{
@@ -126,7 +161,7 @@ $messages = $loginFrm->validate();
 The `$request` above is `Strukt\Http\Request`
 
 
-### Validator Methods
+## Validator Methods
 
 ```php
 Strukt\Validator::isAlpha()
@@ -140,7 +175,7 @@ Strukt\Validator::equalsTo($val)
 Strukt\Validator::isLen($len)
 ```
 
-### Adding Validators
+## Adding Validators
 
 New validators can be added is in your `lib/App/Validator/Extra.php`
 There you can find an example `App\Validator\Extra::isLenGt`
