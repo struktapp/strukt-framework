@@ -73,7 +73,8 @@ class PackagePublisher extends \Strukt\Console\Command{
 					new Raise(sprintf("Please install and publish package [%s]!", $requirement));
 		}
 
-		Arr::create($pkg->getFiles())->each(function($key, $relpath) use ($vendor_pkg, $appname){
+		Arr::create($pkg->getFiles())->each(function($key, $relpath) use (
+			$pkgname, $vendor_pkg, $appname){
 
 			$vendor_appbase = Fs::ds(Str::create(Env::get("rel_appsrc_dir"))
 										->concat("App")
@@ -94,7 +95,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			$vendorFilePath = Str::create($vendor_pkg);
 
-			if($vendor_pkg != "package")
+			if($pkgname != "package")
 				$vendorFilePath->concat(Fs::ds("/package/"));
 
 			$vendor_file_path = $vendorFilePath->concat($relpath)->yield();
