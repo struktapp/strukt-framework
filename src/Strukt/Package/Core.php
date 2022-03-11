@@ -82,4 +82,9 @@ class Core implements Pkg{
 
 		return true;
 	}
+
+	public function getRequirements(){
+
+		return null;
+	}
 }

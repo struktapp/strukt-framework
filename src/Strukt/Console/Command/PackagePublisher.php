@@ -37,7 +37,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 		$pkgname = $in->get("pkg");
 
 		$vendor_pkg = Str::create(Env::get("root_dir"))
-			->concat(Fs::ds("/vendor/strukt/"))
+			->concat(Fs::ds(Env::get("vendor_fw")))
 			->concat($pkgname)
 			->yield();
 
@@ -60,6 +60,16 @@ class PackagePublisher extends \Strukt\Console\Command{
 		$pkg = Ref::create($pkgclass)->make()->getInstance();
 
 		$appname = $app_ini["app-name"];
+
+		$requirements = $pkg->getRequirements();
+		
+		if(!is_null($requirements)){
+
+			$published = FrameworkApp::packages("published");
+			foreach($requirements as $requirement)
+				if(!in_array($requirement, $published))
+					new Raise(sprintf("Please install and publish package [%s]!", $requirement));
+		}
 
 		Arr::create($pkg->getFiles())->each(function($key, $relpath) use ($vendor_pkg, $appname){
 

@@ -93,6 +93,7 @@ $core->getCmdName();//null
 $core->getFiles();//null
 $core->getModules();//null
 $core->isPublished();//true by default
+$core->getRequirements();//null or array
 ```
 
 The above methods are in abstract class `Strukt\Package\Pkg` you can use them to create your package.

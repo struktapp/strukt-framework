@@ -827,4 +827,5 @@ is_dev = true
 migration_ns = Schema\Migration
 migration_home = database".DS."schema".DS."Schema".DS."Migration
 seeder_home = database".DS."seeder".DS."Seed
-seeder_ns = Seed");
+seeder_ns = Seed
+vendor_fw = ".DS."vendor".DS."strukt".DS);

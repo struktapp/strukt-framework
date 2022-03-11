@@ -8,4 +8,5 @@ interface Package{
 	public function getModules();
 	public function getFiles();
 	public function isPublished();
+	public function getRequirements();
 }
