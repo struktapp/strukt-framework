@@ -92,10 +92,12 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			$actual_path = $qpath->yield();
 
-			$vendor_file_path = Str::create($vendor_pkg)
-				->concat(Fs::ds("/package/"))
-				->concat($relpath)
-				->yield();
+			$vendorFilePath = Str::create($vendor_pkg);
+
+			if($vendor_pkg != "package")
+				$vendorFilePath->concat(Fs::ds("/package/"));
+
+			$vendor_file_path = $vendorFilePath->concat($relpath)->yield();
 
 			$path = pathinfo($actual_path);
 
