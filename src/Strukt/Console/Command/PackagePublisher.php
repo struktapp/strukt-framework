@@ -19,7 +19,7 @@ use Strukt\Framework\App as FrameworkApp;
 *
 * Usage:
 *
-*       publish:package <pkg>
+*       publish:package [--vendorfw <vendorfw>] <pkg>
 *
 * Arguments:
 *
