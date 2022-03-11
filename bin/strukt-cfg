@@ -540,22 +540,27 @@ Strukt\Fs::touchWrite("bootstrap.php", '<?php
 
 define("DS", DIRECTORY_SEPARATOR);
 
-error_reporting(E_ALL & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
-
-$cfg_app = parse_ini_file("cfg/app.ini");
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
 
 $loader = require "vendor/autoload.php";
-$loader->add("App", __DIR__."/lib/");
-$loader->add("Strukt", __DIR__."/src/");
 
-//pkg-do
-$loader->add("Seed", __DIR__."/database/seeder/");
+$paths = array(
 
+	"App"=> __DIR__."/lib/",
+	"Strukt"=>__DIR__."/src/",
+	"Seed"=>__DIR__."/database/seeder/", 
+	"Schema"=>__DIR__."/database/schema/"
+);
+
+$cfg_app = parse_ini_file("cfg/app.ini");
 if(!is_null($cfg_app))
-	$loader->add($cfg_app["app-name"], __DIR__."/app/src/");
+	$paths[$cfg_app["app-name"]] = __DIR__."/app/src/";
 
-return $loader;
-');
+foreach($paths as $ns=>$dir)
+		if(file_exists($dir))
+			$loader->add($nd, $dir);
+
+return $loader;');
 
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 
