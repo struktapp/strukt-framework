@@ -19,15 +19,11 @@ use Strukt\Framework\App as FrameworkApp;
 *
 * Usage:
 *
-*       publish:package [--vendorfw <vendorfw>] <pkg>
+*       publish:package <pkg>
 *
 * Arguments:
 *
 *       pkg   package name
-*
-* Options:
-*
-*      --vendorfw -v   Vendor Strukt Framework Directory
 */
 class PackagePublisher extends \Strukt\Console\Command{
 
@@ -40,14 +36,12 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 		$pkgname = $in->get("pkg");
 
-		$vendorfw = $in->get("vendorfw");
-		if(empty($vendorfw))
-			$vendorfw = Env::get("vendor_fw");
-
-		$vendor_pkg = Str::create(Env::get("root_dir"))
-			->concat(Fs::ds($vendorfw))
-			->concat($pkgname)
-			->yield();
+		$vendor_pkg = "package";
+		if($pkgname != "package")
+			$vendor_pkg = Str::create(Env::get("root_dir"))
+				->concat(Fs::ds(Env::get("vendor_fw")))
+				->concat($pkgname)
+				->yield();
 
 		$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
 				->concat(DS)
