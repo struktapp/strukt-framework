@@ -24,9 +24,9 @@ use Strukt\Framework\App as FrameworkApp;
 * Arguments:
 *
 *       pkg   package name
-* 
+*
 * Options:
-* 
+*
 *      --vendorfw -v   Vendor Strukt Framework Directory
 */
 class PackagePublisher extends \Strukt\Console\Command{
