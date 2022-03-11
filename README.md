@@ -148,7 +148,7 @@ are a few tricks you could use while building your package. The `publish:package
 takes argument `package` for publishing packages that are currently in development,
 since your source will be in the root folder in a subfolder called `package`. 
 
-This will require you to enter into your `cfg/repo.php` (See [Setup Registry Packages](#setup-registry-packges)) and indicate your currently in-development package with the key/keyword `package` which will allow the publisher to install files in the your app source folder `app/src`.
+This will require you to enter into your `cfg/repo.php` (See [Setup Registry Packages](#setup-registry-packages)) and indicate your currently in-development package with the key/keyword `package` which will allow the publisher to install files in the your app source folder `app/src`.
 
 # Validator
 
