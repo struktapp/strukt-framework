@@ -100,9 +100,19 @@ The above methods are in abstract class `Strukt\Package\Pkg` you can use them to
 
 ## Building Packages
 
-See structure of packages below.
+Your first step in developing your package will require you to install `strukt-framework`
+and execute `composer exec strukt-cfg` command that will create your folder structure. You'll need to create `src` and `package` folders. 
+
+See structure of package below.
 
 ```
+├── bootstrap.php
+├── cfg
+├── console
+├── index.php
+├── lib
+├── tpl
+└── vendor
 ├── composer.json
 ├── LICENSE
 ├── package #Place all your packages files here
@@ -115,7 +125,7 @@ See structure of packages below.
 ```
 
 Your package class in `src/Strukt/Package/Pkg<Package Name>.php` will have methods
-listed in the `Default Package` that is it should implement the 
+listed in the `Default Package` section that is it should implement the 
 interface `Strukt\Contract\Package`
 
 ### Package Autoloading
@@ -130,6 +140,15 @@ $loader->addPsr4("App\\", [
 	__DIR__."/packages/lib/App"
 ]);
 ```
+
+### Note
+
+For packages that require installation into your `app/src/{{AppName}}` folder, there
+are a few tricks you could use while building your package. The `publish:package` command
+takes argument `package` for publishing packages that are currently in development,
+since your source will be in the root folder in a subfolder called `package`. 
+
+This will require you to enter into your `cfg/repo.php` and indicate your currently in-development package with the key/keyword `package` which will allow the publisher to install files in the your app source folder `app/src`.
 
 # Validator
 
