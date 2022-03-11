@@ -36,12 +36,20 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 		$pkgname = $in->get("pkg");
 
-		$vendor_pkg = "package";
-		if($pkgname != "package")
-			$vendor_pkg = Str::create(Env::get("root_dir"))
-				->concat(Fs::ds(Env::get("vendor_fw")))
-				->concat($pkgname)
-				->yield();
+		$vendorPkg = Str::create(Env::get("root_dir"));
+		
+		if($pkgname == "package"){
+
+			$devpkgname = Fs::ds(sprintf("/%s/", $pkgname));
+
+			$vendor_pkg = $vendorPkg->concat($devpkgname)->yield();
+		}
+		else{
+
+			$vendor_pkg = $vendorPkg
+							->concat(Fs::ds(Env::get("vendor_fw")))
+							->concat($pkgname)->yield();
+		}
 
 		$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
 				->concat(DS)
@@ -96,7 +104,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$vendorFilePath = Str::create($vendor_pkg);
 
 			if($pkgname != "package")
-				$vendorFilePath->concat(Fs::ds("/package/"));
+				$vendorFilePath = $vendorFilePath->concat(Fs::ds("/package/"));
 
 			$vendor_file_path = $vendorFilePath->concat($relpath)->yield();
 
