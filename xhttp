@@ -40,7 +40,8 @@ App\Middleware\XSession::create(array(
 	),
 	array(
 
-		"strukt:auth"
+		"strukt:auth",
+		// "user_all"
 ));
 
 $config = new Configuration();
