@@ -63,14 +63,18 @@ class PackageCopy extends \Strukt\Console\Command{
 
 					echo(sprintf("mkdir   |%s\n", $dirname));
 					Fs::mkdir($dirname);
-				}		
+				}
 
-				$content = Str::create(Fs::cat($file))->replace($old_nsls, $new_nsls)->yield();
-
-				$dest = sprintf("%s/%s", $dirname, $info["basename"]);
-				Fs::touchWrite($dest, $content);
-				echo(sprintf("copy-to |%s\n", $dest));
+				$dest = sprintf("%s/%s", $dirname, $info["basename"]);		
 			}
+
+			if($sDirName->equals("."))
+				$dest = sprintf("package/%s", $info["basename"]);
+
+			$content = Str::create(Fs::cat($file))->replace($old_nsls, $new_nsls)->yield();
+
+			Fs::touchWrite($dest, $content);
+			echo(sprintf("copy-to |%s\n", $dest));
 		}
 
 		/**
@@ -84,14 +88,14 @@ class PackageCopy extends \Strukt\Console\Command{
 			$rename = sprintf("%s/%s", $info["dirname"], $basename);
 			Fs::rename($file, $rename);
 
-			$file_name = basename($file);
-			$module_name = basename(dirname($file));
+			$file_name = basename($rename);
+			$module_name = basename(dirname($rename));
 			$content = Fs::cat($rename);
 			$old_modcls_name = Str::create($app_name)->concat($module_name)->yield();
 			$new_modcls_name = Str::create("{{App}}")->concat($module_name)->yield();
 			$content = Str::create($content)->replace($old_modcls_name, $new_modcls_name)->yield();
-			Fs::overwrite($file, $content);
-			echo(sprintf("refactor|%s\n", $file));
+			Fs::overwrite($rename, $content);
+			echo(sprintf("refactor|%s\n", $rename));
 		}
 
 		/**
