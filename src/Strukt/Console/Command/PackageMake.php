@@ -33,7 +33,7 @@ class PackageMake extends \Strukt\Console\Command{
 		Fs::mkdir(sprintf("%s/package", $root_dir));
 		Fs::mkdir(sprintf("%s/src/Strukt/Package", $root_dir));
 		
-		$tpl = Fs::cat("tpl/sgf/src/Strukt/Package/Pkg_.php");
+		$tpl = Fs::cat("tpl/sgf/src/Strukt/Package/Pkg_.sgf");
 		$content = Templator::create($tpl, array(
 
 			"name"=>$name,

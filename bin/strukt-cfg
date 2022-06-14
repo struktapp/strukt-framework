@@ -318,6 +318,81 @@ class UserTest extends TestCase{
 	}
 }');
 
+Strukt\Fs::touchWrite("tpl/sgf/src/Strukt/Package/Pkg_.sfg",'<?php
+
+namespace Strukt\Package;
+
+use Strukt\Contract\Package as Pkg;
+
+class Pkg{{name}} implements Pkg{
+
+	private $manifest;
+
+	public function __construct(){
+
+		$this->manifest = array(
+
+			"cmd_name"=>"{{name}}",
+			"package"=>"pkg-{{lower_name}}",
+			"files"=>array()
+		);
+	}
+
+	public function getSettings($type){
+
+		$settings = array(
+
+			"App:Cli"=>array(
+
+				"providers"=>array(),
+				"middlewares"=>array(),
+				"commands"=>array()
+			),
+			"App:Idx"=>array(
+
+				"providers"=>array(),
+				"middlewares"=>array()
+			)
+		);
+
+		return $settings[$type];
+	}
+
+	public function getName(){
+
+		return $this->manifest["package"];
+	}
+
+	public function getCmdName(){
+
+		return $this->manifest["cmd_name"];
+	}
+
+	public function getFiles(){
+
+		return $this->manifest["files"];
+	}
+
+	public function getModules(){
+
+		return null;
+	}
+
+	/**
+	* Use php\'s class_exists function to identify a class that indicated your package is installed
+	*/
+	public function isPublished(){
+
+		//This will return false because SomeClass::class shouldn\'t exists
+		return class_exists(\SomeClass::class);
+	}
+
+	public function getRequirements(){
+
+		return null;
+	}
+}');
+
 Strukt\Fs::touchWrite("lib/App/Contract/AbstractCommand.php",'<?php
 
 namespace App\Contract;
