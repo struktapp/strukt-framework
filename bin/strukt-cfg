@@ -17,6 +17,7 @@ Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Tests");
 Strukt\Fs::mkdir("tpl/sgf/lib/App");
+Strukt\Fs::mkdir("tpl/sgf/src/Strukt/Package");
 Strukt\Fs::mkdir("lib/App/Contract");
 Strukt\Fs::mkdir("lib/App/Middleware");
 Strukt\Fs::mkdir("lib/App/Provider");
