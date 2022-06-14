@@ -39,11 +39,11 @@ class PackageCopy extends \Strukt\Console\Command{
 						->yield();
 
 			$old_nsls[] = sprintf("%s\%s", $app_name, $model);
-			$new_nsls[] = sprintf("{{App}}\%s", $model);
+			$new_nsls[] = sprintf("{{app}}\%s", $model);
 		}
 
 		$old_nsls[] = $ns;
-		$new_nsls[] = "namespace {{App}}";
+		$new_nsls[] = "namespace {{app}}";
 
 		/**
 		* Copy files and change namespace
@@ -71,7 +71,17 @@ class PackageCopy extends \Strukt\Console\Command{
 			if($sDirName->equals("."))
 				$dest = sprintf("package/%s", $info["basename"]);
 
-			$content = Str::create(Fs::cat($file))->replace($old_nsls, $new_nsls)->yield();
+			$sFileContent = Str::create(Fs::cat($file));
+			foreach($old_nsls as $old_ns){
+
+				if($sFileContent->contains($old_ns)){
+
+					$dest = Str::create($dest)->replace(".php", ".sgf")->yield();
+					break;
+				}
+			}
+
+			$content = $sFileContent->replace($old_nsls, $new_nsls)->yield();
 
 			Fs::touchWrite($dest, $content);
 			echo(sprintf("copy-to |%s\n", $dest));
@@ -80,7 +90,7 @@ class PackageCopy extends \Strukt\Console\Command{
 		/**
 		* Refactor module classes and change their class names
 		*/
-		$files = glob("package/app/src/App/*Module/*Module.php");
+		$files = glob("package/app/src/App/*Module/*Module.sgf");
 		foreach($files as $file){
 
 			$info = pathinfo($file);
@@ -92,7 +102,7 @@ class PackageCopy extends \Strukt\Console\Command{
 			$module_name = basename(dirname($rename));
 			$content = Fs::cat($rename);
 			$old_modcls_name = Str::create($app_name)->concat($module_name)->yield();
-			$new_modcls_name = Str::create("{{App}}")->concat($module_name)->yield();
+			$new_modcls_name = Str::create("{{app}}")->concat($module_name)->yield();
 			$content = Str::create($content)->replace($old_modcls_name, $new_modcls_name)->yield();
 			Fs::overwrite($rename, $content);
 			echo(sprintf("refactor|%s\n", $rename));
@@ -101,7 +111,7 @@ class PackageCopy extends \Strukt\Console\Command{
 		/**
 		* Clean up excess backup module classes
 		*/
-		Fs::rm("package/app/src/App/*Module/*Module.php_*");
+		Fs::rm("package/app/src/App/*Module/*Module.sgf_*");
 
 		$out->add("Package files copied successfully.");
 	}
