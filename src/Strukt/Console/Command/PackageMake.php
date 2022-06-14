@@ -30,22 +30,37 @@ class PackageMake extends \Strukt\Console\Command{
 
 		$root_dir = Env::get("root_dir");
 
-		Fs::mkdir(sprintf("%s/package", $root_dir));
-		Fs::mkdir(sprintf("%s/src/Strukt/Package", $root_dir));
-		
-		$tpl = Fs::cat("tpl/sgf/src/Strukt/Package/Pkg_.sgf");
-		$content = Templator::create($tpl, array(
+		$pkg_file = sprintf("%s/src/Strukt/Package/Pkg%s.php", $root_dir, $name);
 
-			"name"=>$name,
-			"lower_name"=>strtolower($name)
-		));
+		$msg = [];
+		if(!Fs::isFile($pkg_file)){
 
-		Fs::touchWrite(sprintf("%s/src/Strukt/Package/Pkg%s.php", $root_dir, $name), $content);
+			$msg[] = "package";
+			Fs::mkdir(sprintf("%s/package", $root_dir));
+			Fs::mkdir(sprintf("%s/src/Strukt/Package", $root_dir));
+			
+			$tpl = Fs::cat("tpl/sgf/src/Strukt/Package/Pkg_.sgf");
+			$content = Templator::create($tpl, array(
 
-		$pkg = array("files"=>[]);
-		$pkg = Json::pp($pkg);
-		Fs::touchWrite("package.json", $pkg);
+				"name"=>$name,
+				"lower_name"=>strtolower($name)
+			));
 
-		$out->add("Package scaffold created successfully.");
+			Fs::touchWrite($pkg_file, $content);
+		}
+
+		if(!Fs::isFile("package.json")){
+
+			$msg[] = "package.json";
+			$pkg = array("files"=>[]);
+			$pkg = Json::pp($pkg);
+			Fs::touchWrite("package.json", $pkg);
+		}
+
+		$outmsg = "Already exists!";
+		if(!empty($msg))
+			$outmsg = sprintf("Package scaffold[%s] created successfully.", implode("|", $msg));
+
+		$out->add($outmsg);
 	}
 }
