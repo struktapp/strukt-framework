@@ -14,13 +14,6 @@ class Console extends \Strukt\Console\Application{
 
 	/**
 	* Constructor loads Strukt Framework in-build applications
-	*
-	* Commands loaded:
-	*
-	* 	\Strukt\Console\Command\ApplicationGenerator
-	* 	\Strukt\Console\Command\RouterGenerator
-	* 	\Strukt\Console\Command\ModuleGenerator
-	* 	\Strukt\Console\Command\ApplicationLoaderGenerator
 	*/
 	public function __construct($load_native_cmds = true){
 
@@ -43,7 +36,12 @@ class Console extends \Strukt\Console\Application{
 			}
 
 			$this->add(new \Strukt\Console\Command\ShellExec);
+			$this->addCmdSect("\nPackage");
 			$this->add(new \Strukt\Console\Command\PackagePublisher);
+			$this->add(new \Strukt\Console\Command\PackageMake);
+			$this->add(new \Strukt\Console\Command\PackageAdd);
+			$this->add(new \Strukt\Console\Command\PackageCopy);
+			$this->add(new \Strukt\Console\Command\PackageExport);
 		}
 	}
 }

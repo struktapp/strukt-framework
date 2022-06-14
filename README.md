@@ -134,11 +134,15 @@ You may require to autoload libraries both from your root directory and package 
 
 ```php
 $loader = require "vendor/autoload.php";
+...
+...
 $loader->addPsr4("App\\", [
 
 	__DIR__."/lib/App",
-	__DIR__."/packages/lib/App"
+	__DIR__."/package/lib/App"
 ]);
+
+return $loader;
 ```
 
 ### Note

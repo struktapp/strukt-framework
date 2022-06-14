@@ -15,11 +15,11 @@ use Strukt\Ref;
 use Strukt\Framework\App as FrameworkApp;
 
 /**
-* publish:package     Package Publisher
+* package:publish     Package Publisher
 *
 * Usage:
 *
-*       publish:package <pkg>
+*       package:publish <pkg>
 *
 * Arguments:
 *
