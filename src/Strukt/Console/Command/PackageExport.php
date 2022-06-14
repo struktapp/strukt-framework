@@ -61,7 +61,7 @@ class PackageExport extends \Strukt\Console\Command{
 		// copy("composer.json", sprintf("%s/composer.json", $pkg_fldr));
 		copy(".env", sprintf("%s/.env", $pkg_fldr));
 		copy(".gitignore", sprintf("%s/.gitignore", $pkg_fldr));
-		Fs::touchWrite("composer.json", Json::pp($composer));
+		Fs::touchWrite(sprintf("%s/composer.json", $pkg_fldr), Json::pp($composer));
 		Fs::touchWrite(sprintf("%s/README.md", $pkg_fldr), implode("\n", array(
 
 			sprintf("Strukt %s", ucfirst($as_name)),
