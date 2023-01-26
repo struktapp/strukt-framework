@@ -7,7 +7,7 @@ Strukt Framework
 [![Latest Unstable Version](https://poser.pugx.org/strukt/framework/v/unstable)](https://packagist.org/packages/strukt/framework)
 [![License](https://poser.pugx.org/strukt/framework/license)](https://packagist.org/packages/strukt/framework)
 
-The is the package that unifies all [strukt-strukt](https://github.com/pitsolu/strukt-strukt)
+The is the package that unifies all [strukt-strukt](https://github.com/samweru/strukt-strukt)
 components under the framework.
 
 Rarely should anyone use this on its own.
@@ -25,7 +25,7 @@ $cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
 
 ## Environment Setup
 
-This class is defaultly found in [strukt-commons](github.com/pitsolu/strukt-commons)
+This class is defaultly found in [strukt-commons](github.com/samweru/strukt-commons)
 
 ```php
 Strukt\Env::withFile();//default .env file in your root folder
@@ -49,12 +49,12 @@ FrameworkApp::getType(); //get application type
 $repo = array(
 
 	"core"=>Strukt\Package\Core::class, //Default in built package for default middlewares and providers
-	"pkg-do"=>Strukt\Package\PkgDo::class,//https://github.com/pitsolu/pkg-do
-	"pkg-roles"=>Strukt\Package\PkgRoles::class,//https://github.com/pitsolu/pkg-roles
-	"pkg-audit"=>Strukt\Package\PkgAudit::class,//https://github.com/pitsolu/pkg-audit
-	"pkg-books"=>Strukt\Package\PkgBooks::class,//https://github.com/pitsolu/pkg-books
-	"pkg-tests"=>Strukt\Package\PkgTests::class,//https://github.com/pitsolu/pkg-tests
-	"pkg-asset"=>Strukt\Package\PkgAsset::class//https://github.com/pitsolu/pkg-asset
+	"pkg-do"=>Strukt\Package\PkgDo::class,//https://github.com/samweru/pkg-do
+	"pkg-roles"=>Strukt\Package\PkgRoles::class,//https://github.com/samweru/pkg-roles
+	"pkg-audit"=>Strukt\Package\PkgAudit::class,//https://github.com/samweru/pkg-audit
+	"pkg-books"=>Strukt\Package\PkgBooks::class,//https://github.com/samweru/pkg-books
+	"pkg-tests"=>Strukt\Package\PkgTests::class,//https://github.com/samweru/pkg-tests
+	"pkg-asset"=>Strukt\Package\PkgAsset::class//https://github.com/samweru/pkg-asset
 );
 
 FrameworkApp::mayBeRepo($repo);
