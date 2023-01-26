@@ -50,6 +50,8 @@ $middlewares = $config->get("middlewares");
 $middlewares = array_merge([App\Middleware\XSession::class], $middlewares);
 $config->set("middlewares", $middlewares);
 
+// print_r($config->get("middlewares"));
+
 // $kernel = new App\Kernel($config, new Injectable());
 // $refAppInj = new ReflectionClass(new AppInjectable());
 // $kernel = new App\Kernel($config, new InjectableCfg($refAppInj));

@@ -33,6 +33,7 @@ class Injectable implements \Strukt\Contract\Injectable{
 						"http.method" => $method_items["Method"]["item"],
 						"route.path" => $method_items["Route"]["item"],
 						"route.perm" => $name,
+						"route.form" => $method_items["Form"]["item"],
 						"ref.class" => $notes["class_name"],
 						"ref.method" => $method_name,
 					);

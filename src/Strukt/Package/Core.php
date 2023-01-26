@@ -37,6 +37,7 @@ class Core implements Pkg{
 					\Strukt\Router\Middleware\Session::class,
 					\Strukt\Router\Middleware\Authorization::class,
 					\Strukt\Router\Middleware\Authentication::class,
+					\Strukt\Framework\Middleware\Validator::class,
 					\Strukt\Router\Middleware\Router::class
 				)
 			),
@@ -50,6 +51,7 @@ class Core implements Pkg{
 				),
 				"middlewares"=>array(
 
+					\Strukt\Framework\Middleware\Validator::class,
 					\Strukt\Router\Middleware\Router::class
 				)
 			)
