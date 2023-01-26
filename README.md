@@ -18,7 +18,7 @@ Rarely should anyone use this on its own.
 
 ```php
 $cfg = new Strukt\Framework\Configuration();
-$cfg->getInjectable();//Get package configurations from App\Injectables
+$cfg->getInjectables();//Get package configurations from App\Injectables
 $cfg->getSetup();//Already called in instance above
 $cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
 ```
