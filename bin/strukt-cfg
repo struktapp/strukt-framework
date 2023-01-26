@@ -121,6 +121,7 @@ class Auth extends \Strukt\Contract\Router{
 	/**
 	* @Route(/login)
 	* @Method(POST)
+	* @Form(User)
 	*/
 	public function login(Request $request){
 
