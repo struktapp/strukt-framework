@@ -43,7 +43,7 @@ FrameworkApp::create($type); //Can only be "App:Idx" for web or "App:Cli" for co
 FrameworkApp::getType(); //get application type
 ```
 
-## Setup Registry Packages 
+## Setup Packages Registry 
 
 ```php
 $repo = array(
@@ -195,3 +195,9 @@ class User extends \Strukt\Contract\Form{
 
 New validators can be added is in your `lib/App/Validator/Extra.php`
 There you can find an example `App\Validator\Extra::isLenGt`
+
+```php
+/**
+* @IsLenGt(10)
+*/
+```
