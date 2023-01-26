@@ -3,6 +3,7 @@
 namespace Strukt\Framework;
 
 use Strukt\Framework\App as FrameworkApp;
+use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
 
 class Configuration{
 
@@ -10,6 +11,11 @@ class Configuration{
 
 		$this->packages = FrameworkApp::getRepo();
 		$this->settings = $this->getSetup();
+	}
+
+	public function getInjectables(){
+
+		return new InjectableCfg(new \ReflectionClass(new \App\Injectable()));
 	}
 
 	public function getSetup(){

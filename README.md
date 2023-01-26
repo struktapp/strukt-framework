@@ -18,6 +18,7 @@ Rarely should anyone use this on its own.
 
 ```php
 $cfg = new Strukt\Framework\Configuration();
+$cfg->getInjectable();//Get package configurations from App\Injectables
 $cfg->getSetup();//Already called in instance above
 $cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
 ```
@@ -159,44 +160,35 @@ This will require you to enter into your `cfg/repo.php` (See [Setup Registry Pac
 ## Example
 
 ```php
-$loginFrm = new class($request) extends \Strukt\Contract\Form{
+class User extends \Strukt\Contract\Form{
 
-	protected function validation(){
+	/**
+	* @IsNotEmpty()
+	* @IsAlpha()
+	*/
+	public string $username;
 
-		$service = $this->getValidatorService();
-
-		$this->setMessage("email", $service->getNew($this->get("email"))
-										->isNotEmpty()
-										->isEmail());
-
-		$this->setMessage("password", $service->getNew($this->get("password"))
-										->isNotEmpty()
-										->isLen(8));
-
-		$this->setMessage("confirm_password", $service->getNew($this->get("confirm_password"))
-												->isNotEmpty()
-												->equalTo($this->get("password")));
-	}
-};
-
-$messages = $loginFrm->validate();
+	/**
+	* @IsNotEmpty()
+	*/
+	public string $password;
+}
 ```
-
-The `$request` above is `Strukt\Http\Request`
-
 
 ## Validator Methods
 
 ```php
-Strukt\Validator::isAlpha()
-Strukt\Validator::isAlphaNum()
-Strukt\Validator::isNumeric()
-Strukt\Validator::isEmail()
-Strukt\Validator::isDate(string $format="Y-m-d")
-Strukt\Validator::isNotEmpty()
-Strukt\Validator::isIn(array $enum)
-Strukt\Validator::equalsTo($val)
-Strukt\Validator::isLen($len)
+/**
+* @IsNotEmpty()
+* @IsAlpha()
+* @IsAlphaNum()
+* @IsNumeric()
+* @IsEmail()
+* @IsDate(Y-m-d)
+* @IsIn(a,b,c)
+* @EqualsTo(xyz)
+* @IsLen(10)
+*/
 ```
 
 ## Adding Validators
