@@ -25,7 +25,7 @@ $cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
 
 ## Environment Setup
 
-This class is defaultly found in [strukt-commons](github.com/samweru/strukt-commons)
+This class is defaultly found in [strukt-commons](samweru/strukt-commons)
 
 ```php
 Strukt\Env::withFile();//default .env file in your root folder
