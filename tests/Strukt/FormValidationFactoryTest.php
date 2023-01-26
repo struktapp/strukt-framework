@@ -27,22 +27,36 @@ class FormValidationFactoryTest extends TestCase{
 
 		$loginFrm = new class($request) extends \Strukt\Contract\Form{
 
-			protected function validation(){
+			/**
+			* @IsEmail()
+			* @IsNotEmpty()
+			*/
+			public $email;
 
-				$service = $this->getValidatorService();
+			/**
+			* @IsNotEmpty()
+			* @IsLen(8)
+			*/
+			public $password;
 
-				$this->setMessage("email", $service->getNew($this->get("email"))
-												->isNotEmpty()
-												->isEmail());
+			// protected function validation(){
 
-				$this->setMessage("password", $service->getNew($this->get("password"))
-												->isNotEmpty()
-												->isLen(8));
+			// 	$service = $this->getValidatorService();
 
-			}
+			// 	$this->setMessage("email", $service->getNew($this->get("email"))
+			// 									->isNotEmpty()
+			// 									->isEmail());
+
+			// 	$this->setMessage("password", $service->getNew($this->get("password"))
+			// 									->isNotEmpty()
+			// 									->isLen(8));
+
+			// }
 		};
 
 		$messages = $loginFrm->validate();
+
+		// print_r($messages);
 
 		$this->assertEquals($messages, array(
 
@@ -66,23 +80,41 @@ class FormValidationFactoryTest extends TestCase{
 
 		$loginFrm = new class($request) extends \Strukt\Contract\Form{
 
-			protected function validation(){
+			/**
+			* @IsEmail
+			* @IsNotEmpty
+			*/
+			public $username;
 
-				$service = $this->getValidatorService();
+			/**
+			* @IsLen(8)
+			* @IsNotEmpty
+			*/
+			public $password;
 
-				$this->setMessage("username", $service->getNew($this->get("username"))
-												->isNotEmpty()
-												->isEmail());
+			/**
+			* @EqualTo(.password)
+			* @IsNotEmpty
+			*/
+			public $confirm_password;
 
-				$this->setMessage("password", $service->getNew($this->get("password"))
-												->isNotEmpty()
-												->isLen(8));
+			// protected function validation(){
 
-				$this->setMessage("confirm_password", $service->getNew($this->get("confirm_password"))
-												->isNotEmpty()
-												->equalTo($this->get("password")));
+			// 	$service = $this->getValidatorService();
 
-			}
+			// 	$this->setMessage("username", $service->getNew($this->get("username"))
+			// 									->isNotEmpty()
+			// 									->isEmail());
+
+			// 	$this->setMessage("password", $service->getNew($this->get("password"))
+			// 									->isNotEmpty()
+			// 									->isLen(8));
+
+			// 	$this->setMessage("confirm_password", $service->getNew($this->get("confirm_password"))
+			// 									->isNotEmpty()
+			// 									->equalTo($this->get("password")));
+
+			// }
 		};
 
 		$messages = $loginFrm->validate();

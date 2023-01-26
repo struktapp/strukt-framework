@@ -67,6 +67,10 @@ abstract class Form extends AbstractCore{
 				if(array_key_exists("items", $prop))
 					$items = $prop["items"];
 
+				if(is_string($items))
+					if(preg_match("/^\./",$items))
+						$items = $this->get(trim($items, "."));
+
 				if(!empty($items))
 					$rMethod->invoke($items);
 				else
