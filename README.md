@@ -175,7 +175,7 @@ class User extends \Strukt\Contract\Form{
 }
 ```
 
-## Validator Methods
+## Validator Annotations
 
 ```php
 /**
@@ -186,7 +186,7 @@ class User extends \Strukt\Contract\Form{
 * @IsEmail()
 * @IsDate(Y-m-d)
 * @IsIn(a,b,c)
-* @EqualsTo(xyz)
+* @EqualTo(xyz)
 * @IsLen(10)
 */
 ```
