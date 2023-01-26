@@ -64,7 +64,7 @@ FrameworkApp::getRepo();
 ## Some Application Methods
 
 ```php
-//The line below sets up namespace for with application name
+// The line below sets up namespace with the application name
 //	the ns will translate into Payroll\AuthModule\Command\PermissionAdd
 //	if your app's name is payroll
 $cls = FrameworkApp::newCls("{{app}}\AuthModule\Command\PermissionAdd");
