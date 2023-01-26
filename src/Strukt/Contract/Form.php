@@ -4,7 +4,6 @@ namespace Strukt\Contract;
 
 use Strukt\Http\Request;
 use \Strukt\Framework\Service\Validator\Injectable;
-// use Strukt\Validator;
 
 /**
 * Form class to be inherited in Form
@@ -56,7 +55,7 @@ abstract class Form extends AbstractCore{
 
 		foreach($rInj->getConfigs() as $key=>$props){
 
-			$service = $factory->getNew($this->request->get($key));
+			$service = $factory->getNew($this->get($key));
 
 			$ref = \Strukt\Ref::createFrom($service);
 			foreach($props as $vName=>$prop){
