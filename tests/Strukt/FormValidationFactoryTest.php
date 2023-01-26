@@ -38,25 +38,9 @@ class FormValidationFactoryTest extends TestCase{
 			* @IsLen(8)
 			*/
 			public $password;
-
-			// protected function validation(){
-
-			// 	$service = $this->getValidatorService();
-
-			// 	$this->setMessage("email", $service->getNew($this->get("email"))
-			// 									->isNotEmpty()
-			// 									->isEmail());
-
-			// 	$this->setMessage("password", $service->getNew($this->get("password"))
-			// 									->isNotEmpty()
-			// 									->isLen(8));
-
-			// }
 		};
 
 		$messages = $loginFrm->validate();
-
-		// print_r($messages);
 
 		$this->assertEquals($messages, array(
 
@@ -81,40 +65,22 @@ class FormValidationFactoryTest extends TestCase{
 		$loginFrm = new class($request) extends \Strukt\Contract\Form{
 
 			/**
-			* @IsEmail
-			* @IsNotEmpty
+			* @IsEmail()
+			* @IsNotEmpty()
 			*/
 			public $username;
 
 			/**
 			* @IsLen(8)
-			* @IsNotEmpty
+			* @IsNotEmpty()
 			*/
 			public $password;
 
 			/**
 			* @EqualTo(.password)
-			* @IsNotEmpty
+			* @IsNotEmpty()
 			*/
 			public $confirm_password;
-
-			// protected function validation(){
-
-			// 	$service = $this->getValidatorService();
-
-			// 	$this->setMessage("username", $service->getNew($this->get("username"))
-			// 									->isNotEmpty()
-			// 									->isEmail());
-
-			// 	$this->setMessage("password", $service->getNew($this->get("password"))
-			// 									->isNotEmpty()
-			// 									->isLen(8));
-
-			// 	$this->setMessage("confirm_password", $service->getNew($this->get("confirm_password"))
-			// 									->isNotEmpty()
-			// 									->equalTo($this->get("password")));
-
-			// }
 		};
 
 		$messages = $loginFrm->validate();
