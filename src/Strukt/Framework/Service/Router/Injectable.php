@@ -28,9 +28,6 @@ class Injectable implements \Strukt\Contract\Injectable{
 						if(array_key_exists("Auth", $method_items))
 							$name = "strukt:auth";
 
-					// if(is_null($name))
-						// $name = "";
-
 					$this->notes[] = array(
 
 						"http.method" => $method_items["Method"]["item"],

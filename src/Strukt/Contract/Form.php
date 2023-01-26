@@ -14,13 +14,6 @@ use \Strukt\Framework\Service\Validator\Injectable;
 abstract class Form extends AbstractCore{
 
 	/**
-	* Messages from validators
-	*
-	* @return array
-	*/
-	// private $message;
-
-	/**
 	* Http Request
 	*
 	* @return Strukt\Http\Request
@@ -38,29 +31,6 @@ abstract class Form extends AbstractCore{
 	}
 
 	/**
-	* Getter for validator factory
-	*
-	* @return anonymous class object
-	*/
-	// protected function getValidatorService(){
-
-		// return $this->core()->get("strukt.service.validator");
-	// }
-
-	/**
-	* Message setter
-	*
-	* @param string $key request parameter name
-	* @param Strukt\Validator $validator
-	*
-	* @return void
-	*/
-	// protected function setMessage($key, Validator $validator){
-
-		// $this->message[$key] = $validator->getMessage();
-	// }
-
-	/**
 	* Getter raw validator values
 	*
 	* @param string $key
@@ -71,16 +41,6 @@ abstract class Form extends AbstractCore{
 
 		return $this->request->get($key);
 	}
-
-	/**
-	* Validation method to be overriden
-	*
-	* @return void
-	*/
-	// protected function validation(){
-
-		//do validation
-	// }
 
 	/**
 	* Execute validator and return compiled messages
@@ -99,8 +59,19 @@ abstract class Form extends AbstractCore{
 			$service = $factory->getNew($this->request->get($key));
 
 			$ref = \Strukt\Ref::createFrom($service);
-			foreach($props as $vName=>$prop)
-				$service = $ref->method(lcfirst($vName))->invoke();
+			foreach($props as $vName=>$prop){
+
+				$rMethod = $ref->method(lcfirst($vName));
+
+				$items = $prop["item"];
+				if(array_key_exists("items", $prop))
+					$items = $prop["items"];
+
+				if(!empty($items))
+					$rMethod->invoke($items);
+				else
+					$rMethod->invoke();
+			}
 
 			$message[$key] = $service->getMessage();
 		}

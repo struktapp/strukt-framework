@@ -14,7 +14,6 @@ class Injectable implements \Strukt\Contract\Injectable{
 
 		$this->packages = FrameworkApp::packages("published");
 
-		// $rInj = new \ReflectionClass(\App\Injectable::class);
 		$parser = new \Strukt\Annotation\Parser\Basic($rclass);
 		$notes = $parser->getAnnotations();
 
