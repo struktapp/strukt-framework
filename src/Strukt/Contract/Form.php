@@ -3,7 +3,8 @@
 namespace Strukt\Contract;
 
 use Strukt\Http\Request;
-use Strukt\Validator;
+use \Strukt\Framework\Service\Validator\Injectable;
+// use Strukt\Validator;
 
 /**
 * Form class to be inherited in Form
@@ -17,7 +18,7 @@ abstract class Form extends AbstractCore{
 	*
 	* @return array
 	*/
-	private $message;
+	// private $message;
 
 	/**
 	* Http Request
@@ -25,13 +26,6 @@ abstract class Form extends AbstractCore{
 	* @return Strukt\Http\Request
 	*/
 	private $request;
-
-	/**
-	* Strukt\Core\Registry
-	*
-	* @return Strukt\Core\Registry
-	*/
-	private $registry;
 
 	/**
 	* Constructor
@@ -48,10 +42,10 @@ abstract class Form extends AbstractCore{
 	*
 	* @return anonymous class object
 	*/
-	protected function getValidatorService(){
+	// protected function getValidatorService(){
 
-		return $this->core()->get("strukt.service.validator");
-	}
+		// return $this->core()->get("strukt.service.validator");
+	// }
 
 	/**
 	* Message setter
@@ -61,10 +55,10 @@ abstract class Form extends AbstractCore{
 	*
 	* @return void
 	*/
-	protected function setMessage($key, Validator $validator){
+	// protected function setMessage($key, Validator $validator){
 
-		$this->message[$key] = $validator->getMessage();
-	}
+		// $this->message[$key] = $validator->getMessage();
+	// }
 
 	/**
 	* Getter raw validator values
@@ -83,10 +77,10 @@ abstract class Form extends AbstractCore{
 	*
 	* @return void
 	*/
-	protected function validation(){
+	// protected function validation(){
 
 		//do validation
-	}
+	// }
 
 	/**
 	* Execute validator and return compiled messages
@@ -95,11 +89,25 @@ abstract class Form extends AbstractCore{
 	*/
 	public function validate(){
 
-		$this->validation();
+		$rForm = new \ReflectionClass($this);
+		$rInj = new Injectable($rForm);
 
-		foreach($this->message as $field=>$props)
+		$factory = $this->core()->get("strukt.service.validator");
+
+		foreach($rInj->getConfigs() as $key=>$props){
+
+			$service = $factory->getNew($this->request->get($key));
+
+			$ref = \Strukt\Ref::createFrom($service);
+			foreach($props as $vName=>$prop)
+				$service = $ref->method(lcfirst($vName))->invoke();
+
+			$message[$key] = $service->getMessage();
+		}
+
+		foreach($message as $field=>$props)
       		if(!array_product(array_values($props)))
-          			return array("is_valid"=>false, "messages"=>$this->message);
+          			return array("is_valid"=>false, "messages"=>$message);
 
     	return array("is_valid"=>true, "messages"=>"None");
 	}

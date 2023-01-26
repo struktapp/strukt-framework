@@ -5,7 +5,7 @@ namespace Strukt;
 use Strukt\Core\Map;
 use Strukt\Core\Collection;
 use Strukt\Router\Kernel as RouterKernel;
-use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
+// use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 use Strukt\Contract\Module;
 use Strukt\Env;
 use Strukt\Raise;

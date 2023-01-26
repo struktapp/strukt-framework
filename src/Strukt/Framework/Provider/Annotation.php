@@ -3,17 +3,19 @@
 namespace Strukt\Framework\Provider;
 
 use Strukt\Router\RouteCollection;
-use Strukt\Router\Route;
+// use Strukt\Router\Route;
 use Strukt\Event;
 use Strukt\Contract\Provider\AbstractProvider;
 use Strukt\Contract\Provider\ProviderInterface;
-use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
+// use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
+use Strukt\Framework\Service\Router\Injectable as InjectableRouter;
 
 class Annotation extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){
 
 		$this->core()->set("strukt.annotations", new RouteCollection());
+		// $this->core()->set("strukt.annotations", []);
 	}
 
 	public function register(){
@@ -28,37 +30,46 @@ class Annotation extends AbstractProvider implements ProviderInterface{
 
 			foreach($module_list as $module){
 
-				foreach($module["Router"] as $routr){
+				foreach($module["Router"] as $router){
 
 					/**
 					* @todo either cache annotations or cache router loaded
 					*		with annotations for speed and efficiency
 					*/
-					$class_name = sprintf("%s\Router\%s", $module["base-ns"], $routr);
-					$parser = new BasicAnnotationParser(new \ReflectionClass($class_name));
-					$annArr = $parser->getAnnotations();
+					$class = sprintf("%s\Router\%s", $module["base-ns"], $router);
 
-					foreach($annArr as $annItem){
+						// print_r($class);
 
-						foreach($annItem as $methodName=>$methodItems){
+					$rClass = new \ReflectionClass($class);
 
-							if(array_key_exists("Method", $methodItems)){
+					$rInj = new InjectableRouter($rClass);
+					$annotations = $rInj->getConfigs();
 
-								$name = "";
-								if(array_key_exists("Permission", $methodItems))
-									$name = $methodItems["Permission"]["item"];
+					// $class_name = sprintf("%s\Router\%s", $module["base-ns"], $routr);
+					// $parser = new BasicAnnotationParser(new \ReflectionClass($class_name));
+					// $annArr = $parser->getAnnotations();
 
-								$annotations[] = array(
+					// foreach($annArr as $annItem){
 
-									"http_method" => $methodItems["Method"]["item"],
-									"route" => $methodItems["Route"]["item"],
-									"class" => $annArr["class_name"],
-									"method" => $methodName,
-									"name" => $name
-								);
-							}
-						}
-					}
+					// 	foreach($annItem as $methodName=>$methodItems){
+
+					// 		if(array_key_exists("Method", $methodItems)){
+
+					// 			$name = "";
+					// 			if(array_key_exists("Permission", $methodItems))
+					// 				$name = $methodItems["Permission"]["item"];
+
+					// 			$annotations[] = array(
+
+					// 				"http_method" => $methodItems["Method"]["item"],
+					// 				"route" => $methodItems["Route"]["item"],
+					// 				"class" => $annArr["class_name"],
+					// 				"method" => $methodName,
+					// 				"name" => $name
+					// 			);
+					// 		}
+					// 	}
+					// }
 				}
 			}
 

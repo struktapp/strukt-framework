@@ -50,14 +50,17 @@ Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf",'<?php
 namespace {{app}}\AuthModule\Form;
 
 class User extends \Strukt\Contract\Form{
+	
+	/**
+	* @IsNotEmpty()
+	* @IsAlpha()
+	*/
+	public string $username;
 
-	protected function validation(){
-
-		$service = $this->getValidatorService();
-
-		$this->setMessage("username", $service->getNew($this->get("username"))->isNotEmpty());
-		$this->setMessage("password", $service->getNew($this->get("password"))->isNotEmpty());
-	}
+	/**
+	* @IsNotEmpty()
+	*/
+	public string $password;
 }');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf",'<?php
@@ -643,7 +646,7 @@ Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 namespace App;
 
 use Strukt\Framework\Configuration;
-use Strukt\Framework\Injectable;
+use Strukt\Contract\Injectable;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Http\Request;
@@ -724,7 +727,8 @@ use Strukt\Console;
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
-use Strukt\Framework\Injectable;
+use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
+use App\Injectable as AppInjectable;
 
 use App\Loader as AppLoader;
 use App\Kernel as AppKernel;
@@ -740,7 +744,8 @@ $repo = require "cfg/repo.php";
 FrameworkApp::create("App:Cli");
 FrameworkApp::mayBeRepo($repo); 
 
-$kernel = new App\Kernel(new Configuration(), new Injectable());
+$refAppInj = new ReflectionClass(new AppInjectable());
+$kernel = new App\Kernel(new Configuration(), new InjectableCfg($refAppInj));
 $app = $kernel->getApp();
 
 if(!is_null($app))
@@ -775,7 +780,8 @@ Strukt\Fs::touchWrite("index.php",'<?php
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
-use Strukt\Framework\Injectable;
+use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
+use App\Injectable as AppInjectable;
 
 require "bootstrap.php";
 $repo = require "cfg/repo.php";
@@ -786,7 +792,8 @@ Env::set("root_dir", getcwd());
 FrameworkApp::create("App:Idx");
 FrameworkApp::mayBeRepo($repo);
 
-$kernel = new App\Kernel(new Configuration(), new Injectable());
+$refAppInj = new ReflectionClass(new AppInjectable());
+$kernel = new App\Kernel(new Configuration(), new InjectableCfg($refAppInj));
 $kernel->run();');
 
 Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php

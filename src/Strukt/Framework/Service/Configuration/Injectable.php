@@ -1,21 +1,21 @@
 <?php
 
-namespace Strukt\Framework;
+namespace Strukt\Framework\Service\Configuration;
 
 use Strukt\Builder\Collection as CollectionBuilder;
 use Strukt\Framework\App as FrameworkApp;
 
-class Injectable{
+class Injectable implements \Strukt\Contract\Injectable{
 
 	private $packages;
 	private $injectables;
 
-	public function __construct(){
+	public function __construct(\ReflectionClass $rclass){
 
 		$this->packages = FrameworkApp::packages("published");
 
-		$rInj = new \ReflectionClass(\App\Injectable::class);
-		$parser = new \Strukt\Annotation\Parser\Basic($rInj);
+		// $rInj = new \ReflectionClass(\App\Injectable::class);
+		$parser = new \Strukt\Annotation\Parser\Basic($rclass);
 		$notes = $parser->getAnnotations();
 
 		$refCls = \Strukt\Ref::create($notes["class_name"]);

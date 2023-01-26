@@ -4,7 +4,8 @@
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
-use Strukt\Framework\Injectable;
+use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
+use App\Injectable as AppInjectable;
 
 require "bootstrap.php";
 $repo = require "cfg/repo.php";
@@ -49,8 +50,14 @@ $middlewares = $config->get("middlewares");
 $middlewares = array_merge([App\Middleware\XSession::class], $middlewares);
 $config->set("middlewares", $middlewares);
 
-$kernel = new App\Kernel($config, new Injectable());
+// $kernel = new App\Kernel($config, new Injectable());
+$refAppInj = new ReflectionClass(new AppInjectable());
+$kernel = new App\Kernel($config, new InjectableCfg($refAppInj));
 $runner = $kernel->getApp()->run();
 $runner = $runner->init();
 $response = $kernel->getRouter()->run();
 exit(sprintf("%s\n", $response->getContent()));
+
+// $file_name = $_FILES["file"]["name"];
+// $file_tmp = file_get_contents($_FILES["file"]["tmp_name"])
+// file_put_contents($file_name, $file_tmp, FILE_APPEND);
