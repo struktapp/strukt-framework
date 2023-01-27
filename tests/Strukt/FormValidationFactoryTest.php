@@ -44,8 +44,8 @@ class FormValidationFactoryTest extends TestCase{
 
 		$this->assertEquals($messages, array(
 
-			"is_valid"=>true,
-			"messages"=>"None"
+			"success"=>true,
+			"message"=>"None"
 		));
 	}
 
@@ -85,6 +85,6 @@ class FormValidationFactoryTest extends TestCase{
 
 		$messages = $loginFrm->validate();
 
-		$this->assertFalse($messages["is_valid"]);
+		$this->assertFalse($messages["success"]);
 	}
 }
