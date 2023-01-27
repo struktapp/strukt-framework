@@ -201,3 +201,14 @@ There you can find an example `App\Validator\Extra::isLenGt`
 * @IsLenGt(10)
 */
 ```
+
+# Notes
+
+Somes notable mentions that can be explored via repl `./console shell:exec` console.
+
+```php
+$registry->get("strukt.router")
+$registry->get("strukt.annotations")
+$registry->get("stukt.forms")
+$registry->get("module-list")
+```

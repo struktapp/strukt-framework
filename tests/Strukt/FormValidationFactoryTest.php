@@ -85,6 +85,8 @@ class FormValidationFactoryTest extends TestCase{
 
 		$messages = $loginFrm->validate();
 
+		// print_r($messages);
+
 		$this->assertFalse($messages["success"]);
 	}
 }
