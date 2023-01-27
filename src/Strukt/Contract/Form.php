@@ -3,7 +3,7 @@
 namespace Strukt\Contract;
 
 use Strukt\Http\Request;
-use \Strukt\Framework\Service\Validator\Injectable;
+use \Strukt\Framework\Service\Validator\Injectable as ValidatorInjectable;
 
 /**
 * Form class to be inherited in Form
@@ -49,11 +49,11 @@ abstract class Form extends AbstractCore{
 	public function validate(){
 
 		$rForm = new \ReflectionClass($this);
-		$rInj = new Injectable($rForm);
+		$rValdInj = new ValidatorInjectable($rForm);
 
 		$factory = $this->core()->get("strukt.service.validator");
 
-		foreach($rInj->getConfigs() as $key=>$props){
+		foreach($rValdInj->getConfigs() as $key=>$props){
 
 			$service = $factory->getNew($this->get($key));
 
@@ -81,8 +81,17 @@ abstract class Form extends AbstractCore{
 
 		foreach($message as $field=>$props)
       		if(!array_product(array_values($props)))
-          			return array("is_valid"=>false, "messages"=>$message);
+          			return array(
 
-    	return array("is_valid"=>true, "messages"=>"None");
+          				"success"=>false, 
+          				"fields"=>$message,
+          				"message"=>"Validation error!"
+          			);
+
+    	return array(
+
+			"success"=>true, 
+			"message"=>"None"
+    	);
 	}
 }

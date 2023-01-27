@@ -27,7 +27,7 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 			$ref = \Strukt\Ref::create($forms[$pattern]);
 			$messages = $ref->makeArgs([$request])->method("validate")->invoke();
 
-			if(!$messages["is_valid"])
+			if(!$messages["success"])
 				return new JsonResponse($messages, 400); //Bad Request Error 400
 		}
 
