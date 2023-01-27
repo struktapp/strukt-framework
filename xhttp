@@ -4,17 +4,61 @@
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
-// use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
-// use App\Injectable as AppInjectable;
 
 require "bootstrap.php";
 $repo = require "cfg/repo.php";
 
+$methods = array(
+
+	"ANY",
+	"PUT", 
+	"GET", 
+	"PATH", 
+	"POST", 
+	"DELETE",
+	"PATCH"
+);
+
 $argv = $_SERVER["argv"];
 
-array_shift($argv);
-$method = array_shift($argv);
-$uri = array_shift($argv);
+array_shift($argv);//xhttp
+$arg1 = array_shift($argv);//arg1
+
+if(in_array(strtolower(trim($arg1)), [
+	"usage", 
+	"help",
+	"--help", 
+	"-h","?"])){
+
+echo <<<EOF
+
+xhttp	XHTTP is a CLI utility that mimicks a HTTP client.
+
+Usage:  xhttp <method> <route> [params...]
+
+Arguments:
+
+  method 		GET, POST ...etc
+  route 		Example: /login Default: / root
+  parameters  	Example: username=pitsolu password=p@55w0rd
+
+Example:  ./xhttp POST /login username=pitsolu password=p@55word\n\n
+
+EOF; exit;
+}
+
+$method = $arg1;//method
+if(!in_array($method, $methods)){
+
+	$uri = $method;
+	$method = "GET";
+}
+
+if(empty($uri))//uri
+	$uri = array_shift($argv);
+
+// print_r(array(array("method"=>$method, "uri"=>$uri, "args"=>$argv)));exit;
+
 $params = [];
 
 array_map(function($param) use(&$params){
@@ -25,8 +69,17 @@ array_map(function($param) use(&$params){
 
 }, $argv);
 
+if(!in_array(strtoupper(trim($method)), $methods)){
+
+echo <<<EOF
+
+Invalid HTTP method!\n
+
+EOF; exit;
+}
+
 $_SERVER["REQUEST_URI"] = $uri;
-$_SERVER["REQUEST_METHOD"] = $method;
+$_SERVER["REQUEST_METHOD"] = strtoupper(trim($method));
 $_REQUEST = $_POST = $params;
 
 Env::withFile();
@@ -50,17 +103,8 @@ $middlewares = $config->get("middlewares");
 $middlewares = array_merge([App\Middleware\XSession::class], $middlewares);
 $config->set("middlewares", $middlewares);
 
-// print_r($config->get("middlewares"));
-
-// $kernel = new App\Kernel($config, new Injectable());
-// $refAppInj = new ReflectionClass(new AppInjectable());
-// $kernel = new App\Kernel($config, new InjectableCfg($refAppInj));
 $kernel = new App\Kernel($config);
 $runner = $kernel->getApp()->run();
 $runner = $runner->init();
 $response = $kernel->getRouter()->run();
 exit(sprintf("%s\n", $response->getContent()));
-
-// $file_name = $_FILES["file"]["name"];
-// $file_tmp = file_get_contents($_FILES["file"]["tmp_name"])
-// file_put_contents($file_name, $file_tmp, FILE_APPEND);

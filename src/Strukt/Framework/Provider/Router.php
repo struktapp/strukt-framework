@@ -63,7 +63,10 @@ class Router extends AbstractProvider implements ProviderInterface{
 													$rItm["route.form"]);
 							}
 
-							$forms[$rItm["route.path"]] = $form;
+							if(!empty($form))
+								$forms[$rItm["route.path"]] = sprintf("%s:%s", 
+																		$rItm["http.method"],
+																		$form);
 
 							$core->get("strukt.router")->addRoute($route);
 						}
