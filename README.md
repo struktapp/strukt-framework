@@ -12,6 +12,13 @@ components under the framework.
 
 Rarely should anyone use this on its own.
 
+### Getting started
+
+```sh
+echo {"minimum-stability":"dev"} > composer.json
+composer require "strukt/framework:1.1.4-alpha" --prefer-dist
+```
+
 # Setup, Configuration & Environment
 
 ## Configuration
