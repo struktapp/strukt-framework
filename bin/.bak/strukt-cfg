@@ -10,6 +10,15 @@ foreach($autoloadFiles as $autoloadFile)
     if(file_exists($autoloadFile))
         require_once $autoloadFile;
 
+Strukt\Fs::rmdir('app');
+Strukt\Fs::rmdir('lib/App');
+Strukt\Fs::rmdir('cfg');
+Strukt\Fs::rmdir('tpl');
+Strukt\Fs::rm('.env');
+Strukt\Fs::rm('bootstrap');
+Strukt\Fs::rm('index.php');
+Strukt\Fs::rm('console');
+
 Strukt\Fs::mkdir("cfg");
 Strukt\Fs::mkdir("tpl/sgf/cfg");
 Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
@@ -45,6 +54,8 @@ class User extends \Strukt\Contract\Controller{
 		return $user->getUsername() == "admin" && $user->getPassword() == sha1("p@55w0rd");
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf", '<?php
@@ -63,6 +74,8 @@ class User extends \Strukt\Contract\Form{
 	*/
 	public string $password;
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf", '<?php
@@ -110,6 +123,8 @@ class User{
 		$this->password = sha1($password);
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf", '<?php
@@ -173,6 +188,8 @@ class Auth extends \Strukt\Contract\Router{
 		return "Successfully logged out.";
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf", '<?php
@@ -242,6 +259,8 @@ class Index extends \Strukt\Contract\Router{
 		throw new \Exception("Whoops!");
 	}	
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf", '<?php
@@ -251,6 +270,8 @@ class {{app}}AuthModule extends \Strukt\Contract\Module{
 
 	protected $alias="Au";
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf", '<?php
@@ -290,6 +311,8 @@ class Loader{
 		return $this->app;
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
@@ -315,9 +338,82 @@ class UserTest extends TestCase{
 		$this->assertTrue($isSuccess);
 	}
 }
+
+
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/src/Strukt/Package/Pkg_.sgf", '
+Strukt\Fs::touchWrite("tpl/sgf/src/Strukt/Package/Pkg_.sgf", '<?php
+
+namespace Strukt\Package;
+
+use Strukt\Contract\Package as Pkg;
+
+class Pkg{{name}} implements Pkg{
+
+	private $manifest;
+
+	public function __construct(){
+
+		$this->manifest = array(
+			"cmd_name"=>"{{name}}",
+			"package"=>"pkg-{{lower_name}}",
+			"files"=>array()
+		);
+	}
+
+	public function getSettings($type){
+
+		$settings = array(
+			"App:Cli"=>array(
+				"providers"=>array(),
+				"middlewares"=>array(),
+				"commands"=>array()
+			),
+			"App:Idx"=>array(
+				"providers"=>array(),
+				"middlewares"=>array()
+			)
+		);
+
+		return $settings[$type];
+	}
+
+	public function getName(){
+
+		return $this->manifest["package"];
+	}
+
+	public function getCmdName(){
+
+		return $this->manifest["cmd_name"];
+	}
+
+	public function getFiles(){
+
+		return $this->manifest["files"];
+	}
+
+	public function getModules(){
+
+		return null;
+	}
+
+	/**
+	* Use php\'s class_exists function to identify a class that indicated your package is installed
+	*/
+	public function isPublished(){
+
+		//This will return false because SomeClass::class shouldn\'t exists
+		return class_exists(\SomeClass::class);
+	}
+
+	public function getRequirements(){
+		
+		return null;
+	}
+}
+
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Contract/AbstractCommand.php", '<?php
@@ -328,6 +424,8 @@ abstract class AbstractCommand extends \Strukt\Console\Command{
 
 	use CoreTraits;
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Contract/CoreTraits.php", '<?php
@@ -353,6 +451,8 @@ trait CoreTraits{
 		return $core->get($alias);
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Middleware/Cors.php", '<?php
@@ -400,6 +500,8 @@ class Cors extends AbstractMiddleware implements MiddlewareInterface{
     	return $next($request, $response);
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Middleware/XSession.php", '<?php
@@ -447,6 +549,8 @@ class XSession extends AbstractMiddleware implements MiddlewareInterface{
 		return $next($request, $response);
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
@@ -505,6 +609,8 @@ class Logger extends AbstractProvider implements ProviderInterface{
 		});	
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Validator/Extra.php", '<?php
@@ -527,6 +633,8 @@ class Extra extends \Strukt\Contract\Validator{
 			$this->message["is_gt"] = true;
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("cfg/module.ini", '[folders]
@@ -537,9 +645,13 @@ folder["tes"] = "Tests"
 ; folder["fix"] = "Fixture"
 ; folder["rep"] = "Repository"
 ; folder["sdr"] = "Seeder"
+
+
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
+
+
 
 ');
 
@@ -568,6 +680,7 @@ foreach($paths as $ns=>$dir)
 			$loader->add($nd, $dir);
 
 return $loader;
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
@@ -643,6 +756,8 @@ class Kernel{
 		$this->app->run()->init()->noDebug();
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("console", '#!/usr/bin/php
@@ -702,6 +817,7 @@ foreach($repo as $name=>$cls){
 }
 
 exit($console->run($_SERVER["argv"]));
+
 ');
 
 Strukt\Fs::touchWrite("index.php", '<?php
@@ -725,6 +841,7 @@ FrameworkApp::mayBeRepo($repo);
 // $kernel = new App\Kernel(new Configuration(), new InjectableCfg($refAppInj));
 $kernel = new App\Kernel(new Configuration());
 $kernel->run();
+
 ');
 
 Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
@@ -806,6 +923,8 @@ class Injectable{
 		return new Monologer(null, null, $log_dir);
 	}
 }
+
+
 ');
 
 Strukt\Fs::touchWrite("cfg/repo.php", '<?php
@@ -820,6 +939,8 @@ return array(
 	"pkg-tests"=>Strukt\Package\PkgTests::class,
 	"pkg-asset"=>Strukt\Package\PkgAsset::class
 );
+
+
 ');
 
 Strukt\Fs::touchWrite(".env", 'rel_appsrc_dir = app'.DS.'src'.DS.'
@@ -849,5 +970,8 @@ migration_home = database'.DS.'schema'.DS.'Schema'.DS.'Migration
 seeder_home = database'.DS.'seeder'.DS.'Seed
 seeder_ns = Seed
 vendor_fw = '.DS.'vendor'.DS.'strukt'.DS.'
+
+
 ');
 
+chmod('./console', 0755);
