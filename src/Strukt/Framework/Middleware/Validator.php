@@ -40,9 +40,6 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 
 				try{
 
-					if($method != $request->getMethod())
-						throw new NotFoundException();
-
 					$ref = \Strukt\Ref::create($cls);
 					$messages = $ref->makeArgs([$request])->method("validate")->invoke();
 
