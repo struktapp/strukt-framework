@@ -1,0 +1,80 @@
+#!/usr/bin/env php
+<?php
+
+define('DS', DIRECTORY_SEPARATOR);
+
+$autoloadFiles = array(__DIR__ . '/../vendor/autoload.php',
+                       __DIR__ . '/../../../autoload.php');
+
+foreach($autoloadFiles as $autoloadFile)
+    if(file_exists($autoloadFile))
+        require_once $autoloadFile;
+ 
+$ls = ["tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
+"tpl/sgf/app/src/App/AuthModule/Form/User.sgf",
+"tpl/sgf/app/src/App/User.sgf",
+"tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
+"tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
+"tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",
+"tpl/sgf/lib/App/Loader.sgf",
+"tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf",
+"tpl/sgf/src/Strukt/Package/Pkg_.sgf",//
+"lib/App/Contract/AbstractCommand.php",
+"lib/App/Contract/CoreTraits.php",
+"lib/App/Middleware/Cors.php",
+"lib/App/Middleware/XSession.php",
+"lib/App/Provider/Logger.php",
+"lib/App/Validator/Extra.php",
+"cfg/module.ini",
+"tpl/sgf/cfg/app.sgf",
+"bootstrap.php",
+"lib/App/Kernel.php",
+"console",
+"index.php",
+"lib/App/Injectable.php",
+"cfg/repo.php",
+".env"];
+
+$cfg = new Strukt\Type\Str("#!/usr/bin/env php
+<?php
+
+define('DS', DIRECTORY_SEPARATOR);
+
+\$autoloadFiles = array(__DIR__ . '/../vendor/autoload.php',
+                       __DIR__ . '/../../../autoload.php');
+
+foreach(\$autoloadFiles as \$autoloadFile)
+    if(file_exists(\$autoloadFile))
+        require_once \$autoloadFile;
+
+Strukt\Fs::mkdir(\"cfg\");
+Strukt\Fs::mkdir(\"tpl/sgf/cfg\");
+Strukt\Fs::mkdir(\"tpl/sgf/app/src/App/AuthModule/Controller\");
+Strukt\Fs::mkdir(\"tpl/sgf/app/src/App/AuthModule/Form\");
+Strukt\Fs::mkdir(\"tpl/sgf/app/src/App/AuthModule/Router\");
+Strukt\Fs::mkdir(\"tpl/sgf/app/src/App/AuthModule/Tests\");
+Strukt\Fs::mkdir(\"tpl/sgf/lib/App\");
+Strukt\Fs::mkdir(\"tpl/sgf/src/Strukt/Package\");
+Strukt\Fs::mkdir(\"lib/App/Contract\");
+Strukt\Fs::mkdir(\"lib/App/Middleware\");
+Strukt\Fs::mkdir(\"lib/App/Provider\");
+Strukt\Fs::mkdir(\"lib/App/Validator\");\n\n");
+
+foreach($ls as $tpl){
+
+	$content = Strukt\Fs::cat($tpl);
+	if($tpl == ".env")
+		$content = str_replace("/", "'.DS.'", $content);
+
+	$cfg = $cfg->concat(sprintf("Strukt\Fs::touchWrite(\"%s\", '%s\n');\n\n", $tpl, $content));
+}
+
+// $cfg = $cfg->replace("Strukt's","Strukt\'s");
+// $cfg = $cfg->replace("'Access-Control-Allow-Methods'","\'Access-Control-Allow-Methods\'");
+// $cfg = $cfg->replace("'Access-Control-Allow-Origin'","\'Access-Control-Allow-Origin\'");
+// $cfg = $cfg->replace("'Access-Control-Allow-Headers'","\'Access-Control-Allow-Headers\'");
+// $cfg = $cfg->replace("Couldn't","Couldn\'t");
+
+Strukt\Fs::rm("./bin/strukt-cfg");
+Strukt\Fs::touchWrite("./bin/strukt-cfg", $cfg);
+chmod("./bin/strukt-cfg", 0755);
