@@ -16,7 +16,7 @@ Rarely should anyone use this on its own.
 
 ```sh
 echo {"minimum-stability":"dev"} > composer.json
-composer require "strukt/framework:1.1.4-alpha" --prefer-dist
+composer require "strukt/framework:1.1.5-alpha" --prefer-dist
 ```
 
 # Setup, Configuration & Environment
@@ -216,6 +216,5 @@ Somes notable mentions that can be explored via repl `./console shell:exec` cons
 ```php
 $registry->get("strukt.router")
 $registry->get("strukt.annotations")
-$registry->get("stukt.forms")
 $registry->get("module-list")
 ```
