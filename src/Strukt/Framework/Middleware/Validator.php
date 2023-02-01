@@ -20,35 +20,45 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
 
-		$forms = $this->core()->get("strukt.forms");
+		$method = $request->getMethod(); 
+		$uri = $request->getRequestUri();
 
-		$urlParser = new \Strukt\Router\UrlParser(array_keys($forms));
-		$pattern = $urlParser->whichPattern($request->getRequestUri());
+		$routeLs = $this->core()->get("strukt.router");
+		$route = $routeLs->matchToken("@forms")->getRoute($method, $uri);
 
-		try{
+		if(!is_null($route)){
 
-			if(!empty($forms[$pattern])){
+			$tokens = $route->getTokens();
 
-				list($method, $cls) = explode(":", $forms[$pattern]);
+			if(!empty($tokens)){
 
-				if($method != $request->getMethod())
-					throw new NotFoundException();
+				foreach($tokens as $token)
+					if(str_starts_with($token, "@form"))
+						continue;
 
-				$ref = \Strukt\Ref::create($cls);
-				$messages = $ref->makeArgs([$request])->method("validate")->invoke();
+				list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
 
-				if(!$messages["success"])
-					return new JsonResponse($messages, 400); //Bad Request Error 400
+				try{
+
+					if($method != $request->getMethod())
+						throw new NotFoundException();
+
+					$ref = \Strukt\Ref::create($cls);
+					$messages = $ref->makeArgs([$request])->method("validate")->invoke();
+
+					if(!$messages["success"])
+						return new JsonResponse($messages, 400); //Bad Request Error 400		
+				}
+				catch(\Exception $e){
+
+			 		$code = 500;
+			 		if($e instanceof HttpExceptionInterface)
+			 			$code = $e->getCode();
+
+			 		$response = new Response($e->getMessage(), $code);
+			 	}
 			}
 		}
-		catch(\Exception $e){
-
-	 		$code = 500;
-	 		if($e instanceof HttpExceptionInterface)
-	 			$code = $e->getCode();
-
-	 		$response = new Response($e->getMessage(), $code);
-	 	}
 
 		return $next($request, $response);
 	}

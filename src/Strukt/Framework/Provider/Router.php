@@ -45,11 +45,6 @@ class Router extends AbstractProvider implements ProviderInterface{
 							$rMethod = $rClass->getMethod($rItm["ref.method"]);
 							$rFunc = $rMethod->getClosure($rClass->newInstance());
 
-							$route = new Route($rItm["route.path"], 
-												$rFunc,
-												$rItm["http.method"], 
-												$rItm["route.perm"]);
-
 							$form = "";
 							if(!empty($rItm["route.form"])){
 
@@ -63,17 +58,20 @@ class Router extends AbstractProvider implements ProviderInterface{
 													$rItm["route.form"]);
 							}
 
+							$tokens = [];
 							if(!empty($form))
-								$forms[$rItm["route.path"]] = sprintf("%s:%s", 
-																		$rItm["http.method"],
-																		$form);
+								$tokens[] = sprintf("@forms|%s:%s", $rItm["http.method"], $form);
+
+							$route = new Route($rItm["route.path"], 
+												$rFunc,
+												$rItm["http.method"], 
+												$rItm["route.perm"],
+												$tokens);
 
 							$core->get("strukt.router")->addRoute($route);
 						}
 					}
 				}
-
-				$core->set("strukt.forms", $forms);
 			}
 		));
 	}
