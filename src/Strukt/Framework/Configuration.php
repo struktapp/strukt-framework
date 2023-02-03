@@ -94,9 +94,6 @@ class Configuration{
 		if(in_array($key, ["middlewares", "providers"])){
 
 			$appIni = parse_ini_file(\Strukt\Env::get("rel_app_ini"));	
-			// $appIni["providers"][] = "strukt.router";
-			// $appIni["providers"][] = "strukt.annotations";
-			// $appIni["providers"][] = "valid";	
 
 			$settings = [];
 			foreach($this->settings[$key] as $facet){

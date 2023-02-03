@@ -29,6 +29,11 @@ class App{
 		return static::$app_type;
 	}
 
+	public static function getConfig(){
+
+		return new \Strukt\Framework\Configuration;
+	}
+
 	public static function mayBeRepo(array $packages){
 
 		static::$repo_pkgs = $packages;

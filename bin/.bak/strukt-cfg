@@ -47,7 +47,7 @@ class User extends \Strukt\Contract\Controller{
 		return "AuthModule\Controller\User::getAll Not Yet Implemented!";
 	}
 
-	public function doAuthentication($username, $password){
+	public function doAuth($username, $password){
 
 		$user = $this->get("User", array($username, $password));
 
@@ -149,7 +149,7 @@ class Auth extends \Strukt\Contract\Router{
 		$username = $request->get("username");
 		$password = $request->get("password");
 
-		if($this->get("au.ctr.User")->doAuthentication($username, $password)){
+		if($this->get("au.ctr.User")->doAuth($username, $password)){
 
 	    	new \Strukt\Auth($username);
 	    	// new \Strukt\Auth($username, "user_type:admin|status:chilled-out");
@@ -335,12 +335,12 @@ class UserTest extends TestCase{
 		$this->core = Registry::getInstance()->get("core");
 	}
 
-	public function testDoAuthentication(){
+	public function testDoAuth(){
 
 		$username = "admin";
 		$password = "p@55w0rd";
 
-		$isSuccess = $this->core->get("au.ctr.User")->doAuthentication($username, $password);
+		$isSuccess = $this->core->get("au.ctr.User")->doAuth($username, $password);
 
 		$this->assertTrue($isSuccess);
 	}
@@ -488,9 +488,9 @@ class Cors extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
 
-    	// header("Access-Control-Allow-Origin: *");
-		// header("Access-Control-Allow-Headers: *");
-		// header("Access-Control-Allow-Methods: *");
+    	header("Access-Control-Allow-Origin: *");
+		header("Access-Control-Allow-Headers: *");
+		header("Access-Control-Allow-Methods: *");
 
     	return $next($request, $response);
 	}
@@ -657,13 +657,12 @@ folder["tes"] = "Tests"
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
-app-name = Payroll
 middlewares[] = auth
 middlewares[] = authz
 middlewares[] = except
 middlewares[] = sess
 middlewares[] = valid
-middlewares[] = cors
+; middlewares[] = cors
 ; providers[] = logger
 ');
 
