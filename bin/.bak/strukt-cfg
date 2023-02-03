@@ -476,6 +476,9 @@ use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
 
+/**
+* Name(cors)
+*/
 class Cors extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __construct(){
@@ -507,6 +510,10 @@ use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Http\RequestInterface;
 //use Strukt\Http\Request;
 
+/**
+* @Name(xsession)
+* @Inject(session)
+*/
 class XSession extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $session;
@@ -558,6 +565,9 @@ use Strukt\Contract\Provider\AbstractProvider;
 use Strukt\Contract\Provider\ProviderInterface;
 use Strukt\Env;
 
+/**
+* @Name(logger)
+*/
 class Logger extends AbstractProvider implements ProviderInterface{ 
 
 	public function __construct(){
