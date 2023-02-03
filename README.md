@@ -21,6 +21,16 @@ composer require "strukt/framework:1.1.5-alpha" --prefer-dist
 
 # Setup, Configuration & Environment
 
+## Setting Application Type
+
+```php
+use Strukt\Framework\App as FrameworkApp;
+
+FrameworkApp::create($type); //Can only be "App:Idx" for web or "App:Cli" for command line
+FrameworkApp::getType(); //get application type
+FrameworkApp::getConfig();// Strukt\Framework\Configuration
+```
+
 ## Configuration
 
 ```php
@@ -39,15 +49,6 @@ Strukt\Env::withFile();//default .env file in your root folder
 Strukt\Env::withFile(".env-dev");
 Strukt\Env::set("root_dir", getcwd());//custom environment variable
 Strukt\Env::get("root_dir");
-```
-
-## Setting Application Type
-
-```php
-use Strukt\Framework\App as FrameworkApp;
-
-FrameworkApp::create($type); //Can only be "App:Idx" for web or "App:Cli" for command line
-FrameworkApp::getType(); //get application type
 ```
 
 ## Setup Packages Registry 
