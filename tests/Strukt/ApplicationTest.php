@@ -72,6 +72,6 @@ class ApplicationTest extends TestCase{
 
 		$user_ctr = $core->get("au.ctr.User");
 
-		$this->assertTrue($user_ctr->doAuthentication("admin","p@55w0rd"));
+		$this->assertTrue($user_ctr->doAuth("admin","p@55w0rd"));
 	}
 }
