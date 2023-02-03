@@ -657,13 +657,12 @@ folder["tes"] = "Tests"
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
-app-name = Payroll
 middlewares[] = auth
 middlewares[] = authz
 middlewares[] = except
 middlewares[] = sess
 middlewares[] = valid
-middlewares[] = cors
+; middlewares[] = cors
 ; providers[] = logger
 ');
 
