@@ -16,7 +16,8 @@ $methods = array(
 	"PATH", 
 	"POST", 
 	"DELETE",
-	"PATCH"
+	"PATCH",
+	"OPTIONS"
 );
 
 $argv = $_SERVER["argv"];

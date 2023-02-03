@@ -38,6 +38,14 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 
 				list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
 
+				$app_type = \Strukt\Framework\App::getType();
+				if($method == "OPTIONS" &&  $app_type == "App:Idx"){
+
+					$body = \Strukt\Type\Json::decode($request->getContent());
+					foreach($body as $name=>$val)
+						$request->request->set($name, $val);
+				}
+
 				try{
 
 					$ref = \Strukt\Ref::create($cls);
