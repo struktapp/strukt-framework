@@ -10,6 +10,10 @@ use Strukt\Contract\Provider\ProviderInterface;
 // use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 use Strukt\Framework\Service\Router\Injectable as InjectableRouter;
 
+/**
+* @Name(strukt.router)
+* @Require(must)
+*/
 class Router extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){

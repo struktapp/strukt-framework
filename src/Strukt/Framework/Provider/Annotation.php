@@ -7,7 +7,10 @@ use Strukt\Event;
 use Strukt\Contract\Provider\AbstractProvider;
 use Strukt\Contract\Provider\ProviderInterface;
 use Strukt\Framework\Service\Router\Injectable as InjectableRouter;
-
+/**
+* @Name(strukt.annotations)
+* @Require(must)
+*/
 class Annotation extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){

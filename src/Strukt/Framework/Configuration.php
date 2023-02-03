@@ -4,6 +4,7 @@ namespace Strukt\Framework;
 
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
+use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
 class Configuration{
 
@@ -90,7 +91,29 @@ class Configuration{
 	 */
 	public function get(string $key){
 
-		if(array_key_exists($key, $this->settings))
+		if(in_array($key, ["middlewares", "providers"])){
+
+			$appIni = parse_ini_file(\Strukt\Env::get("rel_app_ini"));		
+
+			$settings = [];
+			foreach($this->settings[$key] as $facet){
+
+				$parser = new BasicNotesParser(new \ReflectionClass($facet));
+				$notes = $parser->getAnnotations();
+
+				$name = $notes["class"]["Name"]["item"];
+				if(in_array($name, $appIni[$key]))
+					$settings[] = $facet;
+
+				if(array_key_exists("Require", $notes["class"]))
+					if($notes["class"]["Require"]["item"] == "must")
+						$settings[] = $facet;
+			}
+
+			return $settings;
+		}
+		
+		if(in_array($key, ["commands"]))
 			return $this->settings[$key];
 
 		return null;

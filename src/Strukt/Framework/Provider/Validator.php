@@ -6,6 +6,10 @@ use Strukt\Event;
 use Strukt\Contract\Provider\AbstractProvider;
 use Strukt\Contract\Provider\ProviderInterface;
 
+/**
+* @Name(valid)
+* @Require(must)
+*/
 class Validator extends AbstractProvider implements ProviderInterface{
 
 	public function __construct(){

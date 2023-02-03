@@ -11,6 +11,10 @@ use Strukt\Http\Exception\NotFound as NotFoundException;
 use Strukt\Http\Response\Plain as Response;
 use Strukt\Contract\Http\Exception\HttpExceptionInterface;
 
+/**
+* @Name(valid)
+* @Inject(router)
+*/
 class Validator extends AbstractMiddleware implements MiddlewareInterface{
 
 	public function __construct(){
