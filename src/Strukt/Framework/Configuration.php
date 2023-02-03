@@ -93,7 +93,10 @@ class Configuration{
 
 		if(in_array($key, ["middlewares", "providers"])){
 
-			$appIni = parse_ini_file(\Strukt\Env::get("rel_app_ini"));		
+			$appIni = parse_ini_file(\Strukt\Env::get("rel_app_ini"));	
+			// $appIni["providers"][] = "strukt.router";
+			// $appIni["providers"][] = "strukt.annotations";
+			// $appIni["providers"][] = "valid";	
 
 			$settings = [];
 			foreach($this->settings[$key] as $facet){
@@ -102,8 +105,9 @@ class Configuration{
 				$notes = $parser->getAnnotations();
 
 				$name = $notes["class"]["Name"]["item"];
-				if(in_array($name, $appIni[$key]))
-					$settings[] = $facet;
+				if(!empty($appIni[$key]))
+					if(in_array($name, $appIni[$key]))
+						$settings[] = $facet;
 
 				if(array_key_exists("Require", $notes["class"]))
 					if($notes["class"]["Require"]["item"] == "must")
