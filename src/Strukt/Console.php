@@ -12,6 +12,7 @@ use Strukt\Console\Command\ModuleGenerator;
 use Strukt\Console\Command\RouteList;
 use Strukt\Console\Command\ShellExec;
 use Strukt\Console\Command\PackagePublisher;
+use Strukt\Console\Command\PackageList;
 use Strukt\Console\Command\PackageMake;
 use Strukt\Console\Command\PackageAdd;
 use Strukt\Console\Command\PackageCopy;
@@ -50,6 +51,7 @@ class Console extends \Strukt\Console\Application{
 			$this->add(new ShellExec);
 			$this->addCmdSect("\nPackage");
 			$this->add(new PackagePublisher);
+			$this->add(new PackageList);
 			$this->add(new PackageMake);
 			$this->add(new PackageAdd);
 			$this->add(new PackageCopy);
