@@ -53,6 +53,15 @@ class Core implements Pkg{
 
 					\Strukt\Framework\Middleware\Validator::class,
 					\Strukt\Router\Middleware\Router::class
+				),
+				"commands"=>array(
+
+					\Strukt\Console\Command\PackagePublisher::class,
+					\Strukt\Console\Command\PackageList::class,
+					\Strukt\Console\Command\PackageMake::class,
+					\Strukt\Console\Command\PackageAdd::class,
+					\Strukt\Console\Command\PackageCopy::class,
+					\Strukt\Console\Command\PackageExport::class
 				)
 			)
 		);

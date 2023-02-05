@@ -4,6 +4,7 @@ namespace Strukt;
 
 use Strukt\Env;
 use Strukt\Core\Registry;
+use Strukt\Console\DocBlockParser;
 
 use Strukt\Console\Command\ApplicationGenerator;
 use Strukt\Console\Command\ApplicationLoaderGenerator;
@@ -11,12 +12,6 @@ use Strukt\Console\Command\RouterGenerator;
 use Strukt\Console\Command\ModuleGenerator;
 use Strukt\Console\Command\RouteList;
 use Strukt\Console\Command\ShellExec;
-use Strukt\Console\Command\PackagePublisher;
-use Strukt\Console\Command\PackageList;
-use Strukt\Console\Command\PackageMake;
-use Strukt\Console\Command\PackageAdd;
-use Strukt\Console\Command\PackageCopy;
-use Strukt\Console\Command\PackageExport;
 
 /**
 * Console Loader
@@ -49,13 +44,30 @@ class Console extends \Strukt\Console\Application{
 			}
 
 			$this->add(new ShellExec);
-			$this->addCmdSect("\nPackage");
-			$this->add(new PackagePublisher);
-			$this->add(new PackageList);
-			$this->add(new PackageMake);
-			$this->add(new PackageAdd);
-			$this->add(new PackageCopy);
-			$this->add(new PackageExport);
+
+			$config = new \Strukt\Framework\Configuration();
+			$cmds = $config->get("commands");
+
+			$cls = [];
+			foreach($cmds as $cmd){
+
+				$doc = new \Strukt\Console\DocBlockParser($cmd);
+				$ls = $doc->parse();
+				$alias = $ls["command"]["alias"];
+				$cls[$alias] = $cmd;
+			}
+
+			$cmd_names = parse_ini_file(Env::get("rel_cmd_ini"));
+
+			foreach($cmd_names as $key => $val){
+
+				if(is_string($val))
+					$this->addCmdSect(sprintf("\n%s", $val));
+
+				if(is_array($val))
+					foreach($val as $cmd)
+						$this->add(new $cls[$cmd]);
+			}
 		}
 	}
 }

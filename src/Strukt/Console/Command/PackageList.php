@@ -30,7 +30,7 @@ class PackageList extends \Strukt\Console\Command{
 			if($package == "core")
 				continue;
 
-			$out->add(sprintf("   %s:%s\n", $package, $status)); 
+			$out->add(sprintf("   %s:%s\n", $package, $status));
 		}
 	}
 }
