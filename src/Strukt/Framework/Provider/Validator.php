@@ -8,7 +8,7 @@ use Strukt\Contract\Provider\ProviderInterface;
 
 /**
 * @Name(valid)
-* @Require(must)
+* @Required()
 */
 class Validator extends AbstractProvider implements ProviderInterface{
 

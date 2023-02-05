@@ -106,9 +106,8 @@ class Configuration{
 					if(in_array($name, $appIni[$key]))
 						$settings[] = $facet;
 
-				if(array_key_exists("Require", $notes["class"]))
-					if($notes["class"]["Require"]["item"] == "must")
-						$settings[] = $facet;
+				if(array_key_exists("Required", $notes["class"]))
+					$settings[] = $facet;
 			}
 
 			return $settings;

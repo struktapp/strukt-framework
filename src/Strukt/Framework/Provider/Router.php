@@ -12,7 +12,7 @@ use Strukt\Framework\Service\Router\Injectable as InjectableRouter;
 
 /**
 * @Name(strukt.router)
-* @Require(must)
+* @Required()
 */
 class Router extends AbstractProvider implements ProviderInterface{
 
