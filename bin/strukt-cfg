@@ -905,6 +905,7 @@ rel_app_ini = cfg'.DS.'app.ini
 rel_mod_ini = cfg'.DS.'module.ini
 rel_db_ini = cfg'.DS.'db.ini
 rel_repo_ini = cfg'.DS.'repo.ini
+rel_cmd_ini = cfg'.DS.'cmd.ini
 
 logger_name = Strukt Logger
 logger_file = logs'.DS.'app.log
