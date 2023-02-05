@@ -6,7 +6,6 @@ use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
 
 require "bootstrap.php";
-$repo = require "cfg/repo.php";
 
 $methods = array(
 
@@ -87,7 +86,7 @@ Env::withFile();
 Env::set("root_dir", getcwd());
 
 FrameworkApp::create("App:Cli");
-FrameworkApp::mayBeRepo($repo);
+FrameworkApp::mayBeRepo();
 
 App\Middleware\XSession::create(array(
 

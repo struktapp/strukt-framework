@@ -34,7 +34,12 @@ class App{
 		return new \Strukt\Framework\Configuration;
 	}
 
-	public static function mayBeRepo(array $packages){
+	public static function mayBeRepo(){
+
+		$repos = parse_ini_file(Env::get("rel_repo_ini"));
+
+		foreach($repos as $name => $repo)
+			$packages[$name] = sprintf("Strukt\Package\%s", $repo);
 
 		static::$repo_pkgs = $packages;
 	}

@@ -780,9 +780,6 @@ use Strukt\Console;
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
-// use Strukt\Framework\Injectable;
-// use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
-// use App\Injectable as AppInjectable;
 
 use App\Loader as AppLoader;
 use App\Kernel as AppKernel;
@@ -793,14 +790,9 @@ $loader->add("Schema", __DIR__."/database/schema");
 Env::withFile();
 Env::set("root_dir", getcwd());
 
-$repo = require "cfg/repo.php";
-
 FrameworkApp::create("App:Cli");
-FrameworkApp::mayBeRepo($repo); 
+FrameworkApp::mayBeRepo(); 
 
-// $kernel = new App\Kernel(new Configuration(), new Injectable());
-// $refAppInj = new ReflectionClass(new AppInjectable());
-// $kernel = new App\Kernel(new Configuration(), new InjectableCfg($refAppInj));
 $kernel = new App\Kernel(new Configuration());
 $app = $kernel->getApp();
 
@@ -810,6 +802,7 @@ if(!is_null($app))
 $console = new Console();
 
 $published = FrameworkApp::packages("published");
+$repo = FrameworkApp::getRepo();
 unset($published["core"]);
 unset($repo["core"]);
 
@@ -831,7 +824,6 @@ foreach($repo as $name=>$cls){
 
 exit($console->run($_SERVER["argv"]));
 
-
 ');
 
 Strukt\Fs::touchWrite("index.php", '<?php
@@ -839,20 +831,15 @@ Strukt\Fs::touchWrite("index.php", '<?php
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
-// use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
-// use App\Injectable as AppInjectable;
 
 require "bootstrap.php";
-$repo = require "cfg/repo.php";
 
 Env::withFile();
 Env::set("root_dir", getcwd());
 
 FrameworkApp::create("App:Idx");
-FrameworkApp::mayBeRepo($repo);
+FrameworkApp::mayBeRepo();
 
-// $refAppInj = new ReflectionClass(new AppInjectable());
-// $kernel = new App\Kernel(new Configuration(), new InjectableCfg($refAppInj));
 $kernel = new App\Kernel(new Configuration());
 $kernel->run();
 
@@ -943,20 +930,13 @@ class Injectable{
 
 ');
 
-Strukt\Fs::touchWrite("cfg/repo.php", '<?php
-
-return array(
-
-	"core"=>Strukt\Package\Core::class,
-	"pkg-do"=>Strukt\Package\PkgDo::class,
-	"pkg-roles"=>Strukt\Package\PkgRoles::class,
-	"pkg-audit"=>Strukt\Package\PkgAudit::class,
-	"pkg-books"=>Strukt\Package\PkgBooks::class,
-	"pkg-tests"=>Strukt\Package\PkgTests::class,
-	"pkg-asset"=>Strukt\Package\PkgAsset::class
-);
-
-
+Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
+pkg-do = PkgDo
+pkg-roles = PkgRoles
+pkg-audit = PkgAudit
+pkg-books = PkgBooks
+pkg-tests = PkgTests
+pkg-asset = PkgAsset
 
 ');
 
@@ -973,6 +953,7 @@ rel_static_dir = public'.DS.'static
 rel_app_ini = cfg'.DS.'app.ini
 rel_mod_ini = cfg'.DS.'module.ini
 rel_db_ini = cfg'.DS.'db.ini
+rel_repo_ini = cfg'.DS.'repo.ini
 
 logger_name = Strukt Logger
 logger_file = logs'.DS.'app.log

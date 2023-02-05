@@ -23,17 +23,6 @@ class Configuration{
 		return new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
 	}
 
-	/**
-	* Will allow ignoring @Required annotation in providers and middlewares
-	* Use ONLY for in App:Cli - Currently only works for ./xhttp file
-	*
-	* @param string $ignore - currently only supports '@require'
-	*/
-	public function addIgnore(string $ignore){
-
-		$this->ignore[] = $ignore;
-	}
-
 	public function getSetup(){
 
 		$providers = [];
@@ -98,8 +87,23 @@ class Configuration{
 	}
 
 	/**
-	 * @param string $key
+	* Will allow ignoring @Required annotation in providers and middlewares
+	* Use ONLY for in App:Cli - Currently only works for ./xhttp file
+	*
+	* @param string $ignore - currently only supports '@require'
+	*/
+	public function addIgnore(string $ignore){
+
+		$this->ignore[] = $ignore;
+	}
+
+	/**
+	 * Configuration.get($key) Will filter non-compulsory middlewares 
+	 * and providers using ./cfg/app.ini
 	 * 
+	 * @param string $key
+	 *
+	 * Options:
 	 * - commands
 	 * - providers
 	 * - middlewares
