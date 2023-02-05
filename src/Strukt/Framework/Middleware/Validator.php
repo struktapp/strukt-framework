@@ -13,7 +13,7 @@ use Strukt\Contract\Http\Exception\HttpExceptionInterface;
 
 /**
 * @Name(valid)
-* @Inject(router)
+* @Requires(strukt.router)
 */
 class Validator extends AbstractMiddleware implements MiddlewareInterface{
 

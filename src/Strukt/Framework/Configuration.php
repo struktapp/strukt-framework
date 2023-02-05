@@ -8,6 +8,10 @@ use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
 class Configuration{
 
+	private $packages;
+	private $settings;
+	private $ignore;
+
 	public function __construct(){
 
 		$this->packages = FrameworkApp::getRepo();
@@ -16,7 +20,18 @@ class Configuration{
 
 	public function getInjectables(){
 
-		return new InjectableCfg(new \ReflectionClass(new \App\Injectable()));
+		return new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
+	}
+
+	/**
+	* Will allow ignoring @Required annotation in providers and middlewares
+	* Use ONLY for in App:Cli - Currently only works for ./xhttp file
+	*
+	* @param string $ignore - currently only supports '@require'
+	*/
+	public function addIgnore(string $ignore){
+
+		$this->ignore[] = $ignore;
 	}
 
 	public function getSetup(){
@@ -108,6 +123,29 @@ class Configuration{
 
 				if(array_key_exists("Required", $notes["class"]))
 					$settings[] = $facet;
+
+				if(array_key_exists("Requires", $notes["class"]) && 
+					!in_array("@require", $this->ignore)){
+
+					$requires = $notes["class"]["Requires"]["item"];
+					if(!\Strukt\Reg::exists($requires))
+						new \Strukt\Raise(sprintf("%s:[%s] requires registry:item[%s]!", 
+											ucfirst(trim($key, "s")),
+											$name, 
+											$requires));
+				}
+
+				if(array_key_exists("Inject", $notes["class"])){
+
+					$inj_name = $notes["class"]["Inject"]["item"];
+					$inj_keys = array_keys($this->getInjectables()->getConfigs());
+
+					if(!in_array(sprintf("@inject.%s", $inj_name), $inj_keys))
+						new \Strukt\Raise(sprintf("%s:[%s] requires provider:[%s]!", 
+											ucfirst(trim($key, "s")),
+											$name, 
+											$inj_name));
+				}
 			}
 
 			return $settings;
