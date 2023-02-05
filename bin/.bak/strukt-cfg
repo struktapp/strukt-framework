@@ -54,9 +54,6 @@ class User extends \Strukt\Contract\Controller{
 		return $user->getUsername() == "admin" && $user->getPassword() == sha1("p@55w0rd");
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf", '<?php
@@ -75,9 +72,6 @@ class User extends \Strukt\Contract\Form{
 	*/
 	public string $password;
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf", '<?php
@@ -125,9 +119,6 @@ class User{
 		$this->password = sha1($password);
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf", '<?php
@@ -191,9 +182,6 @@ class Auth extends \Strukt\Contract\Router{
 		return "Successfully logged out.";
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf", '<?php
@@ -263,9 +251,6 @@ class Index extends \Strukt\Contract\Router{
 		throw new \Exception("Whoops!");
 	}	
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf", '<?php
@@ -275,9 +260,6 @@ class {{app}}AuthModule extends \Strukt\Contract\Module{
 
 	protected $alias="Au";
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf", '<?php
@@ -317,9 +299,6 @@ class Loader{
 		return $this->app;
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
@@ -345,9 +324,6 @@ class UserTest extends TestCase{
 		$this->assertTrue($isSuccess);
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("tpl/sgf/src/Strukt/Package/Pkg_.sgf", '<?php
@@ -420,9 +396,6 @@ class Pkg{{name}} implements Pkg{
 		return null;
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Contract/AbstractCommand.php", '<?php
@@ -433,9 +406,6 @@ abstract class AbstractCommand extends \Strukt\Console\Command{
 
 	use CoreTraits;
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Contract/CoreTraits.php", '<?php
@@ -461,9 +431,6 @@ trait CoreTraits{
 		return $core->get($alias);
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Middleware/Cors.php", '<?php
@@ -495,9 +462,6 @@ class Cors extends AbstractMiddleware implements MiddlewareInterface{
     	return $next($request, $response);
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Middleware/XSession.php", '<?php
@@ -549,9 +513,6 @@ class XSession extends AbstractMiddleware implements MiddlewareInterface{
 		return $next($request, $response);
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
@@ -613,9 +574,6 @@ class Logger extends AbstractProvider implements ProviderInterface{
 		});	
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Validator/Extra.php", '<?php
@@ -638,9 +596,15 @@ class Extra extends \Strukt\Contract\Validator{
 			$this->message["is_gt"] = true;
 	}
 }
+');
 
-
-
+Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
+pkg-do = PkgDo
+pkg-roles = PkgRoles
+pkg-audit = PkgAudit
+pkg-books = PkgBooks
+pkg-tests = PkgTests
+pkg-asset = PkgAsset
 ');
 
 Strukt\Fs::touchWrite("cfg/module.ini", '[folders]
@@ -651,10 +615,18 @@ folder["tes"] = "Tests"
 ; folder["fix"] = "Fixture"
 ; folder["rep"] = "Repository"
 ; folder["sdr"] = "Seeder"
-
-
-
 ');
+
+Strukt\Fs::touchWrite("cfg/cmd.ini", 'pkg-pub.title = Package Publisher
+pkg-pub.cmd[] = package:publish
+pkg-pub.cmd[] = package:ls
+; pkg-make.title = Package Maker
+; pkg-make.cmd[] = package:make
+; pkg-make.cmd[] = package:add
+; pkg-make.cmd[] = package:copy
+; pkg-make.cmd[] = package:export
+');
+
 
 Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
 middlewares[] = auth
@@ -691,8 +663,6 @@ foreach($paths as $ns=>$dir)
 			$loader->add($nd, $dir);
 
 return $loader;
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
@@ -768,9 +738,6 @@ class Kernel{
 		$this->app->run()->init()->noDebug();
 	}
 }
-
-
-
 ');
 
 Strukt\Fs::touchWrite("console", '#!/usr/bin/php
@@ -801,29 +768,28 @@ if(!is_null($app))
 
 $console = new Console();
 
-$published = FrameworkApp::packages("published");
-$repo = FrameworkApp::getRepo();
-unset($published["core"]);
-unset($repo["core"]);
+// $published = FrameworkApp::packages("published");
+// $repo = FrameworkApp::getRepo();
+// unset($published["core"]);
+// unset($repo["core"]);
 
-foreach($repo as $pkg_name=>$pkg_cls)
-	if(!in_array($pkg_name, $published))
-		unset($repo[$pkg_name]);
+// foreach($repo as $pkg_name=>$pkg_cls)
+// 	if(!in_array($pkg_name, $published))
+// 		unset($repo[$pkg_name]);
 
-foreach($repo as $name=>$cls){
+// foreach($repo as $name=>$cls){
 
-	$pkg = new $cls;
+// 	$pkg = new $cls;
 
-	$settings = $pkg->getSettings("App:Cli");
-	$cmdset = $settings["commands"];
+// 	$settings = $pkg->getSettings("App:Cli");
+// 	$cmdset = $settings["commands"];
 
-	$console->addCmdSect(sprintf("\n%s", $pkg->getCmdName()));
-	foreach($cmdset as $cmd)
-		$console->add(FrameworkApp::newCls($cmd));
-}
+// 	$console->addCmdSect(sprintf("\n%s", $pkg->getCmdName()));
+// 	foreach($cmdset as $cmd)
+// 		$console->add(FrameworkApp::newCls($cmd));
+// }
 
 exit($console->run($_SERVER["argv"]));
-
 ');
 
 Strukt\Fs::touchWrite("index.php", '<?php
@@ -842,8 +808,6 @@ FrameworkApp::mayBeRepo();
 
 $kernel = new App\Kernel(new Configuration());
 $kernel->run();
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
@@ -925,19 +889,6 @@ class Injectable{
 		return new Monologer(null, null, $log_dir);
 	}
 }
-
-
-
-');
-
-Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
-pkg-do = PkgDo
-pkg-roles = PkgRoles
-pkg-audit = PkgAudit
-pkg-books = PkgBooks
-pkg-tests = PkgTests
-pkg-asset = PkgAsset
-
 ');
 
 Strukt\Fs::touchWrite(".env", 'rel_appsrc_dir = app'.DS.'src'.DS.'
@@ -968,9 +919,6 @@ migration_home = database'.DS.'schema'.DS.'Schema'.DS.'Migration
 seeder_home = database'.DS.'seeder'.DS.'Seed
 seeder_ns = Seed
 vendor_fw = '.DS.'vendor'.DS.'strukt'.DS.'
-
-
-
 ');
 
 chmod('./console', 0755);
