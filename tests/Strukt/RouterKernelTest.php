@@ -27,7 +27,7 @@ class RouterKernelTest extends TestCase{
 		$this->kernel->providers([
 
 			\Strukt\Framework\Provider\Validator::class,
-			\Strukt\Framework\Provider\Annotation::class,
+			// \Strukt\Framework\Provider\Annotation::class,
 			\Strukt\Framework\Provider\Router::class
 		]);
 

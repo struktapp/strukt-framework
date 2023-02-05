@@ -193,11 +193,6 @@ class Application extends AbstractCore{
 				$this->core->set("nr", $this->nr);
 				$this->core->set("core", new Core);
 
-				if($this->core->exists("strukt.service.annotations"))
-					$this->core->get("strukt.service.annotations")
-									->apply($this->modList)
-									->exec();
-
 				if($this->core->exists("strukt.service.router"))
 					$this->core->get("strukt.service.router")
 									->apply($this->modList)

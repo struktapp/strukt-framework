@@ -216,6 +216,5 @@ Somes notable mentions that can be explored via repl `./console shell:exec` cons
 
 ```php
 $registry->get("strukt.router")
-$registry->get("strukt.annotations")
 $registry->get("module-list")
 ```

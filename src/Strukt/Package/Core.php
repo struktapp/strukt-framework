@@ -27,7 +27,7 @@ class Core implements Pkg{
 				"providers"=>array(
 
 					\Strukt\Framework\Provider\Validator::class,
-					\Strukt\Framework\Provider\Annotation::class,
+					// \Strukt\Framework\Provider\Annotation::class,
 					\Strukt\Framework\Provider\Router::class
 				),
 				"middlewares"=>array(
@@ -46,7 +46,7 @@ class Core implements Pkg{
 				"providers"=>array(
 
 					\Strukt\Framework\Provider\Validator::class,
-					\Strukt\Framework\Provider\Annotation::class,
+					// \Strukt\Framework\Provider\Annotation::class,
 					\Strukt\Framework\Provider\Router::class
 				),
 				"middlewares"=>array(
