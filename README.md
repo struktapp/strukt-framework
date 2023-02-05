@@ -53,20 +53,22 @@ Strukt\Env::get("root_dir");
 
 ## Setup Packages Registry 
 
+File location `./cfg/repo.ini`
+
+```ini
+core = Core # Default in built package for default middlewares and providers
+pkg-do = PkgDo # https://github.com/samweru/pkg-do
+pkg-roles = PkgRoles # https://github.com/samweru/pkg-roles
+pkg-audit = PkgAudit # https://github.com/samweru/pkg-audit
+pkg-books = PkgBooks # https://github.com/samweru/pkg-books
+pkg-tests = PkgTests # https://github.com/samweru/pkg-tests
+pkg-asset = PkgAsset # https://github.com/samweru/pkg-asset
+```
+Repo packages load and list.
+
 ```php
-$repo = array(
-
-	"core"=>Strukt\Package\Core::class, //Default in built package for default middlewares and providers
-	"pkg-do"=>Strukt\Package\PkgDo::class,//https://github.com/samweru/pkg-do
-	"pkg-roles"=>Strukt\Package\PkgRoles::class,//https://github.com/samweru/pkg-roles
-	"pkg-audit"=>Strukt\Package\PkgAudit::class,//https://github.com/samweru/pkg-audit
-	"pkg-books"=>Strukt\Package\PkgBooks::class,//https://github.com/samweru/pkg-books
-	"pkg-tests"=>Strukt\Package\PkgTests::class,//https://github.com/samweru/pkg-tests
-	"pkg-asset"=>Strukt\Package\PkgAsset::class//https://github.com/samweru/pkg-asset
-);
-
-FrameworkApp::mayBeRepo($repo);
-FrameworkApp::getRepo();
+FrameworkApp::mayBeRepo(); //Load repo names
+FrameworkApp::getRepo(); //Get loaded repo names
 ```
 
 ## Some Application Methods
