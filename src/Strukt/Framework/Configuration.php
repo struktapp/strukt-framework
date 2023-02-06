@@ -55,7 +55,7 @@ class Configuration{
 
 				if(array_key_exists("commands", $settings))
 					foreach($settings["commands"] as $command)
-						if(class_exists($command))
+						if(class_exists($command = \Strukt\Framework\App::getCls($command)))
 							$commands[] = $command;
 			}
 		}

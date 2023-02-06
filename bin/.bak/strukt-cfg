@@ -628,15 +628,21 @@ pub-pak.cmd[] = package:ls
 ; pkg-tests.title = PhpUnit Testing
 ; pkg-tests.cmd[] = test:run
 ; pkg-tests.cmd[] = test:ls
-; pkg-asset.title[] = Asset
-; pkg-asset.cmd[] = md:html
-; pkg-roles.title[] = RBAC
+; pkg-roles.title = RBAC
 ; pkg-roles.cmd[] = perm:add
 ; pkg-roles.cmd[] = role:add
 ; pkg-roles.cmd[] = role:add:perm
 ; pkg-roles.cmd[] = user:add
 ; pkg-roles.cmd[] = user:dumpcred
 ; pkg-roles.cmd[] = user:reset
+; pkg-do.title = Doctrine
+; pkg-do.cmd[] = make:models   
+; pkg-do.cmd[] = make:db        
+; pkg-do.cmd[] = make:migration 
+; pkg-do.cmd[] = make:seeder    
+; pkg-do.cmd[] = migrate:exec   
+; pkg-do.cmd[] = seeder:exec    
+; pkg-do.cmd[] = sql:exec
 ');
 
 
