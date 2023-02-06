@@ -625,6 +625,9 @@ pkg-pub.cmd[] = package:ls
 ; pkg-make.cmd[] = package:add
 ; pkg-make.cmd[] = package:copy
 ; pkg-make.cmd[] = package:export
+; pkg-test.title = PhpUnit Testing
+; pkg-test.cmd[] = test:run
+; pkg-test.cmd[] = test:ls
 ');
 
 
