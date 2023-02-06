@@ -5,6 +5,7 @@ namespace Strukt\Console\Command;
 use Strukt\Console\Input;
 use Strukt\Console\Output;
 use Strukt\Framework\App as FrameworkApp;
+use Strukt\Console\Color;
 
 /**
 * package:ls  List packages and status
@@ -21,11 +22,11 @@ class PackageList extends \Strukt\Console\Command{
 
 		foreach($packages as $package){
 
-			$status = "unavailable";
+			$status = Color::write("red", "unavailable");
 			if(in_array($package, $published))
-				$status = "published";
+				$status = Color::write("yellow", "published");
 			elseif(in_array($package, $installed))
-				$status = "installed";
+				$status = Color::write("green:bold", "installed");
 			
 			if($package == "core")
 				continue;

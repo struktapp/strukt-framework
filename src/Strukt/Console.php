@@ -12,6 +12,7 @@ use Strukt\Console\Command\RouterGenerator;
 use Strukt\Console\Command\ModuleGenerator;
 use Strukt\Console\Command\RouteList;
 use Strukt\Console\Command\ShellExec;
+use Strukt\Console\Command\CliUtil;
 
 /**
 * Console Loader
@@ -44,6 +45,7 @@ class Console extends \Strukt\Console\Application{
 			}
 
 			$this->add(new ShellExec);
+			$this->add(new CliUtil);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");
