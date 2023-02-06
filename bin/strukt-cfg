@@ -617,17 +617,17 @@ folder["tes"] = "Tests"
 ; folder["sdr"] = "Seeder"
 ');
 
-Strukt\Fs::touchWrite("cfg/cmd.ini", 'pkg-pub.title = Package Publisher
-pkg-pub.cmd[] = package:publish
-pkg-pub.cmd[] = package:ls
-; pkg-make.title = Package Maker
-; pkg-make.cmd[] = package:make
-; pkg-make.cmd[] = package:add
-; pkg-make.cmd[] = package:copy
-; pkg-make.cmd[] = package:export
-; pkg-test.title = PhpUnit Testing
-; pkg-test.cmd[] = test:run
-; pkg-test.cmd[] = test:ls
+Strukt\Fs::touchWrite("cfg/cmd.ini", 'pub-pak.title = Package Publisher
+pub-pak.cmd[] = package:publish
+pub-pak.cmd[] = package:ls
+; pub-mak.title = Package Maker
+; pub-mak.cmd[] = package:make
+; pub-mak.cmd[] = package:add
+; pub-mak.cmd[] = package:copy
+; pub-mak.cmd[] = package:export
+; pkg-tests.title = PhpUnit Testing
+; pkg-tests.cmd[] = test:run
+; pkg-tests.cmd[] = test:ls
 ');
 
 
