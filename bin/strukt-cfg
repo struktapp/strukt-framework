@@ -785,27 +785,6 @@ if(!is_null($app))
 
 $console = new Console();
 
-// $published = FrameworkApp::packages("published");
-// $repo = FrameworkApp::getRepo();
-// unset($published["core"]);
-// unset($repo["core"]);
-
-// foreach($repo as $pkg_name=>$pkg_cls)
-// 	if(!in_array($pkg_name, $published))
-// 		unset($repo[$pkg_name]);
-
-// foreach($repo as $name=>$cls){
-
-// 	$pkg = new $cls;
-
-// 	$settings = $pkg->getSettings("App:Cli");
-// 	$cmdset = $settings["commands"];
-
-// 	$console->addCmdSect(sprintf("\n%s", $pkg->getCmdName()));
-// 	foreach($cmdset as $cmd)
-// 		$console->add(FrameworkApp::newCls($cmd));
-// }
-
 exit($console->run($_SERVER["argv"]));
 ');
 
