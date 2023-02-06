@@ -654,6 +654,10 @@ middlewares[] = sess
 middlewares[] = valid
 ; middlewares[] = cors
 ; providers[] = logger
+; providers[] = sch-mgr
+; providers[] = ent-mgr
+; providers[] = doc-adp
+; providers[] = nmlz
 ');
 
 Strukt\Fs::touchWrite("bootstrap.php", '<?php
