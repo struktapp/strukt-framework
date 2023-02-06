@@ -628,8 +628,16 @@ pub-pak.cmd[] = package:ls
 ; pkg-tests.title = PhpUnit Testing
 ; pkg-tests.cmd[] = test:run
 ; pkg-tests.cmd[] = test:ls
+; pkg-asset.title[] = Asset
+; pkg-asset.cmd[] = md:html
+; pkg-roles.title[] = RBAC
+; pkg-roles.cmd[] = perm:add
+; pkg-roles.cmd[] = role:add
+; pkg-roles.cmd[] = role:add:perm
+; pkg-roles.cmd[] = user:add
+; pkg-roles.cmd[] = user:dumpcred
+; pkg-roles.cmd[] = user:reset
 ');
-
 
 Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
 middlewares[] = auth
