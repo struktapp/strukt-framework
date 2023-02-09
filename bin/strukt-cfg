@@ -619,6 +619,7 @@ folder["tes"] = "Tests"
 Strukt\Fs::touchWrite("cfg/cmd.ini", 'pub-pak.title = Package Publisher
 pub-pak.cmd[] = package:publish
 pub-pak.cmd[] = package:ls
+pub-pak.cmd[] = package:info
 ; pub-mak.title = Package Maker
 ; pub-mak.cmd[] = package:make
 ; pub-mak.cmd[] = package:add

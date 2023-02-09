@@ -44,13 +44,13 @@ class PackageInfo extends \Strukt\Console\Command{
 		$out->add(sprintf("Published: %s\n", ["False", "True"][$is_pub]));
 
 		if(!empty($req))
-			$out->add(sprintf("Requirements: %s\n", $req));
+			$out->add(sprintf("Requirements: %s\n", implode("\n", $req)));
 
 		if(!empty($files))
-			$out->add(sprintf("Files: %s\n", Color::write("yellow", implode("\n", $files))));
+			$out->add(sprintf("Files: %s\n", Color::write("yellow", implode("\n   ", $files))));
 
 		if(!empty($modules))
-			$out->add(sprintf("Modules: %s\n", $modules));
+			$out->add(sprintf("Modules: %s\n", implode("\n", $modules)));
 
 		$out->add("Settings:");
 		foreach(["App:Idx", "App:Cli"] as $type){
