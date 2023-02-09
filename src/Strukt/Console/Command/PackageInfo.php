@@ -12,12 +12,16 @@ use Strukt\Ref;
 * package:info  Information on packages
 * 
 * Usage:
-*	
-*      package:info <name>
+*
+*      package:info <name> [--files]
 *
 * Arguments:
 *
 *      name     Package name
+*
+* Options:
+*
+*      --files -f   Flag to list files
 */
 class PackageInfo extends \Strukt\Console\Command{
 
@@ -50,7 +54,8 @@ class PackageInfo extends \Strukt\Console\Command{
 			$out->add(sprintf("Files: %s\n", Color::write("yellow", implode("\n   ", $files))));
 
 		if(!empty($modules))
-			$out->add(sprintf("Modules: %s\n", implode("\n", $modules)));
+			if(array_key_exists("files", $in->getInputs()))
+				$out->add(sprintf("Modules: %s\n", implode("\n", $modules)));
 
 		$out->add("Settings:");
 		foreach(["App:Idx", "App:Cli"] as $type){
