@@ -12,34 +12,59 @@ use Strukt\Env;
 * 
 * Usage:
 *	
-*      cli:util <type> <command>
+*      cli:util <type> <facet> <name>
 *
 * Arguments:
 *
-*      type        Options: enable, disable
-*      command     Options: pub-pak, pub-make, pkg-tests etc
+*      type     options: (enable|disable)
+*      facet    options: (middleware|provider|command)
+*      name     options: middlewares: (auth|authz|except|sess|valid|cors)
+*                         providers: (logger|nmlz|sch-mgr|ent-mgr|doc-adp)
+*                         commands: (pub-pak|pub-mak|pkg-tests|pkg-do|pkg-roles)
 */
 class CliUtil extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$cmd = $in->get("command");
 		$type = $in->get("type");
+		$facet = $in->get("facet");
+		$name = $in->get("name");
 
-		$filename = Env::get("rel_cmd_ini");
+		if(in_array($facet, ["command"])){
+
+			$filename = Env::get("rel_cmd_ini");
+
+			if($type == "enable"){
+
+				$pattern = sprintf('/;(\s)%s/', $name);
+				$replace = $name;
+			}
+
+			if($type == "disable"){
+
+				$pattern = sprintf('/%s/', $name);
+				$replace = sprintf('; %s', $name);
+			}
+		}
+
+		if(in_array($facet, ["middleware", "provider"])){
+
+			$filename = Env::get("rel_app_ini");
+
+			if($type == "enable"){
+
+				$pattern = sprintf('/;(\s)%ss(.*)%s/', $facet, $name);
+				$replace = sprintf("%ss[] = %s", $facet, $name);
+			}
+
+			if($type == "disable"){
+
+				$pattern = sprintf('/%ss(.*)%s/', $facet, $name);
+				$replace = sprintf("; %ss[] = %s", $facet, $name);
+			}
+		}
+
 		$ini = \Strukt\Fs::cat($filename);
-
-		if($type == "enable"){
-
-			$pattern = sprintf('/;(\s)%s/', $cmd);
-			$replace = $cmd;
-		}
-
-		if($type == "disable"){
-
-			$pattern = sprintf('/%s/', $cmd);
-			$replace = sprintf('; %s', $cmd);
-		}
 
 		$output = preg_replace($pattern, $replace, $ini);
 

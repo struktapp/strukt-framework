@@ -58,6 +58,7 @@ class Core implements Pkg{
 
 					\Strukt\Console\Command\PackagePublisher::class,
 					\Strukt\Console\Command\PackageList::class,
+					\Strukt\Console\Command\PackageInfo::class,
 					\Strukt\Console\Command\PackageMake::class,
 					\Strukt\Console\Command\PackageAdd::class,
 					\Strukt\Console\Command\PackageCopy::class,
