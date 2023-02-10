@@ -31,6 +31,10 @@ class PackageInfo extends \Strukt\Console\Command{
 		$installed = FrameworkApp::packages("installed");
 
 		$name = $in->get("name");
+		if($name!="core")
+			if(array_key_exists($name, $packages))
+				new \Strukt\Raise(sprintf("Package [%s] does not exist!", $name));
+
 		if(!in_array($name, $installed))
 			new \Strukt\Raise(sprintf("Package [%s] is not installed!", $name));
 
@@ -45,7 +49,9 @@ class PackageInfo extends \Strukt\Console\Command{
 		$modules = $pkg->getModules();
 
 		$out->add(sprintf("Name: %s\n", $name));
-		$out->add(sprintf("Published: %s\n", ["False", "True"][$is_pub]));
+		$out->add(sprintf("Published: %s\n", [
+			Color::write("red", "False"), 
+			Color::write("green", "True")][$is_pub]));
 
 		if(!empty($req))
 			$out->add(sprintf("Requirements: %s\n", implode("\n", $req)));
@@ -62,6 +68,9 @@ class PackageInfo extends \Strukt\Console\Command{
 
 			$out->add(sprintf("\n Type: %s", Color::write("blue", $type)));
 			$settings = $pkg->getSettings($type);
+			if(empty($settings))
+				$out->add("\n  None");
+
 			foreach(["commands", "middleware", "providers"] as $facet){
 
 				$classes = $settings[$facet];
