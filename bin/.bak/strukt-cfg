@@ -601,7 +601,7 @@ class Extra extends \Strukt\Contract\Validator{
 Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
 pkg-do = PkgDo
 pkg-roles = PkgRoles
-pkg-books = PkgBooks
+pkg-book = PkgBook
 pkg-tests = PkgTests
 pkg-asset = PkgAsset
 ');
