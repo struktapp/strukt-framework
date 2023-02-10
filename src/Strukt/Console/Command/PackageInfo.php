@@ -32,7 +32,7 @@ class PackageInfo extends \Strukt\Console\Command{
 
 		$name = $in->get("name");
 		if($name!="core")
-			if(array_key_exists($name, $packages))
+			if(!array_key_exists($name, $packages))
 				new \Strukt\Raise(sprintf("Package [%s] does not exist!", $name));
 
 		if(!in_array($name, $installed))
