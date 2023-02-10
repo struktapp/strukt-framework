@@ -80,6 +80,6 @@ class PackageInfo extends \Strukt\Console\Command{
 
 		if(!empty($files))
 			if(array_key_exists("files", $in->getInputs()))
-				$out->add(sprintf("Files: %s\n", Color::write("yellow", implode("\n   ", $files))));
+				$out->add(sprintf("\nFiles: %s\n", Color::write("yellow", implode("\n   ", $files))));
 	}
 }
