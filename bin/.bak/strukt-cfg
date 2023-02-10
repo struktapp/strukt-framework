@@ -643,6 +643,8 @@ pub-pak.cmd[] = package:info
 ; pkg-do.cmd[] = migrate:exec   
 ; pkg-do.cmd[] = seeder:exec    
 ; pkg-do.cmd[] = sql:exec
+; pkg-asset.title = Asset
+; pkg-asset.cmd[] = md:html
 ');
 
 
@@ -652,12 +654,14 @@ middlewares[] = authz
 middlewares[] = except
 middlewares[] = sess
 middlewares[] = valid
+; middlewares[] = asset
 ; middlewares[] = cors
 ; providers[] = logger
 ; providers[] = sch-mgr
 ; providers[] = ent-mgr
 ; providers[] = doc-adp
 ; providers[] = nmlz
+; providers[] = strukt.asset
 ');
 
 Strukt\Fs::touchWrite("bootstrap.php", '<?php
