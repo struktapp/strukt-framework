@@ -56,10 +56,6 @@ class PackageInfo extends \Strukt\Console\Command{
 		if(!empty($req))
 			$out->add(sprintf("Requirements: %s\n", implode("\n", $req)));
 
-		if(!empty($files))
-			if(array_key_exists("files", $in->getInputs()))
-				$out->add(sprintf("Files: %s\n", Color::write("yellow", implode("\n   ", $files))));
-
 		if(!empty($modules))
 			$out->add(sprintf("Modules: %s\n", implode("\n", $modules)));
 
@@ -69,7 +65,7 @@ class PackageInfo extends \Strukt\Console\Command{
 			$out->add(sprintf("\n Type: %s", Color::write("blue", $type)));
 			$settings = $pkg->getSettings($type);
 			if(empty($settings))
-				$out->add(sprintf(" :%s", Color::write("green","None")));
+				$out->add(sprintf(":%s", Color::write("green","None")));
 
 			foreach(["commands", "middleware", "providers"] as $facet){
 
@@ -81,5 +77,9 @@ class PackageInfo extends \Strukt\Console\Command{
 				}
 			}
 		}
+
+		if(!empty($files))
+			if(array_key_exists("files", $in->getInputs()))
+				$out->add(sprintf("Files: %s\n", Color::write("yellow", implode("\n   ", $files))));
 	}
 }
