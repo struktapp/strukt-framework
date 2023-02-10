@@ -69,7 +69,7 @@ class PackageInfo extends \Strukt\Console\Command{
 			$out->add(sprintf("\n Type: %s", Color::write("blue", $type)));
 			$settings = $pkg->getSettings($type);
 			if(empty($settings))
-				$out->add("\n  None");
+				$out->add(sprintf(" :%s", Color::write("green","None")));
 
 			foreach(["commands", "middleware", "providers"] as $facet){
 
