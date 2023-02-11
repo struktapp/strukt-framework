@@ -5,7 +5,6 @@ namespace Strukt;
 use Strukt\Core\Map;
 use Strukt\Core\Collection;
 use Strukt\Router\Kernel as RouterKernel;
-// use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
 use Strukt\Contract\Module;
 use Strukt\Env;
 use Strukt\Raise;
@@ -210,10 +209,7 @@ class Application extends AbstractCore{
 					if(!$this->isInit)
 						$this->init();
 
-					$response = $this->router->run();
-					$response->sendHeaders();
-
-					exit($response->getContent());
+					$this->router->make()->withHeaders()->exec();
 				}
 				catch(\Exception $e){
 
@@ -229,10 +225,7 @@ class Application extends AbstractCore{
 				if(!$this->isInit)
 					new Raise("Strukt\Application::run@anonymous::init must be called first!");
 
-				$response = $this->router->run();
-				$response->sendHeaders();
-
-				exit($response->getContent());
+				$this->router->make()->withHeaders()->exec();
 			}
 		};
 	}
