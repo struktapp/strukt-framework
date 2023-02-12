@@ -6,10 +6,17 @@ use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Middleware\MiddlewareInterface;
 use Strukt\Contract\Middleware\AbstractMiddleware;
-use Strukt\Http\Response\Json as JsonResponse;
-use Strukt\Http\Exception\NotFound as NotFoundException;
-use Strukt\Http\Response\Plain as Response;
-use Strukt\Contract\Http\Exception\HttpExceptionInterface;
+// use Strukt\Http\Response\Json as JsonResponse;
+// use Strukt\Http\Exception\NotFound as NotFoundException;
+// use Strukt\Http\Response\Plain as Response;
+
+use Strukt\Http\Error\BadRequest;
+use Strukt\Contract\Http\Error\HttpErrorInterface;
+use Strukt\Http\Error\Any as HttpError;
+use Strukt\Http\Exec as HttpExec;
+
+use Strukt\Framework\App as FrameworkApp;
+use Strukt\Type\Json;
 
 /**
 * @Name(valid)
@@ -22,52 +29,61 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 		//
 	}
 
-	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
+	public function __invoke(RequestInterface $request, 
+								ResponseInterface $response, callable $next){
 
 		$method = $request->getMethod(); 
 		$uri = $request->getRequestUri();
 
-		$routeLs = $this->core()->get("strukt.router");
-		$route = $routeLs->matchToken("@forms")->getRoute($method, $uri);
+		$headers = [];
+		if(\Strukt\Reg::exists("strukt.useJsonError"))
+			if(\Strukt\Reg::get("strukt.useJsonError"))
+				$headers = ["Content-Type"=>"application/json"];
 
-		if(!is_null($route)){
+		try{
 
-			$tokens = $route->getTokens();
+			$routeLs = $this->core()->get("strukt.router");
+			$route = $routeLs->matchToken("@forms")->getRoute($method, $uri);
 
-			if(!empty($tokens)){
+			if(!is_null($route)){
 
-				foreach($tokens as $token)
-					if(str_starts_with($token, "@form"))
-						continue;
+				$tokens = $route->getTokens();
 
-				list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
+				if(!empty($tokens)){
 
-				$app_type = \Strukt\Framework\App::getType();
-				if($method == "OPTIONS" &&  $app_type == "App:Idx"){
+					foreach($tokens as $token)
+						if(str_starts_with($token, "@form"))
+							continue;
 
-					$body = \Strukt\Type\Json::decode($request->getContent());
-					foreach($body as $name=>$val)
-						$request->request->set($name, $val);
-				}
+					list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
 
-				try{
+					$app_type = FrameworkApp::getType();
+					if($method == "OPTIONS" &&  $app_type == "App:Idx"){
+
+						$body = Json::decode($request->getContent());
+						foreach($body as $name=>$val)
+							$request->request->set($name, $val);
+					}
 
 					$ref = \Strukt\Ref::create($cls);
 					$messages = $ref->makeArgs([$request])->method("validate")->invoke();
 
 					if(!$messages["success"])
-						return new JsonResponse($messages, 400); //Bad Request Error 400		
+						$response = new BadRequest(Json::encode($messages), $headers);
 				}
-				catch(\Exception $e){
-
-			 		$code = 500;
-			 		if($e instanceof HttpExceptionInterface)
-			 			$code = $e->getCode();
-
-			 		$response = new Response($e->getMessage(), $code);
-			 	}
 			}
 		}
+		catch(\Exception $e){
+
+			$code = 500;
+	 		if(HttpError::isCode($e->getCode()))
+	 			$code = $e->getCode();
+
+	 		$response = new HttpError($e->getMessage(), $code, $headers);
+		}
+
+		if($response instanceof HttpErrorInterface)
+	 		HttpExec::make($response)->withHeaders()->run();
 
 		return $next($request, $response);
 	}
