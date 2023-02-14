@@ -924,6 +924,11 @@ migration_home = database'.DS.'schema'.DS.'Schema'.DS.'Migration
 seeder_home = database'.DS.'seeder'.DS.'Seed
 seeder_ns = Seed
 vendor_fw = '.DS.'vendor'.DS.'strukt'.DS.'
+
+serve_host = 127.0.0.1
+serve_port = 8080
+serve_ctx = .
+serve_file = index.php
 ');
 
 chmod('./console', 0755);

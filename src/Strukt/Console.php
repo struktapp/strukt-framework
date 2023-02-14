@@ -8,6 +8,7 @@ use Strukt\Console\DocBlockParser;
 
 use Strukt\Console\Command\ApplicationGenerator;
 use Strukt\Console\Command\ApplicationLoaderGenerator;
+use Strukt\Console\Command\ApplicationExec;
 use Strukt\Console\Command\RouterGenerator;
 use Strukt\Console\Command\ModuleGenerator;
 use Strukt\Console\Command\RouteList;
@@ -37,6 +38,7 @@ class Console extends \Strukt\Console\Application{
 
 			$this->add(new ApplicationGenerator);
 			$this->add(new ApplicationLoaderGenerator);
+			$this->add(new ApplicationExec);
 			
 			if($registry->exists("module-list")){
 
