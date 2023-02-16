@@ -9,7 +9,7 @@ use Strukt\Env;
 use Strukt\Fs;
 
 /**
-* make:loader     Generate Application Loader
+* app:reload     Generate Application Loader
 */
 class ApplicationLoaderGenerator extends \Strukt\Console\Command{
 

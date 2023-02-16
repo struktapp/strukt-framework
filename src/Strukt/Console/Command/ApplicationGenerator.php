@@ -11,11 +11,11 @@ use Strukt\Templator;
 use Strukt\Raise;
 
 /**
-* make:app     Generate Application
+* app:make     Generate Application
 *
 * Usage:
 *
-*       make:app <application_name>
+*       app:make <application_name>
 *
 * Arguments:
 *

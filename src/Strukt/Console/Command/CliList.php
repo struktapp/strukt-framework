@@ -12,11 +12,11 @@ use Strukt\Framework\App as FrameworkApp;
 * 
 * Usage:
 *	
-*      cli:ls <type> [--idx]
+*      cli:ls [<type>] [--idx]
 *
 * Arguments:
 *
-*      type     options: (providers|middlewares)
+*      type     optional: (providers|middlewares)
 *
 * Options:
 *
@@ -31,11 +31,36 @@ class CliList extends \Strukt\Console\Command{
 		if(array_key_exists("idx", $in->getInputs()))
 			FrameworkApp::create("App:Idx");
 
-		$config = FrameworkApp::getConfig();
-		$ls = $config->get($type);
+		$types = [];
+		if($type == "middlewares")
+			$types[] = "middlewares";
 
-		$out->add("\n");
-		foreach($ls as $facet)
-			$out->add(Color::write("yellow", sprintf(" %s\n", $facet)));
+		if($type == "providers")
+			$types[] = "providers";
+
+		if(empty($type))
+			$types = array(
+
+				"middlewares",
+				"providers"
+			);
+
+		$config = FrameworkApp::getConfig();
+		$lsmdl = $config->get("middlewares");
+		$lsprv = $config->get("providers");
+
+		if(in_array("middlewares", $types)){
+
+			$out->add("\nMiddlewares\n");
+			foreach($lsmdl as $facet)
+				$out->add(Color::write("yellow", sprintf(" %s\n", $facet)));
+		}
+
+		if(in_array("providers", $types)){
+
+			$out->add("\nProviders\n");
+			foreach($lsprv as $facet)
+				$out->add(Color::write("yellow", sprintf(" %s\n", $facet)));
+		}
 	}
 }
