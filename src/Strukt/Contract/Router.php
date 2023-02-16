@@ -24,7 +24,7 @@ abstract class Router extends AbstractService{
 	*
 	* @return Strukt\Contract\ResponseInterface
 	*/
-	protected function redirect(string $uri, Request $request = null){
+	protected function redir(string $uri, Request $request = null){
 
 		$method = "POST";
 		if(preg_match("/\:/", $uri))
@@ -53,7 +53,7 @@ abstract class Router extends AbstractService{
 	* 
 	* @return void
 	*/
-	protected function externalRedirect($url, $code = 302, $headers = []){
+	protected function redirx(string $url, int $code = 302, array $headers = []){
 
 		return new RedirectResponse($url, $code, $headers);
 	}

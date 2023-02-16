@@ -65,7 +65,7 @@ class RouterKernelTest extends TestCase{
 
 		$_SERVER["REQUEST_URI"] = "/";
 
-		$response = $this->kernel->run();
+		$response = $this->kernel->make()->run();
 
 		$this->assertEquals("</b>Strukt Works!<b>", $response->getContent());
 	}

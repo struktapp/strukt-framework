@@ -25,7 +25,6 @@
     },
     "suggest":{
 
-        "filp/whoops":"when running debug mode whoops prints cool errors",
         "monolog/monolog":"*"
     },
     "autoload": {
