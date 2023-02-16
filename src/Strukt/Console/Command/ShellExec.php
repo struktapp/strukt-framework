@@ -13,31 +13,31 @@ class ShellExec extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$registry = Registry::getSingleton();
-		$vars[] = "registry";
+		$reg = Registry::getSingleton();
+		$vars[] = "reg";
 		
 
-		if($registry->exists("app.em")){
+		if($reg->exists("app.em")){
 
-			$em = $registry->get("app.em");
+			$em = $reg->get("app.em");
 			$vars[] = "em";
 		}
 
-		if($registry->exists("app.sm")){
+		if($reg->exists("app.sm")){
 
-			$sm = $registry->get("app.sm");
+			$sm = $reg->get("app.sm");
 			$vars[] = "sm";
 		}
 
-		if($registry->exists("app.da")){
+		if($reg->exists("app.da")){
 
-			$da = $registry->get("app.da");
+			$da = $reg->get("app.da");
 			$vars[] = "da";
 		}
 
-		if($registry->exists("core")){
+		if($reg->exists("core")){
 
-			$core = $registry->get("core");
+			$core = $reg->get("core");
 			$vars[] = "core";
 		}
 

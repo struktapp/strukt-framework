@@ -83,7 +83,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				Fs::mkdir($base);
 
 			$outputfile = Str::create($file)
-				->replace("tpl".DS."sgf".DS,"")
+				->replace(".tpl".DS."sgf".DS,"")
 				->replace(DS."App".DS, sprintf(DS."%s".DS, $app_name->yield()))
 				->replace(".sgf", ".php");	
 

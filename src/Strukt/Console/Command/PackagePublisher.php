@@ -121,7 +121,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			$file_content = Fs::cat($vendor_file_path);
 			if(Str::create($vendor_file_path)->endsWith(".sgf") &&
-				!Str::create($vendor_file_path)->contains(Fs::ds("tpl/sgf")))
+				!Str::create($vendor_file_path)->contains(Fs::ds(".tpl/sgf")))
 					$file_content = Templator::create($file_content, array(
 
 						"app"=>$appname

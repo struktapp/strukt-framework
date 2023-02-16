@@ -13,26 +13,26 @@ foreach($autoloadFiles as $autoloadFile)
 Strukt\Fs::rmdir('app');
 Strukt\Fs::rmdir('lib/App');
 Strukt\Fs::rmdir('cfg');
-Strukt\Fs::rmdir('tpl');
+Strukt\Fs::rmdir('.tpl');
 Strukt\Fs::rm('.env');
 Strukt\Fs::rm('bootstrap');
 Strukt\Fs::rm('index.php');
 Strukt\Fs::rm('console');
 
 Strukt\Fs::mkdir("cfg");
-Strukt\Fs::mkdir("tpl/sgf/cfg");
-Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Controller");
-Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Form");
-Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Router");
-Strukt\Fs::mkdir("tpl/sgf/app/src/App/AuthModule/Tests");
-Strukt\Fs::mkdir("tpl/sgf/lib/App");
-Strukt\Fs::mkdir("tpl/sgf/src/Strukt/Package");
+Strukt\Fs::mkdir(".tpl/sgf/cfg");
+Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
+Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Form");
+Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Router");
+Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Tests");
+Strukt\Fs::mkdir(".tpl/sgf/lib/App");
+Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
 Strukt\Fs::mkdir("lib/App/Contract");
 Strukt\Fs::mkdir("lib/App/Middleware");
 Strukt\Fs::mkdir("lib/App/Provider");
 Strukt\Fs::mkdir("lib/App/Validator");
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Controller/User.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Controller/User.sgf", '<?php
 namespace {{app}}\AuthModule\Controller;
 
 class User extends \Strukt\Contract\Controller{
@@ -56,7 +56,7 @@ class User extends \Strukt\Contract\Controller{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Form/User.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Form/User.sgf", '<?php
 namespace {{app}}\AuthModule\Form;
 
 class User extends \Strukt\Contract\Form{
@@ -74,7 +74,7 @@ class User extends \Strukt\Contract\Form{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/User.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/User.sgf", '<?php
 namespace {{app}};
 
 class User{
@@ -121,7 +121,7 @@ class User{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf", '<?php
 
 namespace {{app}}\AuthModule\Router;
 
@@ -184,7 +184,7 @@ class Auth extends \Strukt\Contract\Router{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Router/Index.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Index.sgf", '<?php
 namespace {{app}}\AuthModule\Router;
 
 use Strukt\Http\Request;
@@ -253,7 +253,7 @@ class Index extends \Strukt\Contract\Router{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf", '<?php
 namespace {{app}}\AuthModule;
 
 class {{app}}AuthModule extends \Strukt\Contract\Module{
@@ -262,7 +262,7 @@ class {{app}}AuthModule extends \Strukt\Contract\Module{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/lib/App/Loader.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Loader.sgf", '<?php
 namespace App;
 
 use Strukt\Router\Kernel as RouterKernel;
@@ -301,7 +301,7 @@ class Loader{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
 namespace {{app}}\AuthModule\Tests;
 
 use Strukt\Core\Registry;
@@ -326,7 +326,7 @@ class UserTest extends TestCase{
 }
 ');
 
-Strukt\Fs::touchWrite("tpl/sgf/src/Strukt/Package/Pkg_.sgf", '<?php
+Strukt\Fs::touchWrite(".tpl/sgf/src/Strukt/Package/Pkg_.sgf", '<?php
 
 namespace Strukt\Package;
 
@@ -648,7 +648,7 @@ pub-pak.cmd[] = package:info
 ');
 
 
-Strukt\Fs::touchWrite("tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
+Strukt\Fs::touchWrite(".tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
 middlewares[] = auth
 middlewares[] = authz
 middlewares[] = except
@@ -901,12 +901,12 @@ class Injectable{
 ');
 
 Strukt\Fs::touchWrite(".env", 'rel_appsrc_dir = app'.DS.'src'.DS.'
-rel_tpl_dir = tpl'.DS.'sgf
-rel_tplapp_dir = tpl'.DS.'sgf'.DS.'app'.DS.'
-rel_tplappsrc_dir = tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'
-rel_tplauthmod_dir = tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'App'.DS.'AuthModule'.DS.'
-rel_apptpl_ini = tpl'.DS.'sgf'.DS.'cfg'.DS.'app.sgf
-rel_loader_sgf = tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
+rel_tpl_dir = .tpl'.DS.'sgf
+rel_tplapp_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'
+rel_tplappsrc_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'
+rel_tplauthmod_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'App'.DS.'AuthModule'.DS.'
+rel_apptpl_ini = .tpl'.DS.'sgf'.DS.'cfg'.DS.'app.sgf
+rel_loader_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
 rel_app_lib = lib'.DS.'App
 rel_static_dir = public'.DS.'static
 

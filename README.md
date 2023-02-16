@@ -217,6 +217,6 @@ There you can find an example `App\Validator\Extra::isLenGt`
 Somes notable mentions that can be explored via repl `./console shell:exec` console.
 
 ```php
-$registry->get("strukt.router")
-$registry->get("module-list")
+$reg->get("strukt.router")
+$reg->get("module-list")
 ```

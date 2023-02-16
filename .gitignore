@@ -10,6 +10,7 @@ test.php
 php_errors.log
 cfg/module.ini
 cfg/app.ini
+.tpl/
 tpl/
 bin/clean
 bin/setup
