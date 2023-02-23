@@ -829,7 +829,7 @@ Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
 namespace App;
 
 use Strukt\User; 
-use App\Service\Logger\Monologer;
+use App\Util\Logger\Monologer;
 use Strukt\Http\Session\Native as Session;
 use Strukt\Http\Session\ArrayCache as XSession;
 use Strukt\Contract\Http\SessionInterface;
