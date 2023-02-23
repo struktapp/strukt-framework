@@ -475,26 +475,31 @@ use Strukt\Contract\Http\RequestInterface;
 //use Strukt\Http\Request;
 
 /**
-* @Name(xsession)
+* @Name(xsess)
 * @Inject(session)
 */
 class XSession extends AbstractMiddleware implements MiddlewareInterface{
 
 	private $session;
-	private static $map;
+	private static $options = [];
 
 	public function __construct(){
 
 		$this->session = $this->core()->get("@inject.session")->exec();
 	}
 
-	public static function create(array $map, array $perms = null){
+	public static function config(array $options){
 
-		self::$map = $map;
-		
-		$permissions = ["permissions"=>[]];	
-		if(!is_null($perms))
-			$permissions["permissions"] = $perms;
+		self::$options = $options;
+
+		$permissions = ["permissions"=>[]];
+
+		if(array_key_exists("allow", $options)){
+
+			$perms = $options["allow"];
+			if(!is_null($perms))
+				$permissions["permissions"] = $perms;
+		}
 
 		self::core()->set("@strukt", $permissions);
 	}
@@ -502,11 +507,11 @@ class XSession extends AbstractMiddleware implements MiddlewareInterface{
 	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
 
 		$this->session->start();
-		foreach(self::$map as $key=>$val)
+		foreach(self::$options as $key=>$val)
 			$this->session->set($key, $val);
 
 		if($this->session->has("username"));
-			$request->setUser(new \Strukt\User(self::$map["username"]));
+			$request->setUser(new \Strukt\User(self::$options["username"]));
 
 		$request->setSession($this->session);
 
@@ -647,11 +652,11 @@ pub-pak.cmd[] = package:info
 ; pkg-asset.cmd[] = md:html
 ');
 
-
 Strukt\Fs::touchWrite(".tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
 middlewares[] = auth
 middlewares[] = authz
 middlewares[] = except
+middlewares[] = xsess
 middlewares[] = sess
 middlewares[] = valid
 ; middlewares[] = asset
