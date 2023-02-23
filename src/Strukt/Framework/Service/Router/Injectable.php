@@ -18,6 +18,9 @@ class Injectable implements \Strukt\Contract\Injectable{
 
 			foreach($note as $method_name=>$method_items){
 
+				if(is_null($method_items))
+					continue;
+
 				if(array_key_exists("Method", $method_items)){
 
 					$form = "";
