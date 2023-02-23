@@ -88,28 +88,38 @@ Env::set("root_dir", getcwd());
 FrameworkApp::create("App:Cli");
 FrameworkApp::mayBeRepo();
 
-App\Middleware\XSession::create(array(
+App\Middleware\XSession::config(array(
 
-		"username"=>"admin"
-	),
-	array(
+	"username"=>"admin",
+	"allow"=>[
 
 		"strukt:auth",
 		// "user_all"
+	]
 ));
 
-$config = new Configuration();
-$config->addIgnore("@require");
-$middlewares = $config->get("middlewares");
-$middlewares = array_merge([App\Middleware\XSession::class], $middlewares);
-$config->set("middlewares", $middlewares);
+$config = new Configuration([
+
+	"ignore"=>["@require"]
+]);
+// $config->addIgnore("@require");
+// $middlewares = $config->get("middlewares");
+// $middlewares = array_merge([
+
+	// App\Middleware\XSession::class,
+	// Strukt\Router\Middleware\Authentication::class
+
+// ], $middlewares);
+
+// $config->set("middlewares", $middlewares);
+
+// print_r($config->get("middlewares"));
 
 $kernel = new App\Kernel($config);
 $runner = $kernel->getApp()->run();
+// $kernel->getApp()->run()->init()->debug();
 $runner = $runner->init();
-$runner->debug();
-// print_r(get_class_methods($kernel->getRouter()));
-// $response = $kernel->getRouter()->make()->run();
+$response = $kernel->getRouter()->make()->run();
 // $response = $kernel->getRouter()->debug();
 // $response = $kernel->getRouter()->run();
-// exit(sprintf("%s\n", $response->getContent()));
+exit(sprintf("%s\n", $response->getContent()));

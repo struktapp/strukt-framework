@@ -51,6 +51,8 @@ class Core implements Pkg{
 				),
 				"middlewares"=>array(
 
+					\App\Middleware\XSession::class,
+					\Strukt\Router\Middleware\Authentication::class,
 					\Strukt\Framework\Middleware\Validator::class,
 					\Strukt\Router\Middleware\Router::class
 				),

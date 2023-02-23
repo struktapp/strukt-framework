@@ -823,10 +823,14 @@ Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
 namespace App;
 
 use Strukt\User; 
-use App\Util\Logger\Monologer;
+use App\Service\Logger\Monologer;
 use Strukt\Http\Session\Native as Session;
-use Strukt\Env;
+use Strukt\Http\Session\ArrayCache as XSession;
+use Strukt\Contract\Http\SessionInterface;
+use Strukt\Contract\UserInterface;
 use Strukt\Framework\App;
+use Strukt\Env;
+use Doctrine\DBAL\Logging\SQLLogger;
 
 class Injectable{
 
@@ -834,24 +838,24 @@ class Injectable{
 	 * @Package(core)
 	 * @Inject(permissions)
 	 */
-	public function getPkgCorePermissons(Session $session){
+	public function getPkgCorePermissons(SessionInterface $session){
 
-		$perms["permissions"] = [];
+		$permissions["permissions"] = [];
 
 		/**
 		 * This permission enables Strukt\'s Auth Annotation
 		 */
 		if($session->has("username"))
-			$perms["permissions"][] = "strukt:auth"; 
-
-		return $perms;
+			$permissions["permissions"][] = "strukt:auth"; 
+;
+		return $permissions;
 	}
 
 	/**
 	 * @Package(pkg-roles)
 	 * @Inject(permissions)
 	 */
-	public function getPkgRolesPermissions(Session $session){
+	public function getPkgRolesPermissions(SessionInterface $session){
 
 		$permissions["permissions"] = [];
 
@@ -869,7 +873,7 @@ class Injectable{
 	 * @Package(core)
 	 * @Inject(verify)
 	 */
-	public function getPkgCoreVerify(Session $session){
+	public function getPkgCoreVerify(SessionInterface $session):UserInterface{
 
 		$user = new \Strukt\User();
 		$user->setUsername($session->get("username"));
@@ -881,7 +885,10 @@ class Injectable{
 	 * @Package(core)
 	 * @Inject(session)
 	 */
-	public function getPkgCoreSession(){
+	public function getPkgCoreSession():SessionInterface{
+
+		if(App::getType() == "App:Cli")
+			return new XSession;
 
 		return new Session;
 	}
@@ -890,7 +897,7 @@ class Injectable{
 	 * @Package(pkg-do)
 	 * @Inject(sqllogger)
 	 */
-	public function getPkgDoSqlLogger(){
+	public function getPkgDoSqlLogger():SQLLogger{
 
 		$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
 
