@@ -28,7 +28,11 @@ class CliList extends \Strukt\Console\Command{
 
 		$type = $in->get("type");
 
-		if(array_key_exists("idx", $in->getInputs()))
+		$inputs = $in->getInputs();
+		if(is_null($inputs))
+			$inputs = [];
+
+		if(array_key_exists("idx", $inputs))
 			FrameworkApp::create("App:Idx");
 
 		$types = [];

@@ -109,7 +109,9 @@ class Configuration{
 
 		if(in_array($key, ["middlewares", "providers"])){
 
-			$appIni = parse_ini_file(\Strukt\Env::get("rel_app_ini"));	
+			$rel_app_ini = \Strukt\Env::get("rel_app_ini");
+			if(\Strukt\Fs::isFile($rel_app_ini))
+				$appIni = parse_ini_file($rel_app_ini);
 
 			$settings = [];
 			foreach($this->settings[$key] as $facet){

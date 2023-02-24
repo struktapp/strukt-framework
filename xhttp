@@ -4,11 +4,20 @@
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
-use Strukt\Http\Method as HttpMethod;
 
 require "bootstrap.php";
 
-$methods = HttpMethod::getAll();
+$methods = array(
+
+	"ANY",
+	"PUT", 
+	"GET", 
+	"PATH", 
+	"POST", 
+	"DELETE",
+	"PATCH",
+	"OPTIONS"
+);
 
 $argv = $_SERVER["argv"];
 
@@ -93,6 +102,18 @@ $config = new Configuration([
 
 	"ignore"=>["@require"]
 ]);
+// $config->addIgnore("@require");
+// $middlewares = $config->get("middlewares");
+// $middlewares = array_merge([
+
+	// App\Middleware\XSession::class,
+	// Strukt\Router\Middleware\Authentication::class
+
+// ], $middlewares);
+
+// $config->set("middlewares", $middlewares);
+
+// print_r($config->get("middlewares"));
 
 $kernel = new App\Kernel($config);
 $runner = $kernel->getApp()->run();

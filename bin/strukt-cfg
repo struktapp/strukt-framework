@@ -695,9 +695,12 @@ $paths = array(
 	"Schema"=>__DIR__."/database/schema/"
 );
 
-$cfg_app = parse_ini_file("cfg/app.ini");
-if(!is_null($cfg_app))
-	$paths[$cfg_app["app-name"]] = __DIR__."/app/src/";
+if(file_exists("cfg/app.ini")){
+	
+	$cfg_app = parse_ini_file("cfg/app.ini");
+	if(!is_null($cfg_app))
+		$paths[$cfg_app["app-name"]] = __DIR__."/app/src/";
+}
 
 foreach($paths as $ns=>$dir)
 		if(file_exists($dir))
