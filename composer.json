@@ -32,5 +32,8 @@
         "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
     },
     "bin":["bin/strukt-cfg"],
-    "minimum-stability":"dev"
+    "minimum-stability":"dev",
+    "require-dev": {
+        "nunomaduro/collision": "^5.0"
+    }
 }
