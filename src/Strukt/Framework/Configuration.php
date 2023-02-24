@@ -122,7 +122,7 @@ class Configuration{
 				if(!empty($appIni[$key]))
 					if(in_array($name, $appIni[$key]))
 						$settings[] = $facet;
-
+					
 				if(array_key_exists("Required", $notes["class"]))
 					$settings[] = $facet;
 
