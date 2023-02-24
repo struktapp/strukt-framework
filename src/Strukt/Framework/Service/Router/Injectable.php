@@ -1,6 +1,5 @@
 <?php
 
-// namespace App\Service\Router;
 namespace Strukt\Framework\Service\Router;
 
 use Strukt\Annotation\Parser\Basic;
@@ -13,6 +12,9 @@ class Injectable implements \Strukt\Contract\Injectable{
 
 		$parser = new Basic($rclass);
 		$notes = $parser->getAnnotations();
+
+		$class_name = $notes["class_name"];
+		unset($notes["class_name"]);
 
 		foreach($notes as $note){
 
@@ -41,7 +43,7 @@ class Injectable implements \Strukt\Contract\Injectable{
 						"route.path" => $method_items["Route"]["item"],
 						"route.perm" => $name,
 						"route.form" => $form,
-						"ref.class" => $notes["class_name"],
+						"ref.class" => $class_name,
 						"ref.method" => $method_name,
 					);
 				}
