@@ -8,9 +8,9 @@ use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
 class Configuration{
 
-	private $packages;
 	private $settings;
 	private $ignore = [];
+	private $facet = [];
 
 	public function __construct(array $options = []){
 
@@ -22,34 +22,31 @@ class Configuration{
 		if(array_key_exists("ignore", $options))
 			$this->ignore = $options["ignore"];
 
-		$this->packages = FrameworkApp::getRepo();
-		$this->settings = $this->getSetup();
+		$this->settings = self::getSetup();
 	}
 
-	public function getInjectables(){
+	public static function getInjectables(){
 
 		return new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
 	}
 
-	public function getSetup(){
+	public static function getSetup(){
 
 		$providers = [];
 		$middlewares = [];
 		$commands = [];
 
 		$app_type = FrameworkApp::getType();
-
 		$published = FrameworkApp::packages("published");
+		$packages = FrameworkApp::getRepo();
 
-		foreach($this->packages as $name=>$cls){
+		foreach($packages as $name=>$cls){
 
 			if(class_exists($cls) && in_array($name, $published)){
 
 				$pkg = FrameworkApp::newCls($cls);
 
 				$settings = $pkg->getSettings($app_type);
-
-				// $this->pkg_ls[$name] = $settings; 
 
 				if(array_key_exists("providers", $settings))
 					foreach($settings["providers"] as $provider)
@@ -116,7 +113,6 @@ class Configuration{
 			$settings = [];
 			foreach($this->settings[$key] as $facet){
 
-				// print_r($facet."\n");
 				$parser = new BasicNotesParser(new \ReflectionClass($facet));
 				$notes = $parser->getAnnotations();
 
@@ -150,6 +146,8 @@ class Configuration{
 											$name, 
 											$inj_name));
 				}
+
+				$this->facet[$key][] = $name;
 			}
 
 			return $settings;
@@ -159,5 +157,10 @@ class Configuration{
 			return $this->settings[$key];
 
 		return null;
+	}
+
+	public function getAliases(){
+
+		return $this->facet;
 	}
 }

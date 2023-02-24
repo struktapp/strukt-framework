@@ -62,6 +62,14 @@ class CliUtil extends \Strukt\Console\Command{
 				$pattern = sprintf('/%ss(.*)%s/', $facet, $name);
 				$replace = sprintf("; %ss[] = %s", $facet, $name);
 			}
+
+			$cfg = new \Strukt\Framework\Configuration();
+			$cfg->get("middlewares");
+			$cfg->get("providers");
+
+			$aliases = $cfg->getAliases();
+			if(!in_array($name, $aliases[sprintf("%ss", $facet)]))
+				new \Strukt\Raise(sprintf("%s:%s does not exists!", $facet, $name));
 		}
 
 		$ini = \Strukt\Fs::cat($filename);
