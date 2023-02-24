@@ -4,20 +4,12 @@
 use Strukt\Env;
 use Strukt\Framework\App as FrameworkApp;
 use Strukt\Framework\Configuration;
+use Strukt\Console\Color;
+use Strukt\Http\Method as HttpMethod;
 
 require "bootstrap.php";
 
-$methods = array(
-
-	"ANY",
-	"PUT", 
-	"GET", 
-	"PATH", 
-	"POST", 
-	"DELETE",
-	"PATCH",
-	"OPTIONS"
-);
+$methods = HttpMethod::getAll();
 
 $argv = $_SERVER["argv"];
 
@@ -30,21 +22,29 @@ if(in_array(strtolower(trim($arg1)), [
 	"--help", 
 	"-h","?"])){
 
-echo <<<EOF
+	echo Color::write("white","\n xhttp");
+	echo Color::writeln("blue", " XHTTP is a CLI utility that mimicks a HTTP client.\n");
+	echo Color::write("yellow"," Usage");
+	echo ": xhttp <method> <route> [params...]\n\n";
+	echo sprintf("%s:\n\n", Color::write("yellow"," Arguments"));
+	echo sprintf("%s:", Color::write("cyan","    method"));
+	echo "     GET, POST ...etc";
+	echo sprintf("%s:", Color::write("cyan","\n    route"));
+	echo "      Example: /login Default: / root";
+	echo sprintf("%s:", Color::write("cyan","\n    parameters"));
+	echo " Example: username=pitsolu password=p@55w0rd\n\n";
+	echo Color::write("yellow", " Example");
+	echo ":  ./xhttp POST /login username=pitsolu password=p@55word\n\n";
+	exit;
+}
 
-xhttp	XHTTP is a CLI utility that mimicks a HTTP client.
+if(!file_exists("cfg/app.ini")){
 
-Usage:  xhttp <method> <route> [params...]
-
-Arguments:
-
-  method 		GET, POST ...etc
-  route 		Example: /login Default: / root
-  parameters  	Example: username=pitsolu password=p@55w0rd
-
-Example:  ./xhttp POST /login username=pitsolu password=p@55word\n\n
-
-EOF; exit;
+	echo Color::write("red", "\n Application is not ready!");
+	echo " Run:\n";
+	echo Color::writeln("yellow","  ./console app:make {{app_name}}");
+	echo Color::writeln("yellow","  ./console app:reload\n");
+	exit;
 }
 
 $method = $arg1;//method
@@ -57,8 +57,6 @@ if(!in_array($method, $methods)){
 if(empty($uri))//uri
 	$uri = array_shift($argv);
 
-// print_r(array(array("method"=>$method, "uri"=>$uri, "args"=>$argv)));exit;
-
 $params = [];
 
 array_map(function($param) use(&$params){
@@ -69,14 +67,8 @@ array_map(function($param) use(&$params){
 
 }, $argv);
 
-if(!in_array(strtoupper(trim($method)), $methods)){
-
-echo <<<EOF
-
-Invalid HTTP method!\n
-
-EOF; exit;
-}
+if(!in_array(strtoupper(trim($method)), $methods))
+	echo Color::writeln("red"," Invalid HTTP method!\n");
 
 $_SERVER["REQUEST_URI"] = $uri;
 $_SERVER["REQUEST_METHOD"] = strtoupper(trim($method));
@@ -102,24 +94,9 @@ $config = new Configuration([
 
 	"ignore"=>["@require"]
 ]);
-// $config->addIgnore("@require");
-// $middlewares = $config->get("middlewares");
-// $middlewares = array_merge([
-
-	// App\Middleware\XSession::class,
-	// Strukt\Router\Middleware\Authentication::class
-
-// ], $middlewares);
-
-// $config->set("middlewares", $middlewares);
-
-// print_r($config->get("middlewares"));
 
 $kernel = new App\Kernel($config);
 $runner = $kernel->getApp()->run();
-// $kernel->getApp()->run()->init()->debug();
 $runner = $runner->init();
 $response = $kernel->getRouter()->make()->run();
-// $response = $kernel->getRouter()->debug();
-// $response = $kernel->getRouter()->run();
 exit(sprintf("%s\n", $response->getContent()));
