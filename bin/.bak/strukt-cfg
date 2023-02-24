@@ -700,7 +700,7 @@ if(!is_null($cfg_app))
 
 foreach($paths as $ns=>$dir)
 		if(file_exists($dir))
-			$loader->add($nd, $dir);
+			$loader->add($ns, $dir);
 
 return $loader;
 ');

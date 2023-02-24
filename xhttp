@@ -8,7 +8,7 @@ use Strukt\Http\Method as HttpMethod;
 
 require "bootstrap.php";
 
-$method = HttpMethod::getAll();
+$methods = HttpMethod::getAll();
 
 $argv = $_SERVER["argv"];
 
@@ -96,6 +96,9 @@ $config = new Configuration([
 
 $kernel = new App\Kernel($config);
 $runner = $kernel->getApp()->run();
+// $kernel->getApp()->run()->init()->debug();
 $runner = $runner->init();
 $response = $kernel->getRouter()->make()->run();
+// $response = $kernel->getRouter()->debug();
+// $response = $kernel->getRouter()->run();
 exit(sprintf("%s\n", $response->getContent()));
