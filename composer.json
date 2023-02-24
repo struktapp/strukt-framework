@@ -21,7 +21,8 @@
         "phplucidframe/console-table": "^1.2",
         "psy/psysh": "^0.10.4",
         "strukt/process": "v1.0.1-alpha",
-        "filp/whoops": "^2.14"
+        "filp/whoops": "^2.14",
+        "nunomaduro/collision": "^5.0"
     },
     "suggest":{
 
@@ -32,8 +33,5 @@
         "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
     },
     "bin":["bin/strukt-cfg"],
-    "minimum-stability":"dev",
-    "require-dev": {
-        "nunomaduro/collision": "^5.0"
-    }
+    "minimum-stability":"dev"
 }
