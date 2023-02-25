@@ -17,7 +17,7 @@ Strukt\Fs::rmdir('.tpl');
 Strukt\Fs::rm('.env');
 Strukt\Fs::rm('bootstrap');
 Strukt\Fs::rm('index.php');
-Strukt\Fs::rm('console');
+Strukt\Fs::rm('xcli');
 
 Strukt\Fs::mkdir("cfg");
 Strukt\Fs::mkdir(".tpl/sgf/cfg");
@@ -784,7 +784,7 @@ class Kernel{
 }
 ');
 
-Strukt\Fs::touchWrite("console", '#!/usr/bin/php
+Strukt\Fs::touchWrite("xcli", '#!/usr/bin/php
 <?php
 
 use Strukt\Console;
@@ -943,6 +943,7 @@ logger_file = logs'.DS.'app.log
 cli_app_name = Strukt Console
 cli_label = Strukt
 cli_app_dir = app
+cli_file_name = xcli
 
 is_dev = true
 migration_ns = Schema\Migration
@@ -961,4 +962,4 @@ serve_ctx = .
 serve_file = index.php
 ');
 
-chmod('./console', 0755);
+chmod('./xcli', 0755);

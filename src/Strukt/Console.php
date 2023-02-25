@@ -13,8 +13,8 @@ use Strukt\Console\Command\RouterGenerator;
 use Strukt\Console\Command\ModuleGenerator;
 use Strukt\Console\Command\RouteList;
 use Strukt\Console\Command\ShellExec;
-use Strukt\Console\Command\CliUtil;
-use Strukt\Console\Command\CliList;
+use Strukt\Console\Command\SysUtil;
+use Strukt\Console\Command\SysList;
 
 /**
 * Console Loader
@@ -30,7 +30,7 @@ class Console extends \Strukt\Console\Application{
 
 		$registry = Registry::getSingleton();
 
-		parent::__construct(Env::get("cli_app_name"));
+		parent::__construct(Env::get("cli_app_name"), Env::get("cli_file_name"));
 
 		$this->addCmdSect(Env::get("cli_label"));
 
@@ -48,8 +48,8 @@ class Console extends \Strukt\Console\Application{
 			}
 
 			$this->add(new ShellExec);
-			$this->add(new CliUtil);
-			$this->add(new CliList);
+			$this->add(new SysUtil);
+			$this->add(new SysList);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");

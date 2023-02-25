@@ -1,0 +1,29 @@
+#!/usr/bin/php
+<?php
+
+use Strukt\Console;
+use Strukt\Env;
+use Strukt\Framework\App as FrameworkApp;
+use Strukt\Framework\Configuration;
+
+use App\Loader as AppLoader;
+use App\Kernel as AppKernel;
+
+$loader = require "bootstrap.php";
+$loader->add("Schema", __DIR__."/database/schema");
+
+Env::withFile();
+Env::set("root_dir", getcwd());
+
+FrameworkApp::create("App:Cli");
+FrameworkApp::mayBeRepo(); 
+
+$kernel = new App\Kernel(new Configuration());
+$app = $kernel->getApp();
+
+if(!is_null($app))
+	$app->run()->init();
+
+$console = new Console("Strukt", "xcli");
+
+exit($console->run($_SERVER["argv"]));

@@ -8,11 +8,11 @@ use Strukt\Console\Color;
 use Strukt\Framework\App as FrameworkApp;
 
 /**
-* cli:ls  List facets - providers|middlewares
+* sys:ls  List facets - providers|middlewares
 * 
 * Usage:
 *	
-*      cli:ls [<type>] [--idx]
+*      sys:ls [<type>] [--idx]
 *
 * Arguments:
 *
@@ -22,7 +22,7 @@ use Strukt\Framework\App as FrameworkApp;
 *
 *      --idx -i   Flag app type
 */
-class CliList extends \Strukt\Console\Command{
+class SysList extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 

@@ -8,11 +8,11 @@ use Strukt\Fs;
 use Strukt\Env;
 
 /**
-* cli:util  Enable/Disable optional CLI commands
+* sys:util  Enable/Disable CLI commands
 * 
 * Usage:
 *	
-*      cli:util <type> <facet> <name>
+*      sys:util <type> <facet> <name>
 *
 * Arguments:
 *
@@ -22,7 +22,7 @@ use Strukt\Env;
 *                         providers: (logger|nmlz|sch-mgr|ent-mgr|doc-adp)
 *                         commands: (pub-pak|pub-mak|pkg-tests|pkg-do|pkg-roles)
 */
-class CliUtil extends \Strukt\Console\Command{
+class SysUtil extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
