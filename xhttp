@@ -9,33 +9,44 @@ use Strukt\Http\Method as HttpMethod;
 
 require "bootstrap.php";
 
-$methods = HttpMethod::getAll();
-
 $argv = $_SERVER["argv"];
 
 array_shift($argv);//xhttp
 $arg1 = array_shift($argv);//arg1
 
-if(in_array(strtolower(trim($arg1)), [
+if(empty($arg1) || in_array(strtolower(trim($arg1)), [
 	"usage", 
 	"help",
 	"--help", 
 	"-h","?"])){
 
-	echo Color::write("white","\n xhttp");
-	echo Color::writeln("blue", " XHTTP is a CLI utility that mimicks a HTTP client.\n");
-	echo Color::write("yellow"," Usage");
-	echo ": xhttp <method> <route> [params...]\n\n";
-	echo sprintf("%s:\n\n", Color::write("yellow"," Arguments"));
-	echo sprintf("%s:", Color::write("cyan","    method"));
-	echo "     GET, POST ...etc";
-	echo sprintf("%s:", Color::write("cyan","\n    route"));
-	echo "      Example: /login Default: / root";
-	echo sprintf("%s:", Color::write("cyan","\n    parameters"));
-	echo " Example: username=pitsolu password=p@55w0rd\n\n";
-	echo Color::write("yellow", " Example");
-	echo ":  ./xhttp POST /login username=pitsolu password=p@55word\n\n";
-	exit;
+$tpl = "
+ {{xhttp}} {{descr}}
+
+ {{usage}}: xhttp <method> <route> [params...]
+
+ {{argm}}:
+
+    {{method}}:       GET, POST ...etc
+    {{route}}:        Example: /login Default: / root
+    {{param}}:   Example: username=pitsolu password=p@55w0rd
+
+ {{example}}:  ./xhttp POST /login username=pitsolu password=p@55word
+";
+
+	$output = Strukt\Templator::create($tpl, array(
+
+		"xhttp" => Color::write("white:bold","xhttp"),
+		"usage" => Color::write("yellow","Usage"),
+		"descr" => Color::write("blue", "XHTTP is a CLI utility that mimicks a HTTP client."),
+		"argm" => Color::write("yellow","Arguments"),
+		"method" => Color::write("cyan","method"),
+		"route" => Color::write("cyan","route"),
+		"param" => Color::write("cyan","parameters"),
+		"example" => Color::write("yellow", "Example")
+	));
+
+	exit(sprintf("\n %s\n\n", $output));
 }
 
 if(!file_exists("cfg/app.ini")){
@@ -47,7 +58,11 @@ if(!file_exists("cfg/app.ini")){
 	exit;
 }
 
-$method = $arg1;//method
+$method = strtoupper(trim($arg1));//method
+$methods = HttpMethod::getAll();
+// if(!in_array($method, $methods) && !empty($method))
+	// exit(Color::writeln("red"," Invalid HTTP method!\n"));
+
 if(!in_array($method, $methods)){
 
 	$uri = $method;
@@ -58,17 +73,16 @@ if(empty($uri))//uri
 	$uri = array_shift($argv);
 
 $params = [];
+if(!empty($argv))
+	array_map(function($param) use(&$params){
 
-array_map(function($param) use(&$params){
+		if(preg_match("/\w\=\w/", $param)){
 
-	list($key, $val) = explode("=", $param);
+			list($key, $val) = explode("=", $param);
+			$params[$key] = $val;
+		}
 
-	$params[$key] = $val;
-
-}, $argv);
-
-if(!in_array(strtoupper(trim($method)), $methods))
-	echo Color::writeln("red"," Invalid HTTP method!\n");
+	}, $argv);
 
 $_SERVER["REQUEST_URI"] = $uri;
 $_SERVER["REQUEST_METHOD"] = strtoupper(trim($method));
