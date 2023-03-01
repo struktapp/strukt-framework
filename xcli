@@ -24,6 +24,6 @@ $app = $kernel->getApp();
 if(!is_null($app))
 	$app->run()->init();
 
-$console = new Console("Strukt", "xcli");
+$console = new Console();
 
 exit($console->run($_SERVER["argv"]));
