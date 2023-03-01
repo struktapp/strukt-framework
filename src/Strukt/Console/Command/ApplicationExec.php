@@ -20,7 +20,7 @@ class ApplicationExec extends \Strukt\Console\Command{
 		$port = Env::get("serve_port");
 		$ctx = Env::get("serve_ctx");
 
-		echo(sprintf("Served@%s:%s", $host, $port));
+		// echo(sprintf("Served@%s:%s", $host, $port));
 
 		$output = Tpl::create("php -S {{host}}:{{port}} -t {{ctx}}", array(
 
@@ -29,6 +29,7 @@ class ApplicationExec extends \Strukt\Console\Command{
 			"ctx"=>$ctx
 		));
 
+		Process::switchChannels();
 		$ps = Process::run([$output], function($streamOutput){
 
 			echo $streamOutput;
