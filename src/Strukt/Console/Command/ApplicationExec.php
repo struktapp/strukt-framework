@@ -29,11 +29,11 @@ class ApplicationExec extends \Strukt\Console\Command{
 	public function execute(Input $in, Output $out){
 
 		$host = "localhost";
-		if(Env::exists("serve_host"))
+		if(Env::has("serve_host"))
 			$host = Env::get("serve_host");
 
 		$ctx = ".";
-		if(Env::exists("serve_ctx"))
+		if(Env::has("serve_ctx"))
 			$ctx = Env::get("serve_ctx");
 
 		$port = $in->get("port"); //port override
