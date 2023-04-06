@@ -69,7 +69,11 @@ class PackageInfo extends \Strukt\Console\Command{
 
 			foreach(["commands", "middleware", "providers"] as $facet){
 
+				if(!array_key_exists($facet, $settings))
+					continue;
+
 				$classes = $settings[$facet];
+
 				if(!empty($classes)){
 
 					$out->add(Color::write("green", sprintf("\n  Facet: %s\n", ucfirst($facet))));
