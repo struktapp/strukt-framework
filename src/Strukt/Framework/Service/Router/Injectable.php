@@ -18,6 +18,9 @@ class Injectable implements \Strukt\Contract\Injectable{
 
 		foreach($notes as $note){
 
+			if(is_null($note) || empty($note))
+				continue;
+
 			foreach($note as $method_name=>$method_items){
 
 				if(is_null($method_items))
