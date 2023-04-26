@@ -14,6 +14,9 @@ class FormValidatorTest extends TestCase{
 		$registry = Registry::getSingleton();
 
 		$this->service = $registry->get("strukt.service.validator");
+
+		//App\Validator\Extra
+		$this->serviceEx = $registry->get("strukt.service.validatorExtra");
 	}
 
 	/**
@@ -21,12 +24,19 @@ class FormValidatorTest extends TestCase{
      */
 	public function testLen(){
 
-		$validator = $this->service->getNew("Moderator")
-							->isLenGt(8) //App\Validator\Extra
+		$input = "Moderator";
+
+		$validator = $this->service->getNew($input)
 							->isLen(9)
 							->isNotEmpty();
 
-		$this->assertEquals($validator->getMessage(), array(
+		$validatorEx = $this->serviceEx->getNew($input)
+							->isLenGt(8); //App\Validator\Extra
+
+		$messages = $validator->getMessage();
+		$messages = array_merge($messages, $validatorEx->getMessage());
+
+		$this->assertEquals($messages, array(
 
 			"is_valid_length"=>true,
 			"is_not_empty"=>true,

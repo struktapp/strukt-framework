@@ -84,11 +84,21 @@ abstract class Form extends AbstractCore{
 				*				you'd indicate an annotaion validator like this:
 				*					@EqualTo(.password)
 				*/
-				if(is_string($items))
-					if(preg_match("/^\./",$items))
-						$items = $this->get(trim($items, "."));
+				if(is_string($items)){
 
-				if(!empty($items))
+					$isArgExpected = false;
+					if(preg_match("/^\./",$items)){
+
+						$isArgExpected = true;
+						$items = $this->get(trim($items, "."));
+					}
+				}
+
+				$withArg = false;
+				if(!empty($items) || $isArgExpected)
+					$withArg = true;
+
+				if($withArg)
 					$rMethod->invoke($items);
 				else
 					$rMethod->invoke();
