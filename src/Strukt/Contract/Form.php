@@ -51,16 +51,26 @@ abstract class Form extends AbstractCore{
 		$rForm = new \ReflectionClass($this);
 		$rValdInj = new ValidatorInjectable($rForm);
 
-		$factory = $this->core()->get("strukt.service.validator");
+		$factory["main"] = $this->core()->get("strukt.service.validator");
+		$factory["extra"] = $this->core()->get("strukt.service.validatorExtra");
 
 		foreach($rValdInj->getConfigs() as $key=>$props){
 
-			$service = $factory->getNew($this->get($key));
+			$service["main"] = $factory["main"]->getNew($this->get($key));
+			$service["extra"] = $factory["extra"]->getNew($this->get($key));
 
-			$ref = \Strukt\Ref::createFrom($service);
+			$ref["main"] = \Strukt\Ref::createFrom($service["main"]);
+			$ref["extra"] = \Strukt\Ref::createFrom($service["extra"]);
+
 			foreach($props as $vName=>$prop){
 
-				$rMethod = $ref->method(lcfirst($vName));
+				$rMethod = null;
+				$vName = lcfirst($vName);
+				if($ref["main"]->getRef()->hasMethod($vName))
+					$rMethod = $ref["main"]->method($vName);
+
+				if(is_null($rMethod))
+					$rMethod = $ref["extra"]->method($vName);
 
 				$items = $prop["item"];
 				if(array_key_exists("items", $prop))
@@ -76,15 +86,17 @@ abstract class Form extends AbstractCore{
 					$rMethod->invoke();
 			}
 
-			$message[$key] = $service->getMessage();
+			$message = $service["main"]->getMessage();
+			$message = array_merge($message, $service["extra"]->getMessage());
+			$messages[$key] = $message;
 		}
 
-		foreach($message as $field=>$props)
+		foreach($messages as $field=>$props)
       		if(!array_product(array_values($props)))
           			return array(
 
           				"success"=>false, 
-          				"fields"=>$message,
+          				"fields"=>$messages,
           				"message"=>"Validation error!"
           			);
 

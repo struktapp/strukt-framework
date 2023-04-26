@@ -599,6 +599,8 @@ class Extra extends \Strukt\Contract\Validator{
 		$this->message["is_gt"] = false;
 		if(strlen($this->getVal()) > $len)
 			$this->message["is_gt"] = true;
+
+		return $this;
 	}
 }
 ');

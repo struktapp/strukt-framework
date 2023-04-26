@@ -6,7 +6,6 @@ use Strukt\Ref;
 use Strukt\Raise;
 use Strukt\Core\Registry;
 use Strukt\Contract\Validator as ValidatorContract;
-use App\Validator\Extra as ValidatorExtra;
 
 /**
 * Validator class
@@ -14,15 +13,6 @@ use App\Validator\Extra as ValidatorExtra;
 * @author Moderator <pitsolu@gmail.com>
 */
 class Validator extends ValidatorContract{
-
-	/**
-	* Constructor get validation value
-	*/
-	public function __construct($val=null){
-
-		if(!is_null($val))
-			$this->setVal($val);
-	}
 
 	/**
 	* Check is value is alpha
@@ -152,24 +142,6 @@ class Validator extends ValidatorContract{
 		$this->message["is_valid_length"] = false;
 		if(strlen($this->getVal()) == $len)
 			$this->message["is_valid_length"] = true;
-
-		return $this;
-	}
-
-	public function __call($name, $args){
-
-		$rExtra = Ref::create(ValidatorExtra::class);
-		
-		if(!$rExtra->getRef()->hasMethod($name))
-			new Raise(sprintf("%s::%s doesn't exist!", ValidatorExtra::class, $name));
-
-		$extra = $rExtra->noMake()->getInstance();
-
-		$extra->setVal($this->getVal());
-
-		$rExtra->method($name)->getRef()->invokeArgs($extra, $args);
-
-		$this->message = array_merge($this->message, $extra->getMessage());
 
 		return $this;
 	}

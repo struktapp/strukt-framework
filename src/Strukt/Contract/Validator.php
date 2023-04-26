@@ -26,6 +26,15 @@ abstract class Validator{
 	protected $message = [];
 
 	/**
+	* Constructor get validation value
+	*/
+	public function __construct($val=null){
+
+		if(!is_null($val))
+			$this->setVal($val);
+	}
+
+	/**
 	* Application registry
 	*
 	* @return Strukt\Core\Registry
