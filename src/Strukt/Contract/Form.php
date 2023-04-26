@@ -76,6 +76,14 @@ abstract class Form extends AbstractCore{
 				if(array_key_exists("items", $prop))
 					$items = $prop["items"];
 
+				/**
+				* Allow referencing another field
+				*	Example: You have `password` and `confirm_password`
+				*				you would have to use Strukt\Validator.equalTo
+				*				on `confirm_password`field annotion in the @Form
+				*				you'd indicate an annotaion validator like this:
+				*					@EqualTo(.password)
+				*/
 				if(is_string($items))
 					if(preg_match("/^\./",$items))
 						$items = $this->get(trim($items, "."));
