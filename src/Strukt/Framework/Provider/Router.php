@@ -66,6 +66,17 @@ class Router extends AbstractProvider implements ProviderInterface{
 							if(!empty($form))
 								$tokens[] = sprintf("@forms|%s:%s", $rItm["http.method"], $form);
 
+							$middlewares = $rItm["route.middlewares"];
+							if(!empty($middlewares)){
+
+								if(is_array($middlewares))
+									$middlewares = implode(",", $middlewares);
+
+								$tokens[] = sprintf("@middlewares|%s:%s", 
+													$rItm["http.method"],
+													$middlewares);
+							}
+
 							$route = new Route($rItm["route.path"], 
 												$rFunc,
 												$rItm["http.method"], 

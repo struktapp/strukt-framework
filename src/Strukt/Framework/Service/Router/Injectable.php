@@ -32,6 +32,16 @@ class Injectable implements \Strukt\Contract\Injectable{
 					if(array_key_exists("Form", $method_items))
 						$form = $method_items["Form"]["item"];
 
+					$middlewares = "";
+					if(array_key_exists("Middlewares", $method_items)){
+
+						$key = "item";
+						if(array_key_exists("items", $method_items["Middlewares"]))
+							$key = "items";
+
+						$middlewares = $method_items["Middlewares"][$key];
+					}
+
 					$name = "";
 					if(array_key_exists("Permission", $method_items))
 						$name = $method_items["Permission"]["item"];
@@ -46,6 +56,7 @@ class Injectable implements \Strukt\Contract\Injectable{
 						"route.path" => $method_items["Route"]["item"],
 						"route.perm" => $name,
 						"route.form" => $form,
+						"route.middlewares"=>$middlewares,
 						"ref.class" => $class_name,
 						"ref.method" => $method_name,
 					);
