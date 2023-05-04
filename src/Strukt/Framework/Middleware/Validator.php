@@ -53,7 +53,7 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 
 					foreach($tokens as $token)
 						if(str_starts_with($token, "@form"))
-							continue;
+							break;
 
 					list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
 
