@@ -8,7 +8,7 @@ use Strukt\Event;
 use Strukt\Contract\Provider\AbstractProvider;
 use Strukt\Contract\Provider\ProviderInterface;
 // use Strukt\Annotation\Parser\Basic as BasicAnnotationParser;
-use Strukt\Framework\Service\Router\Injectable as InjectableRouter;
+use Strukt\Framework\Injectable\Router as InjectableRouter;
 
 /**
 * @Name(strukt.router)

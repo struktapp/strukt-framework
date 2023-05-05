@@ -1,10 +1,10 @@
 <?php
 
-namespace Strukt\Framework\Service\Router;
+namespace Strukt\Framework\Injectable;
 
 use Strukt\Annotation\Parser\Basic;
 
-class Injectable implements \Strukt\Contract\Injectable{
+class Router implements \Strukt\Contract\Injectable{
 
 	private $notes = [];
 

@@ -1,11 +1,11 @@
 <?php
 
-namespace Strukt\Framework\Service\Configuration;
+namespace Strukt\Framework\Injectable;
 
 use Strukt\Builder\Collection as CollectionBuilder;
 use Strukt\Framework\App as FrameworkApp;
 
-class Injectable implements \Strukt\Contract\Injectable{
+class Configuration implements \Strukt\Contract\Injectable{
 
 	private $packages;
 	private $injectables;

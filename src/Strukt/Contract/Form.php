@@ -3,7 +3,7 @@
 namespace Strukt\Contract;
 
 use Strukt\Http\Request;
-use \Strukt\Framework\Service\Validator\Injectable as ValidatorInjectable;
+use \Strukt\Framework\Injectable\Validator as ValidatorInjectable;
 
 /**
 * Form class to be inherited in Form

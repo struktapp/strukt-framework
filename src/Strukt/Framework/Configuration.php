@@ -3,7 +3,7 @@
 namespace Strukt\Framework;
 
 use Strukt\Framework\App as FrameworkApp;
-use Strukt\Framework\Service\Configuration\Injectable as InjectableCfg;
+use Strukt\Framework\Injectable\Configuration as InjectableCfg;
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
 class Configuration{
