@@ -64,7 +64,9 @@ class Router extends AbstractProvider implements ProviderInterface{
 
 							$tokens = [];
 							if(!empty($form))
-								$tokens[] = sprintf("@forms|%s:%s", $rItm["http.method"], $form);
+								$tokens[] = sprintf("type:form|method:%s|form:%s", 
+														$rItm["http.method"], 
+														$form);
 
 							$middlewares = $rItm["route.middlewares"];
 							if(!empty($middlewares)){
@@ -72,16 +74,14 @@ class Router extends AbstractProvider implements ProviderInterface{
 								if(is_array($middlewares))
 									$middlewares = implode(",", $middlewares);
 
-								$tokens[] = sprintf("@middlewares|%s:%s", 
-													$rItm["http.method"],
-													$middlewares);
+								$tokens[] = sprintf("middlewares:%s", $middlewares);
 							}
 
 							$route = new Route($rItm["route.path"], 
 												$rFunc,
 												$rItm["http.method"], 
 												$rItm["route.perm"],
-												$tokens);
+												implode("|", $tokens));
 
 							$core->get("strukt.router")->addRoute($route);
 						}
