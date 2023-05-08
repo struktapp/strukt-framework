@@ -43,34 +43,36 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 		try{
 
 			$routeLs = $this->core()->get("strukt.router");
-			$route = $routeLs->matchToken("@forms")->getRoute($method, $uri);
+			$route = $routeLs->withToken("type:form")->getRoute($method, $uri);
+
+			// $route = $routeLs->withToken("@forms")->getRoute($method, $uri);
+			// $route = $routeLs->matchToken("@forms")->getRoute($method, $uri);
 
 			if(!is_null($route)){
 
-				$tokens = $route->getTokens();
+				$tokq = $route->getTokenQuery();
+				$cls = $tokq->get("form");
+				$method = $tokq->get("method");
 
-				if(!empty($tokens)){
+				// foreach($tokens as $token)
+					// if(str_starts_with($token, "@form"))
+						// break;
 
-					foreach($tokens as $token)
-						if(str_starts_with($token, "@form"))
-							break;
+				// list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
 
-					list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
+				$app_type = FrameworkApp::getType();
+				if($method == "OPTIONS" &&  $app_type == "App:Idx"){
 
-					$app_type = FrameworkApp::getType();
-					if($method == "OPTIONS" &&  $app_type == "App:Idx"){
-
-						$body = Json::decode($request->getContent());
-						foreach($body as $name=>$val)
-							$request->request->set($name, $val);
-					}
-
-					$ref = \Strukt\Ref::create($cls);
-					$messages = $ref->makeArgs([$request])->method("validate")->invoke();
-
-					if(!$messages["success"])
-						$response = new BadRequest(Json::encode($messages), $headers);
+					$body = Json::decode($request->getContent());
+					foreach($body as $name=>$val)
+						$request->request->set($name, $val);
 				}
+
+				$ref = \Strukt\Ref::create($cls);
+				$messages = $ref->makeArgs([$request])->method("validate")->invoke();
+
+				if(!$messages["success"])
+					$response = new BadRequest(Json::encode($messages), $headers);
 			}
 		}
 		catch(\Exception $e){
