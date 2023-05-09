@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Framework\Provider;
+namespace Strukt\Provider;
 
 use Strukt\Event;
 use Strukt\Contract\Provider\AbstractProvider;

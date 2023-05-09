@@ -26,35 +26,33 @@ class Core implements Pkg{
 
 				"providers"=>array(
 
-					\Strukt\Framework\Provider\Validator::class,
-					// \Strukt\Framework\Provider\Annotation::class,
-					\Strukt\Framework\Provider\Router::class
+					\Strukt\Provider\Validator::class,
+					\Strukt\Provider\Router::class
 				),
 				"middlewares"=>array(
 
 					\App\Middleware\Cors::class,
-					\Strukt\Router\Middleware\ExceptionHandler::class,
-					\Strukt\Router\Middleware\Session::class,
-					\Strukt\Router\Middleware\Authorization::class,
-					\Strukt\Router\Middleware\Authentication::class,
-					\Strukt\Framework\Middleware\Validator::class,
-					\Strukt\Router\Middleware\Router::class
+					\Strukt\Middleware\ExceptionHandler::class,
+					\Strukt\Middleware\Session::class,
+					\Strukt\Middleware\Authorization::class,
+					\Strukt\Middleware\Authentication::class,
+					\Strukt\Middleware\Validator::class,
+					\Strukt\Middleware\Router::class
 				)
 			),
 			"App:Cli"=>array(
 
 				"providers"=>array(
 
-					\Strukt\Framework\Provider\Validator::class,
-					// \Strukt\Framework\Provider\Annotation::class,
-					\Strukt\Framework\Provider\Router::class
+					\Strukt\Provider\Validator::class,
+					\Strukt\Provider\Router::class
 				),
 				"middlewares"=>array(
 
 					\App\Middleware\XSession::class,
-					\Strukt\Router\Middleware\Authentication::class,
-					\Strukt\Framework\Middleware\Validator::class,
-					\Strukt\Router\Middleware\Router::class
+					\Strukt\Middleware\Authentication::class,
+					\Strukt\Middleware\Validator::class,
+					\Strukt\Middleware\Router::class
 				),
 				"commands"=>array(
 

@@ -26,9 +26,8 @@ class RouterKernelTest extends TestCase{
 
 		$this->kernel->providers([
 
-			\Strukt\Framework\Provider\Validator::class,
-			// \Strukt\Framework\Provider\Annotation::class,
-			\Strukt\Framework\Provider\Router::class
+			\Strukt\Provider\Validator::class,
+			\Strukt\Provider\Router::class
 		]);
 
 		$this->kernel->inject("@inject.permissions", function(){
@@ -51,12 +50,11 @@ class RouterKernelTest extends TestCase{
 
 		$this->kernel->middlewares([
 
-			\Strukt\Router\Middleware\ExceptionHandler::class,
-			\Strukt\Router\Middleware\Session::class,
-			\Strukt\Router\Middleware\Authorization::class,
-			\Strukt\Router\Middleware\Authentication::class,
-			//\Strukt\Middleware\Asset::class,
-			\Strukt\Router\Middleware\Router::class
+			\Strukt\Middleware\ExceptionHandler::class,
+			\Strukt\Middleware\Session::class,
+			\Strukt\Middleware\Authorization::class,
+			\Strukt\Middleware\Authentication::class,
+			\Strukt\Middleware\Router::class
 		]);
 
 		$loader = new \App\Loader($this->kernel);

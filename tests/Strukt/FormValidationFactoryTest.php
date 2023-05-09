@@ -2,7 +2,7 @@
 
 use PHPUnit\Framework\TestCase;
 use Strukt\Core\Registry;
-use Strukt\Framework\Provider\Validator as ValidatorService;
+use Strukt\Provider\Validator as ValidatorService;
 use Strukt\Http\Request;
 
 class FormValidationFactoryTest extends TestCase{

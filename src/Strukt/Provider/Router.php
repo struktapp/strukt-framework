@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Framework\Provider;
+namespace Strukt\Provider;
 
 use Strukt\Router\RouteCollection;
 use Strukt\Router\Route;

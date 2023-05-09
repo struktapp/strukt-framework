@@ -1,6 +1,6 @@
 <?php 
 
-namespace Strukt\Loader;
+namespace Strukt;
 
 use Strukt\Fs;
 use Strukt\Env;
@@ -14,7 +14,7 @@ use Strukt\Templator;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class RegenerateModuleLoader{
+class Reloader{
 
 	/**
 	* Module loader string
