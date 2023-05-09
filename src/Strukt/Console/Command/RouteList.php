@@ -31,6 +31,7 @@ class RouteList extends \Strukt\Console\Command{
 		$table = new ConsoleTable();
 		$table->setHeaders(array('Method', 'Route', "Permission"));
 
+		$noRows = true;
 		foreach($routes as $route){
 
 			if(!empty($filter)){
@@ -40,6 +41,7 @@ class RouteList extends \Strukt\Console\Command{
 					continue;
 			}
 
+			$noRows = false;
 			$table->addRow(array(
 
 				$route["method"],
@@ -48,6 +50,7 @@ class RouteList extends \Strukt\Console\Command{
 			));
 		}
 		
-		$table->setIndent(1)->display();
+		if(!$noRows)
+			$table->setIndent(1)->display();
 	}
 }
