@@ -3,6 +3,7 @@
 namespace Strukt\Framework\Injectable;
 
 use Strukt\Annotation\Parser\Basic;
+use Strukt\Type\Str;
 
 class Router implements \Strukt\Contract\Injectable{
 
@@ -32,14 +33,18 @@ class Router implements \Strukt\Contract\Injectable{
 					if(array_key_exists("Form", $method_items))
 						$form = $method_items["Form"]["item"];
 
-					$middlewares = "";
-					if(array_key_exists("Middlewares", $method_items)){
+					$middlewares = [];
+					if(array_key_exists("Middlewares", $method_items))
+						$middlewares = $method_items["Middlewares"]["items"];
 
-						$key = "item";
-						if(array_key_exists("items", $method_items["Middlewares"]))
-							$key = "items";
+					if(array_key_exists("Middleware", $method_items)){
 
-						$middlewares = $method_items["Middlewares"][$key];
+						$hasMany = array_key_exists("items", $method_items["Middleware"]);
+						if($hasMany)
+							$middlewares = $method_items["Middleware"]["items"];
+
+						if(!$hasMany)
+							$middlewares[] = $method_items["Middleware"]["item"];
 					}
 
 					$name = "";
@@ -56,7 +61,7 @@ class Router implements \Strukt\Contract\Injectable{
 						"route.path" => $method_items["Route"]["item"],
 						"route.perm" => $name,
 						"route.form" => $form,
-						"route.middlewares"=>$middlewares,
+						"route.middlewares"=>implode(",", $middlewares),
 						"ref.class" => $class_name,
 						"ref.method" => $method_name,
 					);
