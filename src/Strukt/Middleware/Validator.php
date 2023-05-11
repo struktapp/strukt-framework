@@ -43,22 +43,15 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 		try{
 
 			$routeLs = $this->core()->get("strukt.router");
-			$route = $routeLs->withToken("type:form")->getRoute($method, $uri);
-
-			// $route = $routeLs->withToken("@forms")->getRoute($method, $uri);
-			// $route = $routeLs->matchToken("@forms")->getRoute($method, $uri);
+			$route = $routeLs->withToken("type:form")
+								->withMethod($method)
+								->getRoute($uri);
 
 			if(!is_null($route)){
 
 				$tokq = $route->getTokenQuery();
 				$cls = $tokq->get("form");
 				$method = $tokq->get("method");
-
-				// foreach($tokens as $token)
-					// if(str_starts_with($token, "@form"))
-						// break;
-
-				// list($token, $method, $cls) = preg_split("/(:|\|)/", $token);
 
 				$app_type = FrameworkApp::getType();
 				if($method == "OPTIONS" &&  $app_type == "App:Idx"){
