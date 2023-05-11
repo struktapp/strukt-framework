@@ -36,8 +36,8 @@ class Validator extends AbstractMiddleware implements MiddlewareInterface{
 		$uri = $request->getRequestUri();
 
 		$headers = [];
-		if(\Strukt\Reg::exists("strukt.useJsonError"))
-			if(\Strukt\Reg::get("strukt.useJsonError"))
+		if(\Strukt\Reg::exists("strukt.json_err"))
+			if(\Strukt\Reg::get("strukt.json_err"))
 				$headers = ["Content-Type"=>"application/json"];
 
 		try{
