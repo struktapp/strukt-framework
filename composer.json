@@ -13,10 +13,10 @@
     "require": {
     
         "php": "^7.1.3",
-        "strukt/generator": "v1.0.1-alpha",
+        "strukt/generator": "v1.0.2-alpha",
         "strukt/console": "1.0.0",
-        "strukt/fs":"1.0.0",
-        "strukt/router":"v1.1.2-alpha",
+        "strukt/fs":"1.1.0",
+        "strukt/router":"v1.1.3-alpha",
         "symfony/http-foundation": "^4.3",
         "phplucidframe/console-table": "^1.2",
         "psy/psysh": "^0.10.4",
@@ -30,7 +30,8 @@
     },
     "autoload": {
 
-        "psr-0": { "Strukt\\": "src/", "App\\": "lib/"}
+        "psr-0": { "Strukt\\": "src/", "App\\": "lib/"},
+        "files": ["src/helpers.php"]
     },
     "bin":["bin/strukt-cfg"],
     "minimum-stability":"dev"
