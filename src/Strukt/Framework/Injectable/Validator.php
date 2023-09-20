@@ -2,7 +2,7 @@
 
 namespace Strukt\Framework\Injectable;
 
-use Strukt\Annotation\Parser\Basic;
+use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
 class Validator implements \Strukt\Contract\Injectable{
 
@@ -10,7 +10,7 @@ class Validator implements \Strukt\Contract\Injectable{
 
 	public function __construct(\ReflectionClass $rclass){
 
-		$parser = new \Strukt\Annotation\Parser\Basic($rclass);
+		$parser = new BasicNotesParser($rclass);
 		$this->notes = $parser->getAnnotations();
 	}
 

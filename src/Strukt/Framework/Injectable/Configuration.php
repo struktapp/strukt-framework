@@ -2,8 +2,8 @@
 
 namespace Strukt\Framework\Injectable;
 
-use Strukt\Builder\Collection as CollectionBuilder;
-use Strukt\Framework\App as FrameworkApp;
+use Strukt\Package\Repos;
+use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
 class Configuration implements \Strukt\Contract\Injectable{
 
@@ -12,16 +12,16 @@ class Configuration implements \Strukt\Contract\Injectable{
 
 	public function __construct(\ReflectionClass $rclass){
 
-		$this->packages = FrameworkApp::packages("published");
+		$this->published = Repos::packages("published");
 
-		$parser = new \Strukt\Annotation\Parser\Basic($rclass);
+		$parser = new BasicNotesParser($rclass);
 		$notes = $parser->getAnnotations();
 
-		$refCls = \Strukt\Ref::create($notes["class_name"]);
+		$refClass = \Strukt\Ref::create($notes["class_name"]);
 
 		foreach($notes["methods"] as $method_name=>$note){
 
-			$method = $refCls->noMake()->method($method_name)->getClosure();
+			$method = $refClass->noMake()->method($method_name)->getClosure();
 			$key = sprintf("@inject.%s", $note["Inject"]["item"]);
 			$inj[$note["Package"]["item"]][$key] = $method;
 		}
@@ -32,7 +32,7 @@ class Configuration implements \Strukt\Contract\Injectable{
 	public function getConfigs(){
 
 		$cfg = [];
-		foreach($this->packages as $package)
+		foreach($this->published as $package)
 			if(array_key_exists($package, $this->injectables))
 				$cfg = array_merge($cfg, $this->injectables[$package]);
 			

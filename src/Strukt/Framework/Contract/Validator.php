@@ -1,8 +1,6 @@
 <?php
 
-namespace Strukt\Contract;
-
-use Strukt\Core\Registry;
+namespace Strukt\Framework\Contract;
 
 /**
 * Abstract Validator
@@ -16,7 +14,7 @@ abstract class Validator{
 	*
 	* @var string
 	*/
-	protected $val;
+	protected $value;
 
 	/**
 	* Failure or success messages for each condition
@@ -28,20 +26,10 @@ abstract class Validator{
 	/**
 	* Constructor get validation value
 	*/
-	public function __construct($val=null){
+	public function __construct($value=null){
 
-		if(!is_null($val))
-			$this->setVal($val);
-	}
-
-	/**
-	* Application registry
-	*
-	* @return Strukt\Core\Registry
-	*/
-	protected function core(){
-
-		return Registry::getSingleton();
+		if(!is_null($value))
+			$this->setValue($value);
 	}
 
 	/**
@@ -51,9 +39,9 @@ abstract class Validator{
 	*
 	* @return Strukt\Validator
 	*/
-	public function setVal($val){
+	public function setValue($value){
 
-		$this->val = $val;
+		$this->value = $value;
 
 		return $this;
 	}
@@ -63,9 +51,9 @@ abstract class Validator{
 	*
 	* @return string
 	*/
-	public function getVal(){
+	public function getValue(){
 
-		return $this->val;
+		return $this->value;
 	}
 
 	/**

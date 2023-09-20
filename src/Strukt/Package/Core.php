@@ -2,9 +2,7 @@
 
 namespace Strukt\Package;
 
-use Strukt\Contract\Package as Pkg;
-
-class Core implements Pkg{
+class Core implements \Strukt\Framework\Contract\Package{
 
 	private $manifest;
 
@@ -26,43 +24,38 @@ class Core implements Pkg{
 
 				"providers"=>array(
 
-					\Strukt\Provider\Validator::class,
-					\Strukt\Provider\Router::class
+					\Strukt\Framework\Provider\Validator::class,
 				),
 				"middlewares"=>array(
 
 					\App\Middleware\Cors::class,
-					\Strukt\Middleware\ExceptionHandler::class,
-					\Strukt\Middleware\Session::class,
-					\Strukt\Middleware\Authorization::class,
-					\Strukt\Middleware\Authentication::class,
-					\Strukt\Middleware\Validator::class,
-					\Strukt\Middleware\Router::class
+					\Strukt\Framework\Middleware\Session::class,
+					\Strukt\Framework\Middleware\Authorization::class,
+					\Strukt\Framework\Middleware\Authentication::class,
+					\Strukt\Framework\Middleware\Validator::class,
 				)
 			),
 			"App:Cli"=>array(
 
 				"providers"=>array(
 
-					\Strukt\Provider\Validator::class,
-					\Strukt\Provider\Router::class
+					\Strukt\Framework\Provider\Validator::class,
 				),
 				"middlewares"=>array(
 
 					\App\Middleware\XSession::class,
-					\Strukt\Middleware\Authentication::class,
-					\Strukt\Middleware\Validator::class,
-					\Strukt\Middleware\Router::class
+					\Strukt\Framework\Middleware\Authentication::class,
+					\Strukt\Framework\Middleware\Validator::class,
 				),
 				"commands"=>array(
 
-					\Strukt\Console\Command\PackagePublisher::class,
-					\Strukt\Console\Command\PackageList::class,
-					\Strukt\Console\Command\PackageInfo::class,
-					\Strukt\Console\Command\PackageMake::class,
-					\Strukt\Console\Command\PackageAdd::class,
-					\Strukt\Console\Command\PackageCopy::class,
-					\Strukt\Console\Command\PackageExport::class
+					\Strukt\Framework\Console\Command\PackagePublisher::class,
+					\Strukt\Framework\Console\Command\PackageList::class,
+					\Strukt\Framework\Console\Command\PackageInfo::class,
+					\Strukt\Framework\Console\Command\PackageMake::class,
+					\Strukt\Framework\Console\Command\PackageAdd::class,
+					\Strukt\Framework\Console\Command\PackageCopy::class,
+					\Strukt\Framework\Console\Command\PackageExport::class
 				)
 			)
 		);

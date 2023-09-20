@@ -2,8 +2,7 @@
 
 namespace Strukt\Framework\Injectable;
 
-use Strukt\Annotation\Parser\Basic;
-use Strukt\Type\Str;
+use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
 class Router implements \Strukt\Contract\Injectable{
 
@@ -11,7 +10,7 @@ class Router implements \Strukt\Contract\Injectable{
 
 	public function __construct(\ReflectionClass $rclass){
 
-		$parser = new Basic($rclass);
+		$parser = new BasicNotesParser($rclass);
 		$notes = $parser->getAnnotations();
 
 		$class_name = $notes["class_name"];

@@ -1,20 +1,37 @@
 <?php
 
-if(!function_exists("fs")){
+if(!function_exists("config")){
 
-	function fs(string $base_path = null){
+	function config(string $key, array|string $options = null){
 
-		if(!is_null($base_path))
-			return new \Strukt\Local\Fs($base_path);
+		if(!reg()->exists("config")){
 
-		return \Strukt\Ref::create(\Strukt\Fs::class)->noMake()->getInstance();
-	}
-}
+			$ini_files = glob("cfg/*.ini");
+			foreach($ini_files as $ini_file)
+				reg(sprintf("config.%s", str($ini_file)
+											->replace(["cfg/",".ini"],"")
+											->yield()), parse_ini_file($ini_file));
 
-if(!function_exists("env")){
+			$app_config = reg("config.app");
+			$app_name = $app_config["app-name"];
+			unset($app_config["app-name"]);
+			$app_config["name"] = $app_name;
+			reg("config")->remove("app");
+			reg("config")->set("app", collect($app_config));
+		}
 
-	function env(){
+		$nkey = sprintf("config.%s", rtrim($key, "*"));
+		if(str($key)->endsWith("*"))
+			return arr(array_flip(reg($nkey)->getKeys()))->each(function($k, $v) use($nkey){
 
-		return \Strukt\Ref::create(\Strukt\Env::class)->noMake()->getInstance();
+				return reg($nkey)->get($k);
+
+			})->yield();
+
+
+		if(reg("config")->exists($key))
+			return reg("config")->get($key);
+
+		return null;
 	}
 }

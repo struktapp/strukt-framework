@@ -1,8 +1,7 @@
 <?php
 
-namespace Strukt\Framework\Module;
+namespace Strukt\Framework;
 
-use Strukt\Contract\AbstractCore;
 use Strukt\Raise;
 use Strukt\Ref;
 use Strukt\Type\Str;
@@ -15,24 +14,15 @@ use Strukt\Type\Str;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Core extends AbstractCore{
-
-	/**
-	* Name Registry
-	*
-	* @var \Strukt\Core\Map
-	*/
-	private $nr = null;
+class Core{
 
 	/**
 	* Constructor
 	*/
 	public function __construct(){
 
-		if(!$this->core()->exists("nr"))
+		if(!reg()->exists("nr"))
 			new Raise("[nr|Name Registry] does not exists!");
-
-		$this->nr = $this->core()->get("nr");
 	}
 
 	public function isQualifiedAlias($alias){
@@ -43,9 +33,9 @@ class Core extends AbstractCore{
 	public function getNamespace($alias_ns){
 
 		if($this->isQualifiedAlias($alias_ns))
-			return $this->nr->get($alias_ns);
+			return reg($alias_ns);
 		else 
-			return Str::create($this->core()->get("app.name"))
+			return Str::create(config("app.name"))
 				->concat("\\")
 				->concat($alias_ns)
 				->yield();

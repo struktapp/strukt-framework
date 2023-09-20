@@ -2,27 +2,24 @@
 
 namespace Strukt;
 
-use Strukt\Ref;
-use Strukt\Raise;
-use Strukt\Core\Registry;
-use Strukt\Contract\Validator as ValidatorContract;
+use Strukt\Framework\Contract\Validator as AbstractValidator;
 
 /**
 * Validator class
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Validator extends ValidatorContract{
+class Validator extends AbstractValidator{
 
 	/**
 	* Check is value is alpha
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isAlpha(){
 
 		$this->message["is_alpha"] = false;
-		if(ctype_alpha(str_replace(" ", "", $this->getVal())))
+		if(ctype_alpha(str_replace(" ", "", $this->getValue())))
 			$this->message["is_alpha"] = true;
 
 		return $this;
@@ -31,12 +28,12 @@ class Validator extends ValidatorContract{
 	/**
 	* Check is value is alphanumeric
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isAlphaNum(){
 
 		$this->message["is_alphanum"] = false;
-		if(ctype_alnum(str_replace(" ", "", $this->getVal())))
+		if(ctype_alnum(str_replace(" ", "", $this->getValue())))
 			$this->message["is_alphanum"] = true;
 
 		return $this;
@@ -45,12 +42,12 @@ class Validator extends ValidatorContract{
 	/**
 	* Check is value is numeric
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isNumeric(){
 
 		$this->message["is_num"] = false;
-		if(is_numeric($this->getVal()))
+		if(is_numeric($this->getValue()))
 			$this->message["is_num"] = true;
 
 		return $this;
@@ -59,12 +56,12 @@ class Validator extends ValidatorContract{
 	/**
 	* Check is value is email
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isEmail(){
 
 		$this->message["is_email"] = false;
-		if(filter_var($this->getVal(), FILTER_VALIDATE_EMAIL))
+		if(filter_var($this->getValue(), FILTER_VALIDATE_EMAIL))
 			$this->message["is_email"] = true;
 
 		return $this;
@@ -73,11 +70,11 @@ class Validator extends ValidatorContract{
 	/**
 	* Check is value is date
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isDate($format="Y-m-d"){
 
-		$date = \DateTime::createFromFormat($format, $this->getVal());
+		$date = \DateTime::createFromFormat($format, $this->getValue());
 		$err = \DateTime::getLastErrors();
 
 		$this->message["is_date"] = false;
@@ -90,12 +87,12 @@ class Validator extends ValidatorContract{
 	/**
 	* Check is value is not empty
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isNotEmpty(){
 
 		$this->message["is_not_empty"] = true;
-		if(empty($this->getVal()))
+		if(empty($this->getValue()))
 			$this->message["is_not_empty"] = false;
 
 		return $this;
@@ -104,15 +101,15 @@ class Validator extends ValidatorContract{
 	/**
 	* Check is value is in enumerator
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isIn($enum){
 
 		if(!is_array($enum))
-			throw new \Exception(sprintf("%s::isIn only takes array!", Validator::class));
+			throw new \Exception(sprintf("%s::isIn only takes an array!", Validator::class));
 
 		$this->message["in_enum"] = false;
-		if(in_array($this->getVal(), $enum))
+		if(in_array($this->getValue(), $enum))
 			$this->message["in_enum"] = true;
 
 		return $this;
@@ -121,12 +118,12 @@ class Validator extends ValidatorContract{
 	/**
 	* Check values are equal
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function equalTo($val){
 
 		$this->message["equal_to"] = true;
-		if($val !== $this->getVal())
+		if($val !== $this->getValue())
 			$this->message["equal_to"] = false;
 
 		return $this;
@@ -135,12 +132,12 @@ class Validator extends ValidatorContract{
 	/**
 	* Check length
 	*
-	* @return Strukt\Validator
+	* @return Strukt\Framework\Validator
 	*/
 	public function isLen($len){
 
 		$this->message["is_valid_length"] = false;
-		if(strlen($this->getVal()) == $len)
+		if(strlen($this->getValue()) == $len)
 			$this->message["is_valid_length"] = true;
 
 		return $this;
