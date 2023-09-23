@@ -1,15 +1,13 @@
 <?php
 
-namespace Strukt;
-
-use Strukt\Framework\Contract\Validator as AbstractValidator;
+namespace Strukt\Traits;
 
 /**
 * Validator class
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Validator extends AbstractValidator{
+trait Validator{
 
 	/**
 	* Check is value is alpha

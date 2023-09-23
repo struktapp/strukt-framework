@@ -1,0 +1,10 @@
+#!/bin/bash
+
+rm -rf .tpl
+rm -rf lib
+rm -rf cfg
+rm bootstrap.php
+rm xcli
+rm index.php
+rm .env
+rm -rf app

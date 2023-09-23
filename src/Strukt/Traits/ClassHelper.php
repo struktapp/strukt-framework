@@ -1,12 +1,12 @@
 <?php
 
-namespace Strukt\Framework\Traits;
+namespace Strukt\Traits;
 
 use Strukt\Ref;
 use Strukt\Raise;
 use Strukt\Type\Str;
 
-class Helper{
+trait ClassHelper{
 
 	public function getClass(string $class){
 
@@ -25,6 +25,6 @@ class Helper{
 		if(!class_exists($class))
 			new Raise(sprintf("%s does not exist!", $class));
 
-		return Ref::create($cls)->noMake()->getInstance();
+		return Ref::create($class)->noMake()->getInstance();
 	}
 }

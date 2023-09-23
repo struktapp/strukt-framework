@@ -12,12 +12,15 @@ if(!function_exists("config")){
 											->replace(["cfg/",".ini"],"")
 											->yield()), parse_ini_file($ini_file));
 
-			$app_config = reg("config.app");
-			$app_name = $app_config["app-name"];
-			unset($app_config["app-name"]);
-			$app_config["name"] = $app_name;
-			reg("config")->remove("app");
-			reg("config")->set("app", collect($app_config));
+			if(reg("config")->exists("app")){
+				
+				$app_config = reg("config.app");
+				$app_name = $app_config["app-name"];
+				unset($app_config["app-name"]);
+				$app_config["name"] = $app_name;
+				reg("config")->remove("app");
+				reg("config")->set("app", collect($app_config));
+			}
 		}
 
 		$nkey = sprintf("config.%s", rtrim($key, "*"));
@@ -28,6 +31,8 @@ if(!function_exists("config")){
 
 			})->yield();
 
+		if(!is_null($options))
+			reg(sprintf("config.%s", $key), $options);
 
 		if(reg("config")->exists($key))
 			return reg("config")->get($key);

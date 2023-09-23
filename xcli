@@ -1,9 +1,9 @@
 #!/usr/bin/php
 <?php
 
-use Strukt\Console;
+use Strukt\Framework\Shell;
 use Strukt\Env;
-use Strukt\Framework\App as FrameworkApp;
+// use Strukt\Framework\Package\Repos;
 use Strukt\Framework\Configuration;
 
 use App\Loader as AppLoader;
@@ -15,8 +15,7 @@ $loader->add("Schema", __DIR__."/database/schema");
 Env::withFile();
 Env::set("root_dir", getcwd());
 
-FrameworkApp::create("App:Cli");
-FrameworkApp::mayBeRepo(); 
+config("app.type","App:Cli");
 
 $kernel = new App\Kernel(new Configuration());
 $app = $kernel->getApp();
@@ -24,6 +23,8 @@ $app = $kernel->getApp();
 if(!is_null($app))
 	$app->run()->init();
 
-$console = new Console();
+$sh = new Shell();
 
-exit($console->run($_SERVER["argv"]));
+exit($sh->run($_SERVER["argv"]));
+
+

@@ -5,7 +5,7 @@ namespace Strukt\Framework\Injectable;
 use Strukt\Package\Repos;
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
-class Configuration implements \Strukt\Contract\Injectable{
+class Configuration implements \Strukt\Framework\Contract\Injectable{
 
 	private $packages;
 	private $injectables;

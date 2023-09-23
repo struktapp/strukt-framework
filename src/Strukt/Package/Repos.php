@@ -2,18 +2,15 @@
 
 namespace Strukt\Package;
 
-use Strukt\Env;
 use Strukt\Ref;
-use Strukt\Raise;
-use Strukt\Type\Str; 
-use Strukt\Type\Arr;
 
 class Repos{
 
 	public static function available(){
 
-		$repos = parse_ini_file(Env::get("rel_repo_ini"));
+		$repos = config("repo");
 
+		$packages = [];
 		foreach($repos as $name => $repo)
 			$packages[$name] = sprintf("Strukt\Package\%s", $repo);
 
@@ -22,26 +19,26 @@ class Repos{
 
 	public static function packages($type){
 
-		$pkgs = [];
+		$packages = [];
 
-		$type = Str::create($type);
+		$type = str($type);
 
-		Arr::create(static::available())->each(function($name, $cls) use(&$pkgs, $type){
+		arr(Repos::available())->each(function($name, $class) use(&$packages, $type){
 
 			if($type->equals("installed")){
 
-				if(class_exists($cls))
-					$pkgs[] = $name;
+				if(class_exists($class))
+					$packages[] = $name;
 			}
 
 			if($type->equals("published")){
 
-				if(class_exists($cls))
-					if(Ref::create($cls)->make()->getInstance()->isPublished())
-						$pkgs[] = $name;
+				if(class_exists($class))
+					if(Ref::create($class)->make()->getInstance()->isPublished())
+						$packages[] = $name;
 			}
 		});
 
-		return $pkgs;
+		return $packages;
 	}
 }
