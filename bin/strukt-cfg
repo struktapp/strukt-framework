@@ -30,7 +30,6 @@ Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
 Strukt\Fs::mkdir("lib/App/Contract");
 Strukt\Fs::mkdir("lib/App/Middleware");
 Strukt\Fs::mkdir("lib/App/Provider");
-Strukt\Fs::mkdir("lib/App/Validator");
 
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Controller/User.sgf", '<?php
 namespace {{app}}\AuthModule\Controller;
@@ -691,7 +690,7 @@ namespace App;
 use Strukt\Framework\Configuration;
 use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Http\Request;
-use Strukt\Core\Registry;
+// use Strukt\Core\Registry;
 
 use App\Loader as AppLoader;
 
@@ -727,8 +726,8 @@ class Kernel{
 			$this->loader = new AppLoader($this->kernel);
 			$this->app =  $this->loader->getApp();
 
-			$registry = Registry::getSingleton();
-			$registry->set("module-list", serialize($this->app->getModuleList()));
+			// $registry = Registry::getSingleton();
+			// $registry->set("module-list", serialize($this->app->getModuleList()));
 		}
 	}
 
@@ -747,16 +746,17 @@ class Kernel{
 		return $this->loader;
 	}
 
-	public function getApp():?\Strukt\Application{
+	public function getApp():?\Strukt\Framework\Application{
 
 		return $this->app;
 	}
 
 	public function run():void{
 		
-		$this->app->run()->init()->noDebug();
+		$this->app->run();//->init()->noDebug();
 	}
 }
+
 
 
 ');
@@ -773,7 +773,7 @@ use App\Loader as AppLoader;
 use App\Kernel as AppKernel;
 
 $loader = require "bootstrap.php";
-$loader->add("Schema", __DIR__."/database/schema");
+// $loader->add("Schema", __DIR__."/database/schema");
 
 Env::withFile();
 Env::set("root_dir", getcwd());
@@ -784,7 +784,7 @@ $kernel = new App\Kernel(new Configuration());
 $app = $kernel->getApp();
 
 if(!is_null($app))
-	$app->run()->init();
+	$app->run();//->init();
 
 $console = new Console();
 

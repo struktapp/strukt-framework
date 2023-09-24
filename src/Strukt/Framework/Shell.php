@@ -5,15 +5,15 @@ namespace Strukt\Framework;
 use Strukt\Env;
 use Strukt\Console\DocBlockParser;
 
-use Strukt\Console\Command\ApplicationGenerator;
-use Strukt\Console\Command\ApplicationLoaderGenerator;
-use Strukt\Console\Command\ApplicationExec;
-use Strukt\Console\Command\RouterGenerator;
-use Strukt\Console\Command\ModuleGenerator;
-use Strukt\Console\Command\RouteList;
-use Strukt\Console\Command\ShellExec;
-use Strukt\Console\Command\SysUtil;
-use Strukt\Console\Command\SysList;
+use Strukt\Framework\Console\Command\ApplicationGenerator;
+use Strukt\Framework\Console\Command\ApplicationLoaderGenerator;
+use Strukt\Framework\Console\Command\ApplicationExec;
+use Strukt\Framework\Console\Command\RouterGenerator;
+use Strukt\Framework\Console\Command\ModuleGenerator;
+use Strukt\Framework\Console\Command\RouteList;
+use Strukt\Framework\Console\Command\ShellExec;
+use Strukt\Framework\Console\Command\SysUtil;
+use Strukt\Framework\Console\Command\SysList;
 
 /**
 * Console Loader
@@ -51,6 +51,8 @@ class Shell extends \Strukt\Console\Application{
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");
 
+			// print_r($cmds);
+
 			$cls = [];
 			foreach($cmds as $cmd){
 
@@ -62,6 +64,8 @@ class Shell extends \Strukt\Console\Application{
 
 			// $cmd_names = parse_ini_file(Env::get("rel_cmd_ini"));
 
+			// print_r($cls);
+
 			foreach(config("cmd") as $key => $val){
 
 				if(is_string($val))
@@ -69,7 +73,8 @@ class Shell extends \Strukt\Console\Application{
 
 				if(is_array($val))
 					foreach($val as $cmd)
-						$this->add(new $cls[$cmd]);
+						if(class_exists($cls[$cmd]))
+							$this->add(new $cls[$cmd]);
 			}
 		}
 	}

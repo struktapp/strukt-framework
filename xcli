@@ -21,7 +21,7 @@ $kernel = new App\Kernel(new Configuration());
 $app = $kernel->getApp();
 
 if(!is_null($app))
-	$app->run()->init();
+	$app->run();//->init();
 
 $sh = new Shell();
 

@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Middleware;
+namespace Strukt\Framework\Middleware;
 
 use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
@@ -9,7 +9,6 @@ use Strukt\Http\Error\BadRequest;
 
 /**
 * @Name(valid)
-* @Requires(strukt.router)
 */
 class Validator implements MiddlewareInterface{
 

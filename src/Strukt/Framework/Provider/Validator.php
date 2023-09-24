@@ -17,15 +17,18 @@ class Validator implements ProviderInterface{
 
 	public function register(){		
 
-		event("provider.validator", new class{
+		event("provider.validator", function(){
 
-		    public function getNew(string $value = null) {
+			return new class{
 
-		    	if(class_exists(\App\Validator::class))	        
-		        	return new \App\Validator($value);
+			    public function getNew(string $value = null) {
 
-		        return null;
-		    }
-   		});
+			    	if(class_exists(\App\Validator::class))	        
+			        	return new \App\Validator($value);
+
+			        return null;
+			    }
+	   		};
+	   	});
 	}
 }

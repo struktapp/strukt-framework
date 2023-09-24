@@ -4,7 +4,7 @@ namespace Strukt\Framework\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-use Strukt\Reloader;
+use Strukt\Framework\Reloader;
 use Strukt\Env;
 use Strukt\Fs;
 

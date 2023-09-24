@@ -22,7 +22,8 @@ class Configuration implements \Strukt\Framework\Contract\Injectable{
 		foreach($notes["methods"] as $method_name=>$note){
 
 			$method = $refClass->noMake()->method($method_name)->getClosure();
-			$key = sprintf("@inject.%s", $note["Inject"]["item"]);
+			// $key = sprintf("@inject.%s",$note["Inject"]["item"]);
+			$key = $note["Inject"]["item"];
 			$inj[$note["Package"]["item"]][$key] = $method;
 		}
 

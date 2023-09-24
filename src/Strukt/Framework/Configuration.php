@@ -56,6 +56,8 @@ class Configuration{
 			}
 		}
 
+		// print_r($config);exit;
+		// print_r(array($providers, $middlewares, $commands));exit;
 		$config = [];//reset config
 		if(!empty($providers))
 			$config["providers"] = $providers;
@@ -66,15 +68,18 @@ class Configuration{
 		if(!empty($commands))
 			$config["commands"] = $commands;
 
+		// print_r($config);exit;
+
 		$injectables = new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
 
+		$ignore = $this->ignore;
 		$facet = [];
-		$this->settings = arr([
+		$settings = arr([
 
-			"middlewares"=>null,
-			"providers"=>null
+			"providers"=>null,
+			"middlewares"=>null
 
-		])->each(function($key, $val) use($injectables, $config, &$facet){
+		])->each(function($key, $val) use($injectables, $config, &$facet, $ignore){
 
 			$settings = [];
 			foreach($config[$key] as $setting){
@@ -83,6 +88,7 @@ class Configuration{
 				$notes = $parser->getAnnotations();
 
 				$name = $notes["class"]["Name"]["item"];
+				// print_r(array($name));
 				if(!empty(config($key)))
 					if(in_array($name, config($key)))
 						$settings[] = $setting;
@@ -91,7 +97,7 @@ class Configuration{
 					$settings[] = $setting;
 
 				if(array_key_exists("Requires", $notes["class"]) && 
-					!in_array("@require", $this->ignore)){
+					!in_array("@require", $ignore)){
 
 					$requires = $notes["class"]["Requires"]["item"];
 					if(!reg()->exists($requires))
@@ -106,7 +112,8 @@ class Configuration{
 					$inj_name = $notes["class"]["Inject"]["item"];
 					$inj_keys = array_keys($injectables->getConfigs());
 
-					if(!in_array(sprintf("@inject.%s", $inj_name), $inj_keys))
+					// if(!in_array(sprintf("@inject.%s", $inj_name), $inj_keys))
+					if(!in_array($inj_name, $inj_keys))
 						raise(sprintf("%s:[%s] requires provider:[%s]!", 
 											ucfirst(trim($key, "s")),
 											$name, 
@@ -119,6 +126,9 @@ class Configuration{
 			return $settings;
 		});
 
+		// print_r($settings);exit;
+
+		$this->settings = $settings->yield();
 		$this->injectables = $injectables;
 		$this->facet = $facet;
 	}
@@ -154,6 +164,8 @@ class Configuration{
 	 * - middlewares
 	 */
 	public function get(string $key){
+
+		// print_r($this->settings);exit;
 
 		if(in_array($key, ["providers", "middlewares", "commands"]))
 			return $this->settings[$key];
