@@ -2,7 +2,7 @@
 
 namespace Strukt\Framework\Contract;
 
-abstract class Controller{
+abstract class Controller extends \Strukt\Framework\Core{
 
 	//
 }

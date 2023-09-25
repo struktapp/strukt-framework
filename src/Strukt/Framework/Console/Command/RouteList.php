@@ -7,6 +7,7 @@ use Strukt\Console\Output;
 use Strukt\Core\Registry;
 use Strukt\Type\Str;
 use LucidFrame\Console\ConsoleTable;
+use Strukt\Cmd;
 
 /**
 * route:ls     Route List
@@ -23,16 +24,26 @@ class RouteList extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$filter = $in->get("filter");
+		$routes = arr(Cmd::ls("^type:route"))->each(function($key, $route){
 
-		$routeCollection = Registry::getSingleton()->get("strukt.router");
-		$routes = $routeCollection->getRoutes();
+			$token = token($route);
+			return [
+
+				"method"=>$token->get("action"),
+				"pattern"=>$token->get("path"),
+				"permission"=>$token->get("permission"),
+			];
+		});
+
+		// dd($routes);
+
+		$filter = $in->get("filter");
 
 		$table = new ConsoleTable();
 		$table->setHeaders(array('Method', 'Route', "Permission"));
 
 		$noRows = true;
-		foreach($routes as $route){
+		foreach($routes->yield() as $route){
 
 			if(!empty($filter)){
 				

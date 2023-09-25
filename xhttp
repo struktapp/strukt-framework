@@ -2,10 +2,9 @@
 <?php
 
 use Strukt\Env;
-use Strukt\Framework\App as FrameworkApp;
+use Strukt\Package\Repos;
 use Strukt\Framework\Configuration;
 use Strukt\Console\Color;
-use Strukt\Http\Method as HttpMethod;
 
 require "bootstrap.php";
 
@@ -59,7 +58,17 @@ if(!file_exists("cfg/app.ini")){
 }
 
 $method = strtoupper(trim($arg1));//method
-$methods = HttpMethod::getAll();
+$methods = [
+	"ANY",
+	"PUT", 
+	"GET", 
+	"PATH", 
+	"POST", 
+	"DELETE",
+	"PATCH",
+	"OPTIONS"
+];
+// $methods = HttpMethod::getAll();
 // if(!in_array($method, $methods) && !empty($method))
 	// exit(Color::writeln("red"," Invalid HTTP method!\n"));
 
@@ -90,9 +99,10 @@ $_REQUEST = $_POST = $params;
 
 Env::withFile();
 Env::set("root_dir", getcwd());
+Env::set("json.validation.err", true);
 
-FrameworkApp::create("App:Cli");
-FrameworkApp::mayBeRepo();
+config("app.type","App:Cli");
+// Repos::available();
 
 App\Middleware\XSession::config(array(
 
@@ -109,8 +119,14 @@ $config = new Configuration([
 	"ignore"=>["@require"]
 ]);
 
+
 $kernel = new App\Kernel($config);
-$runner = $kernel->getApp()->run();
-$runner = $runner->init();
-$response = $kernel->getRouter()->make()->run();
-exit(sprintf("%s\n", $response->getContent()));
+$kernel->run();
+// $app = $kernel->getApp();
+
+// if(!is_null($app))
+	// $app->run();//->init();
+// $kernel->getApp()->run();
+// $runner = $runner->init();
+// $response = $kernel->getRouter()->make()->run();
+// exit(sprintf("%s\n", $response->getContent()));

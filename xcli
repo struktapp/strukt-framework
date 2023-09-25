@@ -14,6 +14,7 @@ $loader->add("Schema", __DIR__."/database/schema");
 
 Env::withFile();
 Env::set("root_dir", getcwd());
+Env::set("json.validation.err", true);
 
 config("app.type","App:Cli");
 
@@ -21,7 +22,7 @@ $kernel = new App\Kernel(new Configuration());
 $app = $kernel->getApp();
 
 if(!is_null($app))
-	$app->run();//->init();
+	$app->init();//->init();
 
 $sh = new Shell();
 

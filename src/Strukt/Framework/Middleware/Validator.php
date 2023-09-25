@@ -27,18 +27,16 @@ class Validator implements MiddlewareInterface{
 		if(env("json.validation.err"))
 			$headers = ["Content-Type"=>"application/json"];
 
-		$configs = Cmd::ls("^type:route");
 		$route = reg("route.current");
+		$configs = reg("route.configs");
+		
 		$name = sprintf("type:route|path:%s|action:%s", $route, $request->getMethod());
 
-		if(in_array($name, $configs)){
+		if(array_key_exists($name, $configs)){
 		
-			$tokq = token($name);
+			$tokq = token($configs[$name]);
 
-			if($tokq->has("form")){
-
-				$cls = $tokq->get("form");
-				$method = $tokq->get("method");	
+			if($tokq->has("form")){	
 
 				if($action == "OPTIONS" &&  config("app.type") == "App:Idx"){
 
@@ -47,7 +45,9 @@ class Validator implements MiddlewareInterface{
 						$request->request->set($name, $val);
 				}
 
-				$messages = \Strukt\Ref::create($cls)->makeArgs([$request])->method("validate")->invoke();
+				$class = reg(sprintf("nr.%s.frm.%s", $tokq->get("module"), $tokq->get("form")));
+
+				$messages = \Strukt\Ref::create($class)->makeArgs([$request])->method("validate")->invoke();
 				if(!$messages["success"])
 					$response = new BadRequest(json($messages)->encode(), $headers);
 			}

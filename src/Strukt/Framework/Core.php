@@ -33,7 +33,7 @@ class Core{
 	public function getNamespace($alias_ns){
 
 		if($this->isQualifiedAlias($alias_ns))
-			return reg($alias_ns);
+			return reg(sprintf("nr.%s", $alias_ns));
 		else 
 			return Str::create(config("app.name"))
 				->concat("\\")
@@ -42,31 +42,35 @@ class Core{
 	}
 
 	/**
-	* Getter for class functionality in static class
-	*
-	* $alias_ns format <module>.<facet>.<class> e.g au.ctr.User
-	*
-	* @param string $alias_ns
-	*
-	* @return object
-	*/
-	public function get($alias_ns){
-
-		return Ref::create($this->getNamespace($alias_ns))->noMake()->getInstance();
-	}
-
-	/**
 	* Getter for class functionality in instantiated class
 	*
 	* $alias_ns format <module>.<facet>.<class> e.g au.ctr.User
 	*
 	* @param string $alias_ns
-	* @param Array $args = null
+	* @param array $args = null
 	*
 	* @return object
 	*/
-	public function getNew($alias_ns, Array $args = null){
+	protected function getNew($alias_ns, array $args = null){
 
 		return Ref::create($this->getNamespace($alias_ns))->makeArgs($args)->getInstance();
+	}
+
+	/**
+	* Getter for class functionality in static class
+	*
+	* $alias_ns format <module>.<facet>.<class> e.g au.ctr.User
+	*
+	* @param string $alias_ns
+	* @param array $args = null
+	*
+	* @return object
+	*/
+	protected function get(string $alias_ns, array $args = null){
+
+		if(!is_null($args))
+			return $this->getNew($alias_ns, $args);
+
+		return Ref::create($this->getNamespace($alias_ns))->noMake()->getInstance();
 	}
 }

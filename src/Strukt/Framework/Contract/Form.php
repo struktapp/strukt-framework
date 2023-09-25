@@ -1,6 +1,6 @@
 <?php
 
-namespace Strukt\Contract;
+namespace Strukt\Framework\Contract;
 
 use Strukt\Http\Request;
 use Strukt\Framework\Injectable\Validator as InjectableValidator;

@@ -12,33 +12,24 @@ use Strukt\Core\Registry;
 class ShellExec extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
-
-		$reg = Registry::getSingleton();
-		$vars[] = "reg";
 		
 
-		if($reg->exists("app.em")){
+		if(event("db.em")){
 
-			$em = $reg->get("app.em");
+			$em = event("db.em");
 			$vars[] = "em";
 		}
 
-		if($reg->exists("app.sm")){
+		if(event("db.sm")){
 
-			$sm = $reg->get("app.sm");
+			$sm = event("db.sm");
 			$vars[] = "sm";
 		}
 
-		if($reg->exists("app.da")){
+		if(event("db.da")){
 
-			$da = $reg->get("app.da");
+			$da = event("db.da");
 			$vars[] = "da";
-		}
-
-		if($reg->exists("core")){
-
-			$core = $reg->get("core");
-			$vars[] = "core";
 		}
 
 		$sh = new \Psy\Shell();

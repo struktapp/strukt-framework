@@ -5,6 +5,8 @@ namespace Strukt\Framework\Injectable;
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 use Strukt\Framework\Injectable\Configuration as InjectableCfg;
 use App\Injectable as InjectableApp;
+use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\ProviderInterface;
 
 class Facet implements \Strukt\Framework\Contract\Injectable{
 
@@ -20,9 +22,14 @@ class Facet implements \Strukt\Framework\Contract\Injectable{
 		$name = $notes["class"]["Name"]["item"];
 		$settings["name"] = $name;
 
-		$middlewares = config("app.middlewares")??[];
-		$providers = config("app.providers")??[];
-		if(arr($middlewares)->has($name) || arr($providers)->has($name)){
+		$interfaces = arr($rclass->getInterfaceNames());
+		if($interfaces->has(MiddlewareInterface::class))
+			$facet = arr(config("app.middlewares")??[]);
+
+		if($interfaces->has(ProviderInterface::class))
+			$facet = arr(config("app.providers")??[]);
+		
+		if($facet->has($name)){
 				
 			$settings["is_required"] = false;
 			if(array_key_exists("Required", $notes["class"]))

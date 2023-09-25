@@ -14,7 +14,7 @@ namespace Strukt\Framework\Contract;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Router{
+abstract class Router extends \Strukt\Framework\Core{
 
-	//
+
 }

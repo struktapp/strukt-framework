@@ -65,15 +65,15 @@ class Application{
 		}));
 	}
 
-	public function run(){
+	public function init(){
 
 		$configs = [];
 		arr($this->aliases)->each(function($key, $alias) use(&$configs){
 
-			arr(reg(sprintf("nr.routes.%s", $alias)))->each(function($key, $class) use(&$configs){
+			arr(reg(sprintf("nr.routes.%s", $alias)))->each(function($key, $class) use(&$configs, $alias){
 
 				$inj_rtr = new InjectableRouter(new \ReflectionClass($class));
-				arr($inj_rtr->getConfigs())->each(function($key, $config) use(&$configs){
+				arr($inj_rtr->getConfigs())->each(function($key, $config) use(&$configs, $alias){
 
 					$configs[] = array(
 
@@ -83,7 +83,8 @@ class Application{
 						"callable"=>$config["ref.method"],
 						"permissions"=>$config["route.perm"],
 						"form"=>$config["route.form"],
-						"middlewares"=>$config["route.middlewares"]
+						"middlewares"=>$config["route.middlewares"],
+						"module"=>$alias
 					);
 				});
 			});
@@ -98,11 +99,28 @@ class Application{
 									->method($config["callable"])
 									->getClosure();
 
+			$other_configs["module"] = $config["module"];
+			if(!empty($config["permissions"]))
+				$other_configs["allows"] = $config["permissions"];
+
+			if(!empty($config["middlewares"]))
+				$other_configs["middlewares"] = $config["middlewares"];
+
+			if(!empty($config["form"]))
+				$other_configs["form"] = $config["form"];
+
 			$this->router->add(path:$config["route"], 
 									func:$callable,
-									action:$config["action"]);
+									action:$config["action"],
+									config:arr($other_configs)->tokenize());
 		}
 
+		return $this;
+	}
+
+	public function run(){
+
+		$this->init();
 		$this->router->run();
 	}
 }

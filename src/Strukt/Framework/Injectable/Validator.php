@@ -4,7 +4,7 @@ namespace Strukt\Framework\Injectable;
 
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
-class Validator implements \Strukt\Contract\Injectable{
+class Validator implements \Strukt\Framework\Contract\Injectable{
 
 	private $notes;
 
