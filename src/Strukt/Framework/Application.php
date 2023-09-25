@@ -5,14 +5,17 @@ namespace Strukt\Framework;
 use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Framework\Contract\Module;
 use Strukt\Fs;
+use Strukt\Framework\Injectable\Router as InjectableRouter;
 
 class Application{
 
 	private $router;
+	private $aliases;
 
 	public function __construct(RouterKernel $router){
 
 		$this->router = $router;
+		$this->aliases = [];
 	}
 
 	public function register(Module $module){
@@ -55,6 +58,7 @@ class Application{
 			}
 		});
 
+		$this->aliases[] = $alias;
 		reg(sprintf("nr.routes.%s", $alias), array_filter($route_nss->yield(), function($v){
 
 			return !is_null($v);
@@ -63,6 +67,42 @@ class Application{
 
 	public function run(){
 
-		//
+		$configs = [];
+		arr($this->aliases)->each(function($key, $alias) use(&$configs){
+
+			arr(reg(sprintf("nr.routes.%s", $alias)))->each(function($key, $class) use(&$configs){
+
+				$inj_rtr = new InjectableRouter(new \ReflectionClass($class));
+				arr($inj_rtr->getConfigs())->each(function($key, $config) use(&$configs){
+
+					$configs[] = array(
+
+						"action"=>$config["http.method"],
+						"route"=>$config["route.path"],
+						"class"=>$config["ref.class"],
+						"callable"=>$config["ref.method"],
+						"permissions"=>$config["route.perm"],
+						"form"=>$config["route.form"],
+						"middlewares"=>$config["route.middlewares"]
+					);
+				});
+			});
+		});
+
+		// dd($configs);
+
+		foreach($configs as $config){
+
+			$callable = \Strukt\Ref::create($config["class"])
+									->noMake()
+									->method($config["callable"])
+									->getClosure();
+
+			$this->router->add(path:$config["route"], 
+									func:$callable,
+									action:$config["action"]);
+		}
+
+		$this->router->run();
 	}
 }

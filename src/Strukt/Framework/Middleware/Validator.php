@@ -6,6 +6,7 @@ use Strukt\Contract\Http\RequestInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Http\Error\BadRequest;
+use Strukt\Cmd;
 
 /**
 * @Name(valid)
@@ -26,26 +27,30 @@ class Validator implements MiddlewareInterface{
 		if(env("json.validation.err"))
 			$headers = ["Content-Type"=>"application/json"];
 
-		$configs = config("route.configs");
-		$route = config("route.current");
-		$name = sprintf("type:route|%s", $route);
-		$tokq = token($configs[$name]);
+		$configs = Cmd::ls("^type:route");
+		$route = reg("route.current");
+		$name = sprintf("type:route|path:%s|action:%s", $route, $request->getMethod());
 
-		if($tokq->has("form")){
+		if(in_array($name, $configs)){
+		
+			$tokq = token($name);
 
-			$cls = $tokq->get("form");
-			$method = $tokq->get("method");	
+			if($tokq->has("form")){
 
-			if($action == "OPTIONS" &&  config("app.type") == "App:Idx"){
+				$cls = $tokq->get("form");
+				$method = $tokq->get("method");	
 
-				$body = json($request->getContent())->decode();
-				foreach($body as $name=>$val)
-					$request->request->set($name, $val);
+				if($action == "OPTIONS" &&  config("app.type") == "App:Idx"){
+
+					$body = json($request->getContent())->decode();
+					foreach($body as $name=>$val)
+						$request->request->set($name, $val);
+				}
+
+				$messages = \Strukt\Ref::create($cls)->makeArgs([$request])->method("validate")->invoke();
+				if(!$messages["success"])
+					$response = new BadRequest(json($messages)->encode(), $headers);
 			}
-
-			$messages = \Strukt\Ref::create($cls)->makeArgs([$request])->method("validate")->invoke();
-			if(!$messages["success"])
-				$response = new BadRequest(json($messages)->encode(), $headers);
 		}
 	
 		return $next($request, $response);

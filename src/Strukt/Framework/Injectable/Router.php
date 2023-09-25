@@ -4,7 +4,7 @@ namespace Strukt\Framework\Injectable;
 
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 
-class Router implements \Strukt\Contract\Injectable{
+class Router implements \Strukt\Framework\Contract\Injectable{
 
 	private $notes = [];
 

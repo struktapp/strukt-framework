@@ -127,7 +127,7 @@ namespace {{app}}\AuthModule\Router;
 use Strukt\Http\Request;
 use Strukt\Http\Response\Plain as Response;
 
-class Auth extends \Strukt\Contract\Router{
+class Auth extends \Strukt\Framework\Contract\Router{
 
 	/**
 	* @Route(/login)

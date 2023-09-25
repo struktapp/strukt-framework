@@ -3,6 +3,7 @@
 namespace Strukt\Framework;
 
 use Strukt\Framework\Injectable\Configuration as InjectableCfg;
+use Strukt\Framework\Injectable\Facet as InjectableFacet;
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 use Strukt\Traits\ClassHelper;
 use Strukt\Package\Repos;
@@ -12,9 +13,8 @@ class Configuration{
 	use ClassHelper;
 
 	private $settings = null;
-	private $ignore = [];
-	private $facet = [];
-	private $injectables;
+	// private $ignore = [];
+	// private $injectables;
 
 	public function __construct(array $options = []){
 
@@ -23,16 +23,16 @@ class Configuration{
 		* Use ONLY for in App:Cli - Currently only works for ./xhttp file
 		* currently only supports '@require'
 		*/
-		$ignore = [];
-		if(array_key_exists("ignore", $options))
-			$this->ignore = $ignore = $options["ignore"];
+		// $ignore = [];
+		// if(array_key_exists("ignore", $options))
+			// $this->ignore = $ignore = $options["ignore"];
 
 		$app_type = config("app.type");
 		$published = Repos::packages("published");
 		$packages = Repos::available();
 
 		$settings = [];
-		$factes = arr($packages)->each(function($name, $class) use($published, $app_type, &$settings){
+		arr($packages)->each(function($name, $class) use($published, $app_type, &$settings){
 
 			if(class_exists($class) && in_array($name, $published)){
 
@@ -45,14 +45,20 @@ class Configuration{
 								"commands"=>[]])->each(function($facet, $value) use($config, $helper){
 
 					if(arr(array_keys($config))->has($facet))
-						return arr($config[$facet])->each(function($key, $facet_class) use($helper){
+						return array_values(array_filter(arr($config[$facet])
+									->each(function($key, $facet_class) use($helper, $facet){
 
 							$facet_class = $helper->getClass($facet_class);
-							if(class_exists($facet_class))
-								return $facet_class;
+							if(class_exists($facet_class)){
 
-							return null;
-						})->yield();
+								if(str($facet)->equals("commands"))
+									return $facet_class;
+
+								$inj_facet = new InjectableFacet(new \ReflectionClass($facet_class));
+								if(!is_null($inj_facet->getConfigs()))
+									return $facet_class;
+							}
+						})->yield()));
 				})->yield();
 
 				$settings = array_merge($settings, $facet);
@@ -60,12 +66,6 @@ class Configuration{
 		});
 
 		$this->settings = $settings;
-
-		print_r($this->settings);
-
-		// $this->settings = $settings->yield();
-		// $this->injectables = $injectables;
-		// $this->facet = $facet;
 	}
 
 	public function getInjectables(){
@@ -100,16 +100,14 @@ class Configuration{
 	 */
 	public function get(string $key){
 
-		// print_r($this->settings);exit;
-
 		if(in_array($key, ["providers", "middlewares", "commands"]))
 			return $this->settings[$key];
 
 		return null;
 	}
 
-	public function getAliases(){
+	// public function getAliases(){
 
-		return $this->facet;
-	}
+	// 	return $this->facet;
+	// }
 }

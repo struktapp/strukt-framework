@@ -4,9 +4,10 @@ namespace Strukt\Framework\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-use Strukt\Framework\App as FrameworkApp;
+// use Strukt\Framework\App as FrameworkApp;
 use Strukt\Console\Color;
 use Strukt\Ref;
+use Strukt\Package\Repos;
 
 /**
 * package:info  Information on packages
@@ -27,8 +28,8 @@ class PackageInfo extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$packages = FrameworkApp::getRepo();
-		$installed = FrameworkApp::packages("installed");
+		$packages = Repos::available();
+		$installed = Repos::packages("installed");
 
 		$name = $in->get("name");
 		if($name!="core")

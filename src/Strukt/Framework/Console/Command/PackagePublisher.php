@@ -12,7 +12,8 @@ use Strukt\Type\Arr;
 use Strukt\Templator;
 use Strukt\Raise;
 use Strukt\Ref;
-use Strukt\Framework\App as FrameworkApp;
+// use Strukt\Framework\App as FrameworkApp;
+use Strukt\Package\Repos;
 
 /**
 * package:publish     Package Publisher
@@ -29,14 +30,14 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 	public function __construct(){
 
-		$this->packages = FrameworkApp::getRepo();
+		$this->packages = Repos::available();
 	}
 
 	public function execute(Input $in, Output $out){
 
 		$pkgname = $in->get("pkg");
 
-		$vendorPkg = Str::create(Env::get("root_dir"));
+		$vendorPkg = str(env("root_dir"));
 		
 		if($pkgname == "package"){
 

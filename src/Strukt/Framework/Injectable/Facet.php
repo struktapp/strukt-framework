@@ -8,7 +8,7 @@ use App\Injectable as InjectableApp;
 
 class Facet implements \Strukt\Framework\Contract\Injectable{
 
-	private $notes;
+	private $notes = null;
 
 	public function __construct(\ReflectionClass $rclass){
 
@@ -19,44 +19,46 @@ class Facet implements \Strukt\Framework\Contract\Injectable{
 
 		$name = $notes["class"]["Name"]["item"];
 		$settings["name"] = $name;
-		// if(!empty(config($key)))
-			// if(in_array($name, config($key)))
-				// $settings[] = $setting;
-			
-		$settings["is_required"] = false;
-		if(array_key_exists("Required", $notes["class"]))
-			$settings["is_required"] = true;
 
-		if(array_key_exists("Requires", $notes["class"])){
+		$middlewares = config("app.middlewares")??[];
+		$providers = config("app.providers")??[];
+		if(arr($middlewares)->has($name) || arr($providers)->has($name)){
+				
+			$settings["is_required"] = false;
+			if(array_key_exists("Required", $notes["class"]))
+				$settings["is_required"] = true;
 
-			$requires = $notes["class"]["Requires"]["item"];
-			$settings["requires"][] = $requires;
-			// if(!reg()->exists($requires))
-			// 	raise(sprintf("%s:[%s] requires registry:item[%s]!", 
-			// 						ucfirst(trim($key, "s")),
-			// 						$name, 
-			// 						$requires));
+			if(array_key_exists("Requires", $notes["class"])){
+
+				$requires = $notes["class"]["Requires"]["item"];
+				$settings["requires"][] = $requires;
+				// if(!reg()->exists($requires))
+				// 	raise(sprintf("%s:[%s] requires registry:item[%s]!", 
+				// 						ucfirst(trim($key, "s")),
+				// 						$name, 
+				// 						$requires));
+			}
+
+			if(array_key_exists("Inject", $notes["class"])){
+
+				$inj_name = $notes["class"]["Inject"]["item"];
+				$inj_keys = array_keys($injectables->getConfigs());
+
+				if(!in_array($inj_name, $inj_keys))
+					raise(sprintf("%s:[%s] requires provider:[%s]!", 
+										ucfirst(trim($key, "s")),
+										$name, 
+										$inj_name));
+			}
+
+			// $facet[$key][] = $name;
+
+			$this->notes = array(
+
+				"class"=>$rclass->getName(),
+				"config"=>$settings
+			);
 		}
-
-		if(array_key_exists("Inject", $notes["class"])){
-
-			$inj_name = $notes["class"]["Inject"]["item"];
-			$inj_keys = array_keys($injectables->getConfigs());
-
-			if(!in_array($inj_name, $inj_keys))
-				raise(sprintf("%s:[%s] requires provider:[%s]!", 
-									ucfirst(trim($key, "s")),
-									$name, 
-									$inj_name));
-		}
-
-		// $facet[$key][] = $name;
-
-		$this->notes = array(
-
-			"class"=>$rclass->getName(),
-			"config"=>$settings
-		);
 	}
 
 	public function getConfigs(){

@@ -4,8 +4,9 @@ namespace Strukt\Framework\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-use Strukt\Framework\App as FrameworkApp;
+// use Strukt\Framework\App as FrameworkApp;
 use Strukt\Console\Color;
+use Strukt\Package\Repos;
 
 /**
 * package:ls  List packages and status
@@ -14,9 +15,9 @@ class PackageList extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$packages = array_keys(FrameworkApp::getRepo());
-		$published = FrameworkApp::packages("published");
-		$installed = FrameworkApp::packages("installed");
+		$packages = array_keys(Repos::available());
+		$published = Repos::packages("published");
+		$installed = Repos::packages("installed");
 
 		$out->add("Package Status:\n\n");
 
