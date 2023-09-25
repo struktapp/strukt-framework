@@ -23,119 +23,54 @@ class Configuration{
 		* Use ONLY for in App:Cli - Currently only works for ./xhttp file
 		* currently only supports '@require'
 		*/
+		$ignore = [];
 		if(array_key_exists("ignore", $options))
-			$this->ignore = $options["ignore"];
+			$this->ignore = $ignore = $options["ignore"];
 
 		$app_type = config("app.type");
 		$published = Repos::packages("published");
 		$packages = Repos::available();
 
-		$providers = [];
-		$middlewares = [];
-		$commands = [];
-		foreach($packages as $name=>$cls){
+		$settings = [];
+		$factes = arr($packages)->each(function($name, $class) use($published, $app_type, &$settings){
 
-			if(class_exists($cls) && in_array($name, $published)){
+			if(class_exists($class) && in_array($name, $published)){
 
-				$config = $this->newClass($cls)->getSettings($app_type);
+				$helper = new class(){use ClassHelper;};
 
-				if(array_key_exists("providers", $config))
-					foreach($config["providers"] as $provider)
-						if(class_exists($provider))
-							$providers[] = $provider;
+				$config = $helper->newClass($class)->getSettings($app_type);
 
-				if(array_key_exists("middlewares", $config))
-					foreach($config["middlewares"] as $middleware)
-						if(class_exists($middleware))
-							$middlewares[] = $middleware;
+				$facet = arr(["middlewares"=>[], 
+								"providers"=>[], 
+								"commands"=>[]])->each(function($facet, $value) use($config, $helper){
 
-				if(array_key_exists("commands", $config))
-					foreach($config["commands"] as $command)
-						if(class_exists($command = $this->getClass($command)))
-							$commands[] = $command;
+					if(arr(array_keys($config))->has($facet))
+						return arr($config[$facet])->each(function($key, $facet_class) use($helper){
+
+							$facet_class = $helper->getClass($facet_class);
+							if(class_exists($facet_class))
+								return $facet_class;
+
+							return null;
+						})->yield();
+				})->yield();
+
+				$settings = array_merge($settings, $facet);
 			}
-		}
-
-		// print_r($config);exit;
-		// print_r(array($providers, $middlewares, $commands));exit;
-		$config = [];//reset config
-		if(!empty($providers))
-			$config["providers"] = $providers;
-
-		if(!empty($middlewares))
-			$config["middlewares"] = $middlewares;
-
-		if(!empty($commands))
-			$config["commands"] = $commands;
-
-		// print_r($config);exit;
-
-		$injectables = new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
-
-		$ignore = $this->ignore;
-		$facet = [];
-		$settings = arr([
-
-			"providers"=>null,
-			"middlewares"=>null
-
-		])->each(function($key, $val) use($injectables, $config, &$facet, $ignore){
-
-			$settings = [];
-			foreach($config[$key] as $setting){
-
-				$parser = new BasicNotesParser(new \ReflectionClass($setting));
-				$notes = $parser->getAnnotations();
-
-				$name = $notes["class"]["Name"]["item"];
-				// print_r(array($name));
-				if(!empty(config($key)))
-					if(in_array($name, config($key)))
-						$settings[] = $setting;
-					
-				if(array_key_exists("Required", $notes["class"]))
-					$settings[] = $setting;
-
-				if(array_key_exists("Requires", $notes["class"]) && 
-					!in_array("@require", $ignore)){
-
-					$requires = $notes["class"]["Requires"]["item"];
-					if(!reg()->exists($requires))
-						raise(sprintf("%s:[%s] requires registry:item[%s]!", 
-											ucfirst(trim($key, "s")),
-											$name, 
-											$requires));
-				}
-
-				if(array_key_exists("Inject", $notes["class"])){
-
-					$inj_name = $notes["class"]["Inject"]["item"];
-					$inj_keys = array_keys($injectables->getConfigs());
-
-					// if(!in_array(sprintf("@inject.%s", $inj_name), $inj_keys))
-					if(!in_array($inj_name, $inj_keys))
-						raise(sprintf("%s:[%s] requires provider:[%s]!", 
-											ucfirst(trim($key, "s")),
-											$name, 
-											$inj_name));
-				}
-
-				$facet[$key][] = $name;
-			}
-
-			return $settings;
 		});
 
-		// print_r($settings);exit;
+		$this->settings = $settings;
 
-		$this->settings = $settings->yield();
-		$this->injectables = $injectables;
-		$this->facet = $facet;
+		print_r($this->settings);
+
+		// $this->settings = $settings->yield();
+		// $this->injectables = $injectables;
+		// $this->facet = $facet;
 	}
 
 	public function getInjectables(){
 
-		return $this->injectables;
+		return new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
 	}
 
 	/**

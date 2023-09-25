@@ -29,9 +29,9 @@ class Core implements \Strukt\Framework\Contract\Package{
 				"middlewares"=>array(
 
 					\App\Middleware\Cors::class,
-					\Strukt\Framework\Middleware\Session::class,
-					\Strukt\Framework\Middleware\Authorization::class,
-					\Strukt\Framework\Middleware\Authentication::class,
+					\Strukt\Router\Middleware\Session::class,
+					\Strukt\Router\Middleware\Authorization::class,
+					\Strukt\Router\Middleware\Authentication::class,
 					\Strukt\Framework\Middleware\Validator::class,
 				)
 			),
@@ -44,7 +44,7 @@ class Core implements \Strukt\Framework\Contract\Package{
 				"middlewares"=>array(
 
 					\App\Middleware\XSession::class,
-					\Strukt\Framework\Middleware\Authentication::class,
+					\Strukt\Router\Middleware\Authentication::class,
 					\Strukt\Framework\Middleware\Validator::class,
 				),
 				"commands"=>array(

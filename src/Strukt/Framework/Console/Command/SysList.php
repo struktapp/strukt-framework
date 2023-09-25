@@ -5,7 +5,7 @@ namespace Strukt\Framework\Console\Command;
 use Strukt\Console\Input;
 use Strukt\Console\Output;
 use Strukt\Console\Color;
-use Strukt\Framework\App as FrameworkApp;
+use Strukt\Framework\Configuration;
 
 /**
 * sys:ls  List facets - providers|middlewares
@@ -32,8 +32,11 @@ class SysList extends \Strukt\Console\Command{
 		if(is_null($inputs))
 			$inputs = [];
 
-		if(array_key_exists("idx", $inputs))
-			FrameworkApp::create("App:Idx");
+		if(array_key_exists("idx", $inputs)){
+
+			reg("config.app")->remove("type");
+			config("app.type","App:Idx");
+		}
 
 		$types = [];
 		if($type == "middlewares")
@@ -49,7 +52,7 @@ class SysList extends \Strukt\Console\Command{
 				"providers"
 			);
 
-		$config = FrameworkApp::getConfig();
+		$config = new Configuration();
 		$lsmdl = $config->get("middlewares");
 		$lsprv = $config->get("providers");
 
