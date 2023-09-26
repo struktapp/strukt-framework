@@ -16,22 +16,23 @@ $ls = [".tpl/sgf/app/src/App/AuthModule/Controller/User.sgf",
 ".tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf",
 ".tpl/sgf/app/src/App/AuthModule/Router/Index.sgf",
 ".tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf",
-".tpl/sgf/lib/App/Loader.sgf",
 ".tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf",
 ".tpl/sgf/src/Strukt/Package/Pkg_.sgf",//
+".tpl/sgf/lib/App/Loader.sgf",
+".tpl/sgf/cfg/app.sgf",
 "lib/App/Contract/AbstractCommand.php",
 "lib/App/Middleware/Cors.php",
 "lib/App/Middleware/XSession.php",
 "lib/App/Provider/Logger.php",
 "lib/App/Validator.php",
 "cfg/module.ini",
-".tpl/sgf/cfg/app.sgf",
-"bootstrap.php",
+"cfg/repo.ini",
+"cfg/cmd.ini",
 "lib/App/Kernel.php",
+"lib/App/Injectable.php",
 "xcli",
 "index.php",
-"lib/App/Injectable.php",
-"cfg/repo.ini",
+"bootstrap.php",
 ".env"];
 
 $cfg = new Strukt\Type\Str("#!/usr/bin/env php
@@ -65,8 +66,7 @@ Strukt\Fs::mkdir(\".tpl/sgf/lib/App\");
 Strukt\Fs::mkdir(\".tpl/sgf/src/Strukt/Package\");
 Strukt\Fs::mkdir(\"lib/App/Contract\");
 Strukt\Fs::mkdir(\"lib/App/Middleware\");
-Strukt\Fs::mkdir(\"lib/App/Provider\");
-Strukt\Fs::mkdir(\"lib/App/Validator\");\n\n");
+Strukt\Fs::mkdir(\"lib/App/Provider\");\n\n");
 
 foreach($ls as $tpl){
 

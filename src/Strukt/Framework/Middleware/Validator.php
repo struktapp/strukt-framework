@@ -29,6 +29,9 @@ class Validator implements MiddlewareInterface{
 
 		$route = reg("route.current");
 		$configs = reg("route.configs");
+
+		// dd(reg("route.configs"));
+		// dd(reg("@strukt.permissions"));
 		
 		$name = sprintf("type:route|path:%s|action:%s", $route, $request->getMethod());
 

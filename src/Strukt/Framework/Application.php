@@ -90,8 +90,6 @@ class Application{
 			});
 		});
 
-		// dd($configs);
-
 		foreach($configs as $config){
 
 			$callable = \Strukt\Ref::create($config["class"])

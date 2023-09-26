@@ -13,6 +13,9 @@ class Router implements \Strukt\Framework\Contract\Injectable{
 		$parser = new BasicNotesParser($rclass);
 		$notes = $parser->getAnnotations();
 
+		// if($rclass->getName() ==  "Payroll\AuthModule\Router\Auth")
+			// dd($notes);
+
 		$class_name = $notes["class_name"];
 		unset($notes["class_name"]);
 
