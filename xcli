@@ -20,9 +20,13 @@ config("app.type","App:Cli");
 
 $kernel = new App\Kernel(new Configuration());
 $app = $kernel->getApp();
+$router = $kernel->getRouter();
 
-if(!is_null($app))
+if(!is_null($app)){
+
 	$app->init();//->init();
+	$router->init();
+}
 
 $sh = new Shell();
 

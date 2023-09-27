@@ -92,6 +92,7 @@ class Application{
 
 		foreach($configs as $config){
 
+			$other_configs = [];
 			$callable = \Strukt\Ref::create($config["class"])
 									->noMake()
 									->method($config["callable"])
