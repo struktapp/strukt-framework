@@ -1,8 +1,8 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Strukt\Core\Registry;
-use Strukt\Provider\Validator as ValidatorService;
+use Strukt\Framework\Contract\Form;
+use Strukt\Framework\Provider\Validator as ValidatorService;
 use Strukt\Http\Request;
 
 class FormValidationFactoryTest extends TestCase{
@@ -26,7 +26,7 @@ class FormValidationFactoryTest extends TestCase{
         	array("confirm_password", null, "p@55w0rd")
         )));
 
-		$loginFrm = new class($request) extends \Strukt\Contract\Form{
+		$loginFrm = new class($request) extends Form{
 
 			/**
 			* @IsEmail()
@@ -71,7 +71,7 @@ class FormValidationFactoryTest extends TestCase{
         	array("confirm_password", null, "")
         )));
 
-		$loginFrm = new class($request) extends \Strukt\Contract\Form{
+		$loginFrm = new class($request) extends Form{
 
 			/**
 			* @IsEmail()
@@ -112,7 +112,7 @@ class FormValidationFactoryTest extends TestCase{
         	array("confirm_password", null, "PaSsW0rd")
         )));
 
-		$loginFrm = new class($request) extends \Strukt\Contract\Form{
+		$loginFrm = new class($request) extends Form{
 
 			/**
 			* @IsEmail()

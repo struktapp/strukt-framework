@@ -1,40 +1,17 @@
 <?php
 
 use PHPUnit\Framework\TestCase;
-use Strukt\Core\Registry;
-use Strukt\Provider\Validator as ValidatorService;
 
 class FormValidatorTest extends TestCase{
 
-	public function setUp():void{
-
-		$factory = new ValidatorService(); 
-		$factory->register();
-
-		$registry = Registry::getSingleton();
-
-		$this->service = $registry->get("strukt.service.validator");
-
-		//App\Validator\Extra
-		$this->serviceEx = $registry->get("strukt.service.validatorExtra");
-	}
-
-	/**
-     * @runInSeparateProcess
-     */
 	public function testLen(){
 
 		$input = "Moderator";
 
-		$validator = $this->service->getNew($input)
-							->isLen(9)
-							->isNotEmpty();
-
-		$validatorEx = $this->serviceEx->getNew($input)
-							->isLenGt(8); //App\Validator\Extra
+		$validator = new \App\Validator($input);
+		$validator = $validator->isLen(9)->isLenGt(8)->isNotEmpty();
 
 		$messages = $validator->getMessage();
-		$messages = array_merge($messages, $validatorEx->getMessage());
 
 		$this->assertEquals($messages, array(
 
@@ -44,14 +21,10 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsLenFail(){
 
-		$validator = $this->service->getNew("Moderator")
-					->isLen(45)
-					->isNotEmpty();
+		$validator = new \App\Validator("Moderator");
+		$validator = $validator->isLen(45)->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -60,14 +33,10 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsAlpha(){
 
-		$validator = $this->service->getNew("moderator")
-					->isAlpha()
-					->isNotEmpty();
+		$validator = new \App\Validator("moderator");
+		$validator = $validator->isAlpha()->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -76,14 +45,10 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsAlphaSpaced(){
 
-		$validator = $this->service->getNew("pitsolu moderator")
-					->isAlpha()
-					->isNotEmpty();
+		$validator = new \App\Validator("pitsolu moderator");
+		$validator = $validator->isAlpha()->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -92,14 +57,10 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsAlphaNum(){
 
-		$validator = $this->service->getNew("pa55w0rd")
-					->isAlphaNum()
-					->isNotEmpty();
+		$validator = new \App\Validator("pa55w0rd");
+		$validator = $validator->isAlphaNum()->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -108,14 +69,10 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsAlphaNumFail(){
 
-		$validator = $this->service->getNew("p@55w0rd")
-					->isAlphaNum()
-					->isNotEmpty();
+		$validator = new \App\Validator("p@55w0rd");
+		$validator = $validator->isAlphaNum()->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -124,14 +81,10 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsEmail(){
 
-		$validator = $this->service->getNew("pitsolu@gmail.com")
-					->isEmail()
-					->isNotEmpty();
+		$validator = new \App\Validator("pitsolu@gmail.com");
+		$validator = $validator->isEmail()->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -140,16 +93,12 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsDate(){
 
 		$date = new DateTime("now");
 
-		$validator = $this->service->getNew($date->format("Y-m-d"))
-					->isDate()
-					->isNotEmpty();
+		$validator = new \App\Validator($date->format("Y-m-d"));
+		$validator = $validator->isDate()->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -158,14 +107,11 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testIsIn(){
 
-		$validator = $this->service->getNew("Ron")
-					->isIn(array("Obama", "Romney", "Hilary", "Ron"))
-					->isNotEmpty();
+		$validator = new \App\Validator("Ron");
+		$validator = $validator->isIn(array("Obama", "Romney", "Hilary", "Ron"))
+								->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 
@@ -174,14 +120,11 @@ class FormValidatorTest extends TestCase{
 		));
 	}
 
-	/**
-     * @runInSeparateProcess
-     */
 	public function testEqualsTo(){
 
-		$validator = $this->service->getNew(sha1("p@55w0rd"))
-					->equalTo(sha1("p@55w0rd"))
-					->isNotEmpty();
+		$validator = new \App\Validator(sha1("p@55w0rd"));
+		$validator = $validator->equalTo(sha1("p@55w0rd"))
+								->isNotEmpty();
 
 		$this->assertEquals($validator->getMessage(), array(
 

@@ -120,6 +120,6 @@ class Application{
 	public function run(){
 
 		$this->init();
-		$this->router->run();
+		return $this->router->run();
 	}
 }
