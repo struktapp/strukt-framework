@@ -6,9 +6,7 @@ use Strukt\Console\Input;
 use Strukt\Console\Output;
 use Strukt\Generator\ClassBuilder;
 use Strukt\Fs;
-use Strukt\Env;
-use Strukt\Type\Str;
-use Strukt\Core\Registry as Registry;
+use Strukt\Framework\Contract\Module;
 
 /**
 * make:module     Generate Application Module
@@ -27,66 +25,58 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$root_dir = Env::get("root_dir");
-		$app_dir = Env::get("rel_appsrc_dir");
-		$mod_ini = Env::get("rel_mod_ini");
-
-		$registry = Registry::getSingleton();
-
-		$moduleList = unserialize($registry->get("module-list"));
+		$root_dir = env("root_dir");
+		$app_dir = env("rel_appsrc_dir");
+		$mod_ini = env("rel_mod_ini");
 
 		/**
 		* Application Name
 		*/
 		$raw_app_name = $in->get("application_name");
 
-		$app_name = Str::create($raw_app_name)->toCamel();
+		$app_name = str($raw_app_name)->toCamel();
 
 		/**
 		* Module Name
 		*/
 		$raw_mod_name = $in->get("module_name");
 
-		$mod_name = Str::create($raw_mod_name)->toCamel();
+		$mod_name = str($raw_mod_name)->toCamel();
 		if(!$mod_name->endsWith("Module"))
 			$mod_name = $mod_name->concat("Module");
 
-		if(in_array(sprintf("%s%s", $app_name, $mod_name), array_keys($moduleList)))
-			throw new \Exception("Module already exists!");
+
+		$module_cls = sprintf("%s%s", $app_name, $mod_name);
+		$module_ns  = sprintf("%s\%s\%s", $app_name, $mod_name, $module_cls);
+
+		if(in_array($module_ns, reg("nr.modules")))
+			raise("Module already exists!");
 
 		/**
 		* Alias
 		*/
 		$raw_alias_name = $in->get("alias_name");
 
-		$aliasName = Str::create($raw_alias_name)->toCamel();
+		$aliasName = str($raw_alias_name)->toCamel();
 
 		//
 
-		$auth_mod_path = sprintf("%s/%s%s/%s", 
-								$root_dir,
-								$app_dir,
-								$app_name,
-								$mod_name);
+		$auth_mod_path = sprintf("%s%s/%s", $app_dir, $app_name, $mod_name);
 
-		Fs::mkdir($auth_mod_path);
-
+		Fs::mkdir(Fs::ds($auth_mod_path));
+		$fs = fs($auth_mod_path);
 		$mod_ini_path = sprintf("%s/%s", $root_dir, $mod_ini);
 
-		$mod_ini_exists = Fs::isFile($mod_ini_path);
+		if(Fs::isFile($mod_ini_path)){//module.ini exists
 
-		if($mod_ini_exists){
-
-			$mod_ini_contents = parse_ini_file($mod_ini_path);
-
-			if(in_array("folder", array_keys($mod_ini_contents)))
-				foreach($mod_ini_contents["folder"] as $folder)
-					Fs::mkdir(sprintf("%s/%s", $auth_mod_path, $folder));
+			$facets = config("module.folder*");
+			foreach($facets as $facet)
+				$fs->mkdir($facet);
 
 			$module = new ClassBuilder(array(
 
 				"namespace"=>sprintf("%s\%s", $app_name, $mod_name),
-				"extends"=>sprintf("\%s", \Strukt\Contract\Module::class),
+				"extends"=>sprintf("\%s", Module::class),
 				"name"=>sprintf("%s%s", $app_name, $mod_name)
 			));
 
@@ -97,13 +87,13 @@ class ModuleGenerator extends \Strukt\Console\Command{
 				"value"=>sprintf("\"%s\"", $aliasName)
 			));
 
-			Fs::touchWrite(sprintf("%s/%s%s.php", $auth_mod_path, $app_name, $mod_name), 
+			$fs->touchWrite(sprintf("%s%s.php", $app_name, $mod_name), 
 							sprintf("<?php\n%s", $module));
 
 			$out->add("Module genarated successfully.\n");
 		}
 		
-		if(!$mod_ini_exists)
+		if(!Fs::isFile($mod_ini_path))
 			$out->add(sprintf("Failed to find [%s] file!\n", $mod_ini));
 	}
 }

@@ -121,7 +121,7 @@ $config = new Configuration([
 
 
 $kernel = new App\Kernel($config);
-$kernel->run();
+exit($kernel->run());
 // $app = $kernel->getApp();
 
 // if(!is_null($app))

@@ -9,7 +9,7 @@ use Strukt\Generator\Annotation\Basic as BasicAnnotations;
 use Strukt\Http\Request as HttpRequest;
 use Strukt\Http\Reponse\Plain as HttpResponse;
 use Strukt\Fs;
-use Strukt\Env;
+// use Strukt\Env;
 use Strukt\Contract\Router as AbstractRouter;
 use Strukt\Core\Registry;
 
@@ -19,7 +19,7 @@ use Strukt\Core\Registry;
 *
 * Usage:
 *
-*	Namepace:	<module>
+*	Module:	<module>
 *	 example:
 *				PayrollAuthModule
 *
@@ -52,11 +52,28 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$root_dir = Env::get("root_dir");
-		$app_dir = Env::get("rel_appsrc_dir");
+		$root_dir = env("root_dir");
+		$app_dir = env("rel_appsrc_dir");
 
-		$registry = Registry::getSingleton();
-		$moduleList = unserialize($registry->get("module-list"));
+		$routeList = [];
+		$moduleList = [];
+		arr(reg("nr.modules"))->each(function($alias, $ns) use(&$moduleList, &$routeList){
+
+			list($app, $module, $app_module) = str($ns)->split("\\");
+
+			$moduleList[$app_module] = array(
+
+				"app"=>$app,
+				"module"=>$module,
+				"app_module"=>$app_module,
+				"ns"=>sprintf("%s\\%s", $app, $module),
+				"alias"=>$alias
+			);
+
+			$routeList[$app_module] = reg(sprintf("nr.routes.%s", $alias));
+		});
+
+		// dd($moduleList);
 
 		/**
 		* Module Name
@@ -69,7 +86,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 			if(in_array($module, array_keys($moduleList))){
 
-				$namespace = $moduleList[$module]["base-ns"];
+				$namespace = $moduleList[$module]["ns"];
 
 				$router["id"]["namespace"] = sprintf("%s\Router", $namespace);
 			}
@@ -103,7 +120,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 
 			$pattern = sprintf("/^%s$/i", $router["id"]["name"]);
 
-			if(!empty(preg_grep($pattern, $moduleList[$module]["Router"]))){
+			if(!empty(preg_grep($pattern, $routeList[$module]))){
 
 				echo "\n  Router already exists!\n\n";
 			}
@@ -118,7 +135,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 			$router["id"]["name"] = str_replace(array("router", "Router"), "", $router["id"]["name"]);
 		}
 		
-		$router["id"]["extends"] = sprintf("\%s", AbstractRouter::class);
+		$router["id"]["extends"] = sprintf("\%s", \Strukt\Framework\Contract\Router::class);
 
 		echo "\n";
 
@@ -285,6 +302,9 @@ class RouterGenerator extends \Strukt\Console\Command{
 				
 			$builderInstance->addMethod($func, new BasicAnnotations($annotations));
 		}
+
+
+		// print_r(array($path, $router, (string) $builderInstance));
 
 		Fs::touchWrite(sprintf("%s/Router/%s.php", $path, $router["id"]["name"]), 
 						sprintf("<?php\n%s", $builderInstance));

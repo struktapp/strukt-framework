@@ -754,7 +754,7 @@ class Kernel{
 
 	public function run():void{
 		
-		$this->app->run();//->init()->noDebug();
+		return $this->app->run();
 	}
 }
 
@@ -907,7 +907,7 @@ Env::set("json.validation.err", false);
 config("app.type","App:Idx");
 
 $kernel = new App\Kernel(new Configuration());
-$kernel->run();
+exit($kernel->run());
 
 
 

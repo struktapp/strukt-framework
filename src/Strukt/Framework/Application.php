@@ -11,6 +11,7 @@ class Application{
 
 	private $router;
 	private $aliases;
+	private $modules;
 
 	public function __construct(RouterKernel $router){
 
@@ -23,6 +24,8 @@ class Application{
 		$ns = $module->getNamespace();
 		$alias = $module->getAlias();
 		$dir = $module->getBaseDir();
+
+		$this->modules[str($alias)->toLower()->yield()] = $ns;
 
 		list($app_name, 
 				$module_name, 
@@ -66,6 +69,8 @@ class Application{
 	}
 
 	public function init(){
+
+		reg("nr.modules", $this->modules);
 
 		$configs = [];
 		arr($this->aliases)->each(function($key, $alias) use(&$configs){
