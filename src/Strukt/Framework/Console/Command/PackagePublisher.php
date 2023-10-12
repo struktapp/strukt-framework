@@ -4,15 +4,9 @@ namespace Strukt\Framework\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-use Strukt\Env;
 use Strukt\Fs;
-use Strukt\Type\Str;
-use Strukt\Type\Json;
-use Strukt\Type\Arr;
 use Strukt\Templator;
-use Strukt\Raise;
 use Strukt\Ref;
-// use Strukt\Framework\App as FrameworkApp;
 use Strukt\Package\Repos;
 
 /**
@@ -48,48 +42,40 @@ class PackagePublisher extends \Strukt\Console\Command{
 		else{
 
 			$vendor_pkg = $vendorPkg
-							->concat(Fs::ds(Env::get("vendor_fw")))
+							->concat(Fs::ds(env("vendor_fw")))
 							->concat($pkgname)->yield();
 		}
 
-		$app_ini = parse_ini_file(Str::create(Env::get("root_dir"))
-				->concat(DS)
-				->concat(Env::get("rel_app_ini"))
-				->yield());
-
-		if(!array_key_exists("app-name", $app_ini))
-			new Raise("cfg/app.ini[app-name] is undefined!");
-
-		if(empty($app_ini["app-name"]))
-			new Raise("cfg/app.ini[app-name] is not defined!");
+		if(config("app.name"))
+			raise("cfg/app.ini[app-name] is not defined!");
 
 		$pkgclass = $this->packages[$pkgname]; 
 
 		if(!class_exists($pkgclass))
-			new Raise(sprintf("Package %s is not installed!", $pkgclass));
+			raise(sprintf("Package %s is not installed!", $pkgclass));
 
 		$pkg = Ref::create($pkgclass)->make()->getInstance();
 
-		$appname = $app_ini["app-name"];
+		$appname = config("app.name");
 
 		$requirements = $pkg->getRequirements();
 		
 		if(!is_null($requirements)){
 
-			$published = FrameworkApp::packages("published");
+			$published = Repos::packages("published");
 			foreach($requirements as $requirement)
 				if(!in_array($requirement, $published))
-					new Raise(sprintf("Please install and publish package [%s]!", $requirement));
+					raise(sprintf("Please install and publish package [%s]!", $requirement));
 		}
 
 		Arr::create($pkg->getFiles())->each(function($key, $relpath) use (
 			$pkgname, $vendor_pkg, $appname){
 
-			$vendor_appbase = Fs::ds(Str::create(Env::get("rel_appsrc_dir"))
+			$vendor_appbase = Fs::ds(str(env("rel_appsrc_dir"))
 										->concat("App")
 										->yield());
 
-			$qpath = Str::create(Env::get("root_dir"))
+			$qpath = str(env("root_dir"))
 				->concat(DS)
 				->concat(Fs::ds($relpath));
 
@@ -102,7 +88,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			$actual_path = $qpath->yield();
 
-			$vendorFilePath = Str::create($vendor_pkg);
+			$vendorFilePath = str($vendor_pkg);
 
 			if($pkgname != "package")
 				$vendorFilePath = $vendorFilePath->concat(Fs::ds("/package/"));
@@ -111,7 +97,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			$path = pathinfo($actual_path);
 
-			$qfilename = Str::create($path["filename"]);
+			$qfilename = str($path["filename"]);
 			if($qfilename->startsWith("_")){
 
 				$filename = $qfilename->replace("_", $appname)->yield();
@@ -121,8 +107,8 @@ class PackagePublisher extends \Strukt\Console\Command{
 			Fs::mkdir($path["dirname"]);
 
 			$file_content = Fs::cat($vendor_file_path);
-			if(Str::create($vendor_file_path)->endsWith(".sgf") &&
-				!Str::create($vendor_file_path)->contains(Fs::ds(".tpl/sgf")))
+			if(str($vendor_file_path)->endsWith(".sgf") &&
+				!str($vendor_file_path)->contains(Fs::ds(".tpl/sgf")))
 					$file_content = Templator::create($file_content, array(
 
 						"app"=>$appname

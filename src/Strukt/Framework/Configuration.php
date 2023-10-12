@@ -13,8 +13,7 @@ class Configuration{
 	use ClassHelper;
 
 	private $settings = null;
-	// private $ignore = [];
-	// private $injectables;
+	private $aliases = null;
 
 	public function __construct(array $options = []){
 
@@ -32,7 +31,8 @@ class Configuration{
 		$packages = Repos::available();
 
 		$settings = [];
-		arr($packages)->each(function($name, $class) use($published, $app_type, &$settings){
+		$aliases = [];
+		arr($packages)->each(function($name, $class) use($published, $app_type, &$settings, &$aliases){
 
 			if(class_exists($class) && in_array($name, $published)){
 
@@ -42,11 +42,12 @@ class Configuration{
 
 				$facet = arr(["middlewares"=>[], 
 								"providers"=>[], 
-								"commands"=>[]])->each(function($facet, $value) use($config, $helper){
+								"commands"=>[]])->each(function($facet, $value) 
+														use($config, $helper, &$aliases){
 
 					if(arr(array_keys($config))->has($facet))
 						return array_values(array_filter(arr($config[$facet])
-									->each(function($key, $facet_class) use($helper, $facet){
+									->each(function($key, $facet_class) use($helper, $facet, &$aliases){
 
 							$facet_class = $helper->getClass($facet_class);
 							if(class_exists($facet_class)){
@@ -55,8 +56,14 @@ class Configuration{
 									return $facet_class;
 
 								$inj_facet = new InjectableFacet(new \ReflectionClass($facet_class));
-								if(!is_null($inj_facet->getConfigs()))
+								$facet_configs = $inj_facet->getConfigs();
+								
+								if(!is_null($facet_configs)){
+
+									$aliases[$facet][] = $facet_configs["config"]["name"];
+
 									return $facet_class;
+								}
 							}
 						})->yield()));
 				})->yield();
@@ -66,6 +73,7 @@ class Configuration{
 		});
 
 		$this->settings = $settings;
+		$this->aliases = $aliases;
 	}
 
 	public function getInjectables(){
@@ -106,8 +114,8 @@ class Configuration{
 		return null;
 	}
 
-	// public function getAliases(){
+	public function getAliases(){
 
-	// 	return $this->facet;
-	// }
+		return $this->aliases;
+	}
 }
