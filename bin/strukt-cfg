@@ -752,7 +752,7 @@ class Kernel{
 		return $this->app;
 	}
 
-	public function run():void{
+	public function run(){
 		
 		return $this->app->run();
 	}
