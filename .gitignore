@@ -25,3 +25,5 @@ logs/
 .phpunit.result.cache
 .env
 .bak
+./xcli
+xcli
