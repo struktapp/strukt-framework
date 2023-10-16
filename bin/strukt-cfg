@@ -726,9 +726,6 @@ class Kernel{
 
 			$this->loader = new AppLoader($this->kernel);
 			$this->app =  $this->loader->getApp();
-
-			// $registry = Registry::getSingleton();
-			// $registry->set("module-list", serialize($this->app->getModuleList()));
 		}
 	}
 
@@ -879,8 +876,12 @@ Env::set("json.validation.err", true);
 config("app.type","App:Cli");
 
 $kernel = new App\Kernel(new Configuration());
-$kernel->getApp()->init();
-$kernel->getRouter()->init();
+$app = $kernel->getApp();
+if(!is_null($app)){
+
+	$app->init();
+	$kernel->getRouter()->init();
+}
 
 $sh = new Shell();
 
