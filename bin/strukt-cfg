@@ -505,19 +505,7 @@ class XSession implements MiddlewareInterface{
 
 	public static function config(array $options){
 
-		// self::$options = $options;
-
-		// $permissions = ["permissions"=>[]];
-
-		// if(array_key_exists("allow", $options)){
-
-		// 	$perms = $options["allow"];
-		// 	if(!is_null($perms))
-		// 		$permissions["permissions"] = $perms;
-		// }
-
-		// reg()->remove("@strukt.permissions");
-		// reg("@strukt", $permissions);
+		//
 	}
 
 	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
@@ -569,7 +557,7 @@ class Logger implements ProviderInterface{
 			return $logger;
 		});
 
-		event("service.logger", new class(){
+		event("service.logger", fn()=>new class(){
 
 			public function info($message, array $context = []){
 
