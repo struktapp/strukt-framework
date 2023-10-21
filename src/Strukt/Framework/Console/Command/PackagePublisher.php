@@ -68,7 +68,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 					raise(sprintf("Please install and publish package [%s]!", $requirement));
 		}
 
-		Arr::create($pkg->getFiles())->each(function($key, $relpath) use (
+		arr($pkg->getFiles())->each(function($key, $relpath) use (
 			$pkgname, $vendor_pkg, $appname){
 
 			$vendor_appbase = Fs::ds(str(env("rel_appsrc_dir"))
