@@ -46,7 +46,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 							->concat($pkgname)->yield();
 		}
 
-		if(config("app.name"))
+		if(is_null(config("app.name")))
 			raise("cfg/app.ini[app-name] is not defined!");
 
 		$pkgclass = $this->packages[$pkgname]; 
