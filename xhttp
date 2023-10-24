@@ -33,16 +33,16 @@ $tpl = "
  {{example}}:  ./xhttp POST /login username=pitsolu password=p@55word
 ";
 
-	$output = Strukt\Templator::create($tpl, array(
+	$output = template($tpl, array(
 
-		"xhttp" => Color::write("white:bold","xhttp"),
-		"usage" => Color::write("yellow","Usage"),
-		"descr" => Color::write("blue", "XHTTP is a CLI utility that mimicks a HTTP client."),
-		"argm" => Color::write("yellow","Arguments"),
-		"method" => Color::write("cyan","method"),
-		"route" => Color::write("cyan","route"),
-		"param" => Color::write("cyan","parameters"),
-		"example" => Color::write("yellow", "Example")
+		"xhttp" => color("white:bold","xhttp"),
+		"usage" => color("yellow","Usage"),
+		"descr" => color("blue", "XHTTP is a CLI utility that mimicks a HTTP client."),
+		"argm" => color("yellow","Arguments"),
+		"method" => color("cyan","method"),
+		"route" => color("cyan","route"),
+		"param" => color("cyan","parameters"),
+		"example" => color("yellow", "Example")
 	));
 
 	exit(sprintf("\n %s\n\n", $output));
@@ -50,10 +50,10 @@ $tpl = "
 
 if(!file_exists("cfg/app.ini")){
 
-	echo Color::write("red", "\n Application is not ready!");
+	echo color("red", "\n Application is not ready!");
 	echo " Run:\n";
-	echo Color::writeln("yellow","  ./console app:make {{app_name}}");
-	echo Color::writeln("yellow","  ./console app:reload\n");
+	echo colorln("yellow","  ./console app:make {{app_name}}");
+	echo colorln("yellow","  ./console app:reload\n");
 	exit;
 }
 

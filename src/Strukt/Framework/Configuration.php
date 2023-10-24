@@ -32,24 +32,21 @@ class Configuration{
 
 		$settings = [];
 		$aliases = [];
-		arr($packages)->each(function($name, $class) use($published, $app_type, &$settings, &$aliases){
+		$commands = [];
 
-			// dd(array($name, $class));
-
-			print_r(array());
+		arr($packages)->each(function($name, $class) use($published, $app_type, &$settings, &$aliases, &$commands){
 
 			if(class_exists($class) && in_array($name, $published)){
-
-				dd(array($name, $class, $published));
 
 				$helper = new class(){use ClassHelper;};
 
 				$config = $helper->newClass($class)->getSettings($app_type);
 
+				if(array_key_exists("commands", $config))
+					$commands = array_merge($commands, $config["commands"]);
+
 				$facet = arr(["middlewares"=>[], 
-								"providers"=>[], 
-								"commands"=>[]])->each(function($facet, $value) 
-														use($config, $helper, &$aliases){
+								"providers"=>[]])->each(function($facet, $value) use($config, $helper, &$aliases){
 
 					if(arr(array_keys($config))->has($facet))
 						return array_values(array_filter(arr($config[$facet])
@@ -58,28 +55,29 @@ class Configuration{
 							$facet_class = $helper->getClass($facet_class);
 							if(class_exists($facet_class)){
 
-								if(str($facet)->equals("commands"))
-									return $facet_class;
-
 								$inj_facet = new InjectableFacet(new \ReflectionClass($facet_class));
 								$facet_configs = $inj_facet->getConfigs();
+
+								if(is_null($aliases[$facet]))
+									$aliases[$facet] = [];
 								
-								if(!is_null($facet_configs)){
+								if(!is_null($facet_configs))
+									if(!in_array($facet_configs["config"]["name"], $aliases[$facet]))
+										$aliases[$facet][] = $facet_configs["config"]["name"];
 
-									$aliases[$facet][] = $facet_configs["config"]["name"];
-
-									return $facet_class;
-								}
+								return $facet_class;
 							}
 						})->yield()));
 				})->yield();
 
-				$settings = array_merge($settings, $facet);
+				$settings = array_merge_recursive($settings, array_filter($facet));
 			}
 		});
 
+		$settings["commands"] = $commands;
+		$settings["aliases"] = $aliases;
+
 		$this->settings = $settings;
-		$this->aliases = $aliases;
 	}
 
 	public function getInjectables(){
@@ -122,6 +120,6 @@ class Configuration{
 
 	public function getAliases(){
 
-		return $this->aliases;
+		return $this->settings["aliases"];
 	}
 }
