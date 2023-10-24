@@ -34,7 +34,13 @@ class Configuration{
 		$aliases = [];
 		arr($packages)->each(function($name, $class) use($published, $app_type, &$settings, &$aliases){
 
+			// dd(array($name, $class));
+
+			print_r(array());
+
 			if(class_exists($class) && in_array($name, $published)){
+
+				dd(array($name, $class, $published));
 
 				$helper = new class(){use ClassHelper;};
 
