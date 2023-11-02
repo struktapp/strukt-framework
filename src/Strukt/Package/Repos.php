@@ -8,7 +8,7 @@ class Repos{
 
 	public static function available(){
 
-		$repos = config("repo");
+		$repos = config("repo*");
 
 		$packages = [];
 		foreach($repos as $name => $repo)

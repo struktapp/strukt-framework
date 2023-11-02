@@ -69,7 +69,7 @@ class ModuleGenerator extends \Strukt\Console\Command{
 
 		if(Fs::isFile($mod_ini_path)){//module.ini exists
 
-			$facets = config("module.folder*");
+			$facets = config("module.folder");
 			foreach($facets as $facet)
 				$fs->mkdir($facet);
 

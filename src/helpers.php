@@ -7,19 +7,20 @@ if(!function_exists("config")){
 		if(!reg()->exists("config")){
 
 			$ini_files = glob("cfg/*.ini");
-			foreach($ini_files as $ini_file)
-				reg(sprintf("config.%s", str($ini_file)
-											->replace(["cfg/",".ini"],"")
-											->yield()), parse_ini_file($ini_file));
+			foreach($ini_files as $ini_file){
+
+				$facet = str($ini_file)->replace(["cfg/",".ini"],"")->yield();
+				$configs = parse_ini_file($ini_file);
+				foreach($configs as $name=>$val)
+					reg(sprintf("config.%s.%s", $facet, $name), $val);
+			}
 
 			if(reg("config")->exists("app")){
 				
 				$app_config = reg("config.app");
-				$app_name = $app_config["app-name"];
-				unset($app_config["app-name"]);
-				$app_config["name"] = $app_name;
-				reg("config")->remove("app");
-				reg("config")->set("app", collect($app_config));
+				$app_name = $app_config->get("app-name");
+				$app_config->remove("app-name");
+				$app_config->set("name", $app_name);
 			}
 		}
 
