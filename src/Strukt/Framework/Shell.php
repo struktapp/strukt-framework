@@ -36,22 +36,15 @@ class Shell extends \Strukt\Console\Application{
 			$this->add(new ApplicationGenerator);
 			$this->add(new ApplicationLoaderGenerator);
 			$this->add(new ApplicationExec);
-			
-			// if(reg()->exists("module-list")){
-
-				$this->add(new RouterGenerator);
-				$this->add(new ModuleGenerator);
-				$this->add(new RouteList);
-			// }
-
+			$this->add(new RouterGenerator);
+			$this->add(new ModuleGenerator);
+			$this->add(new RouteList);
 			$this->add(new ShellExec);
 			$this->add(new SysUtil);
 			$this->add(new SysList);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");
-
-			// print_r($cmds);
 
 			$cls = [];
 			foreach($cmds as $cmd){
@@ -62,19 +55,22 @@ class Shell extends \Strukt\Console\Application{
 				$cls[$alias] = $cmd;
 			}
 
-			// $cmd_names = parse_ini_file(Env::get("rel_cmd_ini"));
+			$cmds = arr(array_flip(config("cmd")->getKeys()))->each(function($k,$v){
 
-			// print_r($cls);
+				return config(sprintf("cmd.%s*", $k));
+			});
 
-			foreach(config("cmd") as $key => $val){
+			foreach($cmds->yield() as $key => $val){
 
-				if(is_string($val))
-					$this->addCmdSect(sprintf("\n%s", $val));
+				if(array_key_exists("title", $val))
+					if(is_string($val["title"]))
+						$this->addCmdSect(sprintf("\n%s", $val["title"]));
 
-				if(is_array($val))
-					foreach($val as $cmd)
-						if(class_exists($cls[$cmd]))
-							$this->add(new $cls[$cmd]);
+				if(array_key_exists("cmd", $val))
+					if(is_array($val["cmd"]))
+						foreach($val["cmd"] as $cmd)
+							if(class_exists($cls[$cmd]))
+								$this->add(new $cls[$cmd]);
 			}
 		}
 	}
