@@ -817,7 +817,6 @@ use App\Loader as AppLoader;
 use App\Kernel as AppKernel;
 
 $loader = require "bootstrap.php";
-$loader->add("Schema", __DIR__."/database/schema");
 
 Env::withFile();
 Env::set("root_dir", getcwd());
@@ -881,9 +880,7 @@ if(php_sapi_name() != "cli"){
 	$whoops->register();
 }
 
-$app_name = config("app.name");
-if(!is_null($app_name))
-	$loader->add($app_name, __DIR__."/app/src/");
+$loader->add(sprintf("%s\\\", config("app.name")), __DIR__."/app/src/");			
 
 return $loader;
 
