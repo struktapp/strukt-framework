@@ -425,10 +425,6 @@ middlewares[] = valid
 ; middlewares[] = cors
 providers[] = valid
 ; providers[] = logger
-; providers[] = sch-mgr
-; providers[] = ent-mgr
-; providers[] = doc-adp
-; providers[] = nmlz
 ; providers[] = strukt.asset
 
 
@@ -630,7 +626,7 @@ folder["tes"] = "Tests"
 ');
 
 Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
-pkg-do = PkgDo
+pkg-db = PkgDb
 pkg-roles = PkgRoles
 pkg-book = PkgBook
 pkg-tests = PkgTests
@@ -660,14 +656,10 @@ pub-pak.cmd[] = package:info
 ; pkg-roles.cmd[] = user:add
 ; pkg-roles.cmd[] = user:dumpcred
 ; pkg-roles.cmd[] = user:reset
-; pkg-do.title = Doctrine
-; pkg-do.cmd[] = make:models   
-; pkg-do.cmd[] = make:db        
-; pkg-do.cmd[] = make:migration 
-; pkg-do.cmd[] = make:seeder    
-; pkg-do.cmd[] = migrate:exec   
-; pkg-do.cmd[] = seeder:exec    
-; pkg-do.cmd[] = sql:exec
+; pkg-db.title = Database
+; pkg-db.cmd[] = model:make   
+; pkg-db.cmd[] = db:make-models       
+; pkg-db.cmd[] = db:make 
 ; pkg-asset.title = Asset
 ; pkg-asset.cmd[] = md:html
 ');
@@ -785,24 +777,6 @@ class Injectable{
 	}
 
 	/**
-	 * @Package(pkg-roles)
-	 * @Inject(permissions)
-	 */
-	public function getPkgRolesPermissions(SessionInterface $session){
-
-		$permissions["permissions"] = [];
-
-		if($session->has("username")){
-
-			$userC = $this->newClass("{{app}}\AuthModule\Controller\User");
-			$username = $session->get("username");
-			$permissions["permissions"] = $userC->findPermissionsByUsername($username);
-		}
-
-		return $permissions;
-	}
-
-	/**
 	 * @Package(core)
 	 * @Inject(verify)
 	 */
@@ -824,17 +798,6 @@ class Injectable{
 			return new XSession;
 
 		return new Session;
-	}
-
-	/**
-	 * @Package(pkg-do)
-	 * @Inject(sqllogger)
-	 */
-	public function getPkgDoSqlLogger():SQLLogger{
-
-		$log_dir = sprintf("%s/logs/", env("root_dir"));
-
-		return new Monologer(null, null, $log_dir);
 	}
 }
 
