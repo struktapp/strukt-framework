@@ -15,7 +15,7 @@ Strukt\Fs::rmdir('lib/App');
 Strukt\Fs::rmdir('cfg');
 Strukt\Fs::rmdir('.tpl');
 Strukt\Fs::rm('.env');
-Strukt\Fs::rm('bootstrap');
+Strukt\Fs::rm('bootstrap.php');
 Strukt\Fs::rm('index.php');
 Strukt\Fs::rm('xcli');
 
@@ -627,7 +627,6 @@ folder["tes"] = "Tests"
 
 Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
 pkg-db = PkgDb
-pkg-roles = PkgRoles
 pkg-book = PkgBook
 pkg-tests = PkgTests
 pkg-asset = PkgAsset
@@ -882,28 +881,11 @@ if(php_sapi_name() != "cli"){
 	$whoops->register();
 }
 
-$paths = array(
-
-	"App"=> __DIR__."/lib/",
-	"Strukt"=>__DIR__."/src/",
-	"Seed"=>__DIR__."/database/seeder/", 
-	"Schema"=>__DIR__."/database/schema/"
-);
-
-if(file_exists("cfg/app.ini")){
-	
-	$cfg_app = parse_ini_file("cfg/app.ini");
-	if(!is_null($cfg_app))
-		$paths[$cfg_app["app-name"]] = __DIR__."/app/src/";
-}
-
-foreach($paths as $ns=>$dir)
-		if(file_exists($dir))
-			$loader->add($ns, $dir);
+$app_name = config("app.name");
+if(!is_null($app_name))
+	$loader->add($app_name, __DIR__."/app/src/");
 
 return $loader;
-
-
 
 
 ');
