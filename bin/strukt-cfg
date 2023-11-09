@@ -524,7 +524,7 @@ class XSession implements MiddlewareInterface{
 
 ');
 
-Strukt\Fs::touchWrite("lib/App/Provider/Facet.php","<?php
+Strukt\Fs::touchWrite("lib/App/Provider/Facet.php",'<?php
 
 namespace App\Provider;
 
@@ -545,11 +545,11 @@ class Facet implements ProviderInterface{
 
 	public function register(){
 
-		$self = \$this;
-		event(\"provider.core\", function(string $alias_ns, array $args = null) use($self){
+		$self = $this;
+		event("provider.core", function(string $alias_ns, array $args = null) use($self){
 
-			if(!reg()->exists(\"nr\"))
-				raise(\"[nr|Name Registry] does not exists!\");
+			if(!reg()->exists("nr"))
+				raise("[nr|Name Registry] does not exists!");
 
 			if(!is_null($args))
 				return Ref::create($self->getNamespace($alias_ns))
@@ -563,7 +563,7 @@ class Facet implements ProviderInterface{
 	}
 }
 
-");
+');
 
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
 
