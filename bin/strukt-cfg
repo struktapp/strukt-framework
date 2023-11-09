@@ -525,7 +525,6 @@ class XSession implements MiddlewareInterface{
 ');
 
 Strukt\Fs::touchWrite("lib/App/Provider/Facet.php","<?php
-<?php
 
 namespace App\Provider;
 
