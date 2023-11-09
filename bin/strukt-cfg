@@ -524,6 +524,48 @@ class XSession implements MiddlewareInterface{
 
 ');
 
+Strukt\Fs::touchWrite("lib/App/Provider/Facet.php","<?php
+<?php
+
+namespace App\Provider;
+
+use Strukt\Ref;
+use Strukt\Contract\ProviderInterface;
+
+/**
+* @Name(facet)
+*/
+class Facet implements ProviderInterface{
+
+	use \Strukt\Traits\FacetHelper;
+
+	public function __construct(){
+
+		//
+	}
+
+	public function register(){
+
+		$self = \$this;
+		event(\"provider.core\", function(string $alias_ns, array $args = null) use($self){
+
+			if(!reg()->exists(\"nr\"))
+				raise(\"[nr|Name Registry] does not exists!\");
+
+			if(!is_null($args))
+				return Ref::create($self->getNamespace($alias_ns))
+							->makeArgs($args)
+							->getInstance();
+
+			return Ref::create($self->getNamespace($alias_ns))
+					->noMake()
+					->getInstance();
+		});
+	}
+}
+
+");
+
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
 
 namespace App\Provider;

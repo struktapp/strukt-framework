@@ -16,5 +16,5 @@ namespace Strukt\Framework\Contract;
 */
 abstract class Router extends \Strukt\Framework\Core{
 
-
+	//
 }

@@ -25,7 +25,8 @@ class Core implements \Strukt\Framework\Contract\Package{
 				"providers"=>array(
 
 					\Strukt\Framework\Provider\Validator::class,
-					\App\Provider\Logger::class
+					\App\Provider\Logger::class,
+					\App\Provider\Facet::class
 				),
 				"middlewares"=>array(
 
@@ -41,7 +42,8 @@ class Core implements \Strukt\Framework\Contract\Package{
 				"providers"=>array(
 
 					\Strukt\Framework\Provider\Validator::class,
-					\App\Provider\Logger::class
+					\App\Provider\Logger::class,
+					\App\Provider\Facet::class
 				),
 				"middlewares"=>array(
 
