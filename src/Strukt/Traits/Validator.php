@@ -17,7 +17,7 @@ trait Validator{
 	public function isAlpha(){
 
 		$this->message["is_alpha"] = false;
-		if(ctype_alpha(str_replace(" ", "", $this->getValue())))
+		if(preg_match("/^[A-Za-z_]+$/", trim($this->getValue())))
 			$this->message["is_alpha"] = true;
 
 		return $this;
