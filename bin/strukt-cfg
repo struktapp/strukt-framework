@@ -423,6 +423,7 @@ middlewares[] = sess
 middlewares[] = valid
 ; middlewares[] = asset
 ; middlewares[] = cors
+providers[] = facet
 providers[] = valid
 ; providers[] = logger
 ; providers[] = strukt.asset
@@ -667,6 +668,7 @@ folder["tes"] = "Tests"
 ');
 
 Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
+pkg-auth = PkgAuth
 pkg-db = PkgDb
 pkg-book = PkgBook
 pkg-tests = PkgTests
