@@ -74,7 +74,13 @@ class Configuration{
 			}
 		});
 
-		$settings["commands"] = $commands;
+		$self = $this;
+		$settings["commands"] = arr($commands)->each(function($k, $class) use($self){
+
+			return $self->getClass($class);
+
+		})->yield();
+
 		$settings["aliases"] = $aliases;
 
 		$this->settings = $settings;
