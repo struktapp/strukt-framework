@@ -52,7 +52,8 @@ class Application{
 											->concat("\\")
 											->yield())->yield();
 
-				reg(sprintf("nr.%s", $base_alias), $facet_ns);
+				if(!is_null($base_alias))
+					reg(sprintf("nr.%s", $base_alias), $facet_ns)
 
 				if(str($facet)->equals("Router"))
 					return $facet_ns;
