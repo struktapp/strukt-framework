@@ -63,7 +63,7 @@ class PackageExport extends \Strukt\Console\Command{
 		$fsRoot->cpr("../.env", ".env");
 		$fsRoot->cpr("../.gitignore", ".gitignore");
 
-		$fsPkg->touchWrite("composer.json", Json::pp($composer));
+		$fsPkg->touchWrite("composer.json", json($composer)->encode());
 		$fsPkg->touchWrite("README.md", implode("\n", array(
 
 			sprintf("Strukt %s", ucfirst($name)),
