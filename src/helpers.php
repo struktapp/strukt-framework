@@ -1,23 +1,12 @@
 <?php
 
-if(!function_exists("phar")){
-
-	function phar(bool $enable = null){
-
-		if($enable)
-			env("phar", $enable);
-
-		return env("phar");
-	}
-}
-
 if(!function_exists("config")){
 
 	function config(string $key, array|string $options = null){
 
 		if(!reg()->exists("config")){
 
-			$cfg_path = str("cfg/");
+			$cfg_path = str(env("root_dir"))->concat("/cfg/");
 			if(env("phar"))
 				if(Phar::running())
 					$cfg_path = $cfg_path->prepend("phar:///");
