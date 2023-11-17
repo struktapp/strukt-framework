@@ -6,8 +6,7 @@ if(!function_exists("config")){
 
 		if(!reg()->exists("config")){
 
-			$cfg_path = str(env("root_dir"))->concat("/cfg/");
-			$ini_files = glob($cfg_path->concat("*.ini")->yield());
+			$ini_files = fs("cfg")->ls();
 			foreach($ini_files as $ini_file){
 
 				$facet = str($ini_file)->replace([$cfg_path->yield(),".ini"],"")->yield();
