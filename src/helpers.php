@@ -21,7 +21,7 @@ if(!function_exists("config")){
 			$cfg_path = str("cfg/");
 			if(env("phar"))
 				if(Phar::running())
-					$cfg_path = $cfg_path->prepend("phar://");
+					$cfg_path = $cfg_path->prepend("phar:///");
 
 			$ini_files = glob($cfg_path->concat("*.ini")->yield());
 			foreach($ini_files as $ini_file){
