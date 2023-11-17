@@ -10,7 +10,7 @@ if(!function_exists("config")){
 			foreach($ini_files as $ini_file){
 
 				$facet = str($ini_file)->replace(".ini","")->yield();
-				$configs = parse_ini_file($ini_file);
+				$configs = $cfg_dir->ini($ini_file);
 				foreach($configs as $name=>$val)
 					reg(sprintf("config.%s.%s", $facet, $name), $val);
 			}
