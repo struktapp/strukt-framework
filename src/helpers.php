@@ -2,7 +2,6 @@
 
 if(!function_exists("phar")){
 
-	env("phar", false);
 	function phar(bool $enable = null){
 
 		if($enable)
