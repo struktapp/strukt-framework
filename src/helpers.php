@@ -6,7 +6,8 @@ if(!function_exists("config")){
 
 		if(!reg()->exists("config")){
 
-			$ini_files = fs("cfg")->ls();
+			$cfg_dir = fs("cfg");
+			$ini_files = $cfg_dir->ls();
 			foreach($ini_files as $ini_file){
 
 				$facet = str($ini_file)->replace(".ini","")->yield();
