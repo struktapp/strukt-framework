@@ -4,11 +4,6 @@ namespace Strukt\Framework\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-use Strukt\Env;
-use Strukt\Type\Str;
-use Strukt\Fs;
-use Strukt\Templator;
-use Strukt\Raise;
 
 /**
 * app:make     Generate Application
@@ -29,62 +24,65 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 		$raw_app_name = $in->get("application_name");
 
-		$app_name = Str::create($raw_app_name)->toCamel();
+		$app_name = str($raw_app_name)->toCamel();
 
-		$root_dir = Env::get("root_dir");
-		$app_dir = Env::get("rel_appsrc_dir");
-		$mod_ini = Env::get("rel_mod_ini");
-		$app_ini = Env::get("rel_app_ini");
-		$tpl_app_ini = Env::get("rel_apptpl_ini");
-		$tpl_app_dir = Env::get("rel_tplapp_dir");
-		$tpl_appsrc_dir = Env::get("rel_tplappsrc_dir");
-		$tpl_authmod_dir = Env::get("rel_tplauthmod_dir");
+		$root_dir = env("root_dir");
+		$app_dir = env("rel_appsrc_dir");
+		$mod_ini = env("rel_mod_ini");
+		$app_ini = env("rel_app_ini");
+		$tpl_app_ini = env("rel_apptpl_ini");
+		$tpl_app_dir = env("rel_tplapp_dir");
+		$tpl_appsrc_dir = env("rel_tplappsrc_dir");
+		$tpl_authmod_dir = env("rel_tplauthmod_dir");
 
-		$auth_mod_path = sprintf("%s".DS."%s%s".DS."AuthModule", 
-								$root_dir,
-								$app_dir,
-								$app_name);
+		$auth_mod_path = str($app_dir)
+			->concat($app_name)
+			->concat("/AuthModule");
 
-		$mod_ini_path = sprintf("%s".DS."%s", $root_dir, $mod_ini);
+		$mod_ini_path = str(env("root_dir"))
+			->concat(sprintf("/%s", $mod_ini))
+			->yield();
 
-		if(!Fs::isFile($mod_ini_path))
-			new Raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
+		$fs_root = fs();
+		if(!$fs_root->isFile($mod_ini))
+			raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
 
-		$mod_ini_contents = parse_ini_file($mod_ini_path);
-
+		$mod_ini_contents = $fs_root->ini($mod_ini);
 		if(in_array("folder", array_keys($mod_ini_contents)))
-			foreach($mod_ini_contents["folder"] as $folder)
-				Fs::mkdir(sprintf("%s".DS."%s", $auth_mod_path, $folder));
+			arr($mod_ini_contents["folder"])->each(function($k, $folder) use($fs_root, $auth_mod_path){
 
-		$authmod_dir = str_replace(array($tpl_appsrc_dir, "App"), 
-											array($app_dir, $app_name), 
-											$tpl_authmod_dir);
+				$fs_root->mkdir($auth_mod_path->concat(sprintf("/%s", $folder))->yield());
+			});
 
-		Fs::mkdir($authmod_dir);
-		
-		$files = Fs::lsr($tpl_app_dir);
+		$authmod_dir = str($tpl_authmod_dir)
+			->replace([$tpl_appsrc_dir, "App"],[$app_dir, $app_name])
+			->yield();
+
+		$fs_root->mkdir($authmod_dir);
+		$files = $fs_root->lsr($tpl_app_dir);
 
 		foreach($files as $file){
 
-			if(!Fs::isFile($file))
+			if(!$fs_root->isFile($file))
 				continue;
 			
-			$tpl_file = Fs::cat($file);
+			$tpl_file = $fs_root->cat($file);
 
-			$output = Templator::create($tpl_file, array(
+			$output = template($tpl_file, array(
 
 				"app"=>$app_name->yield()
 			));
 
-			$base = str_replace($tpl_authmod_dir, $authmod_dir, 
-									preg_replace("/\w+\.sgf$/", "", $file));
+			$base = str(preg_replace("/\w+\.sgf$/", "", $file))
+						->replace($tpl_authmod_dir, $authmod_dir)
+						->yield();
 
-			if(!Fs::isPath($base))
-				Fs::mkdir($base);
+			if(!$fs_root->isPath($base))
+				$fs_root->mkdir($base);
 
-			$outputfile = Str::create($file)
-				->replace(".tpl".DS."sgf".DS,"")
-				->replace(DS."App".DS, sprintf(DS."%s".DS, $app_name->yield()))
+			$outputfile = str($file)
+				->replace(str(".tpl/")->concat("sgf/")->yield(),"")
+				->replace("/App/", sprintf("/%s/", $app_name->yield()))
 				->replace(".sgf", ".php");	
 
 			if($outputfile->contains("_AuthModule.php")){
@@ -94,25 +92,20 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			}
 
 			$outputfile = $outputfile->yield();
-
-
-
-			if(!Fs::touchWrite($outputfile, $output))
-				new Raise(sprintf("%s did not generate!", $outputfile));
+			if(!$fs_root->touchWrite($outputfile, $output))
+				raise(sprintf("%s did not generate!", $outputfile));
 		}
 
-		if(!Fs::isFile($tpl_app_ini))
-			new Raise(sprintf("Failed to find [%s] file!\n", $tpl_app_ini));
+		if(!$fs_root->isFile($tpl_app_ini))
+			raise(sprintf("Failed to find [%s] file!\n", $tpl_app_ini));
 
-		$tpl_app_ini_content = Fs::cat($tpl_app_ini);
-
-		$app_ini_output = Templator::create($tpl_app_ini_content, array(
+		$tpl_app_ini_content = $fs_root->cat($tpl_app_ini);
+		$app_ini_output = template($tpl_app_ini_content, array(
 
 			"app"=>$app_name->yield()
 		));
 
-		Fs::touchWrite($app_ini, $app_ini_output);
-		
+		$fs_root->touchWrite($app_ini, $app_ini_output);
 		$out->add(sprintf("Successfully generated %s application!\n", $app_name->yield()));
 	}
 }
