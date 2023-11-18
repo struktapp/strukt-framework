@@ -78,12 +78,15 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 		foreach($files as $file=>$tpl_file){
 
 			$file = str($file)->replace(env("root_dir"),"")->yield();
-			if(!$fs_root->isFile($file))
-				continue;
-			
-			if(is_numeric($tpl_file))
+
+			if(is_numeric($tpl_file)){
+				
+				if(!$fs_root->isFile($file))
+					continue;
+				
 				$tpl_file = $fs_root->cat($file);
-			
+			}
+
 			$output = template($tpl_file, array(
 
 				"app"=>$app_name->yield()
