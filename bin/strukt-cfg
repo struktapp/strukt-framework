@@ -80,47 +80,17 @@ class User extends \Strukt\Framework\Contract\Form{
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/User.sgf", '<?php
 namespace {{app}};
 
-class User{
+class User extends \Strukt\Entity{
 
-	private $id;
+	/**
+	* @Type(string)
+	*/
 	private $username;
+
+	/**
+	* @Type(string)
+	*/
 	private $password;
-
-	public function __construct($username, $password){
-
-		$this->username = $username;
-		$this->password = sha1($password);
-	}
-
-	public function getId(){
-
-		return $this->id;
-	}
-
-	public function setId($id){
-		
-		$this->id = $id;
-	}
-
-	public function getUsername(){
-		
-		return $this->username;
-	}
-
-	public function setUsername($username){
-		
-		$this->username = $username;
-	}
-
-	public function getPassword(){
-		
-		return $this->password;
-	}
-
-	public function setPassword($password){
-		
-		$this->password = sha1($password);
-	}
 }
 
 
@@ -698,15 +668,15 @@ pub-pak.cmd[] = package:info
 ; pkg-roles.cmd[] = user:add
 ; pkg-roles.cmd[] = user:dumpcred
 ; pkg-roles.cmd[] = user:reset
-pkg-book.title = Ledger
-pkg-book.cmd[] = period:make   
-pkg-book.cmd[] = make:trx-alloc     
-pkg-db.title = Database
-pkg-db.cmd[] = model:make   
-pkg-db.cmd[] = db:make-models       
-pkg-db.cmd[] = db:make
-pkg-db.cmd[] = db:seed 
-pkg-db.cmd[] = db:wipe 
+; pkg-book.title = Ledger
+; pkg-book.cmd[] = period:make   
+; pkg-book.cmd[] = make:trx-alloc     
+; pkg-db.title = Database
+; pkg-db.cmd[] = model:make   
+; pkg-db.cmd[] = db:make-models       
+; pkg-db.cmd[] = db:make
+; pkg-db.cmd[] = db:seed 
+; pkg-db.cmd[] = db:wipe 
 ; pkg-asset.title = Asset
 ; pkg-asset.cmd[] = md:html
 ');
@@ -858,18 +828,11 @@ Strukt\Fs::touchWrite("xcli", '#!/usr/bin/php
 
 use Strukt\Framework\Shell;
 use Strukt\Env;
-// use Strukt\Framework\Package\Repos;
 use Strukt\Framework\Configuration;
-
-use App\Loader as AppLoader;
-use App\Kernel as AppKernel;
 
 $loader = require "bootstrap.php";
 
-Env::withFile();
-Env::set("root_dir", getcwd());
 Env::set("json.validation.err", true);
-
 config("app.type","App:Cli");
 
 $kernel = new App\Kernel(new Configuration());
@@ -896,10 +859,7 @@ use Strukt\Framework\Configuration;
 
 require "bootstrap.php";
 
-Env::withFile();
-Env::set("root_dir", getcwd());
 Env::set("json.validation.err", false);
-
 config("app.type","App:Idx");
 
 $kernel = new App\Kernel(new Configuration());
@@ -911,6 +871,8 @@ exit($kernel->run());
 ');
 
 Strukt\Fs::touchWrite("bootstrap.php", '<?php
+
+use Strukt\Env;
 
 define("DS", DIRECTORY_SEPARATOR);
 
@@ -927,6 +889,11 @@ if(php_sapi_name() != "cli"){
 	$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
 	$whoops->register();
 }
+
+$phar_path = Phar::running();
+Env::withFile(".env");
+Env::set("root_dir", !empty($phar_path)?$phar_path:getcwd());
+Env::set("phar", !empty($phar_path));
 
 $loader->add(sprintf("%s\\\", config("app.name")), __DIR__."/app/src/");			
 

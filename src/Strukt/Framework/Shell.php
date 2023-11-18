@@ -14,6 +14,7 @@ use Strukt\Framework\Console\Command\RouteList;
 use Strukt\Framework\Console\Command\ShellExec;
 use Strukt\Framework\Console\Command\SysUtil;
 use Strukt\Framework\Console\Command\SysList;
+use Strukt\Framework\Console\Command\CacheMake;
 
 /**
 * Console Loader
@@ -42,6 +43,7 @@ class Shell extends \Strukt\Console\Application{
 			$this->add(new ShellExec);
 			$this->add(new SysUtil);
 			$this->add(new SysList);
+			$this->add(new CacheMake);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");
