@@ -44,10 +44,18 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			->yield();
 
 		$fs_root = fs(env("root_dir"));
-		if(!$fs_root->isFile($mod_ini))
-			raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
+		$fsCfgCache = fs(".cache/cfg");
+		if(!$fsCfgCache->isFile("cfg.php")){
 
-		$mod_ini_contents = $fs_root->ini($mod_ini);
+			if(!$fs_root->isFile($mod_ini))
+				raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
+
+			$mod_ini_contents = $fs_root->ini($mod_ini);
+		}
+
+		if($fsCfgCache->isFile("cfg.php"))
+			$mod_ini_contents["folder"] = config("module.folder*"); 
+
 		if(in_array("folder", array_keys($mod_ini_contents)))
 			arr($mod_ini_contents["folder"])->each(function($k, $folder) use($fs_root, $auth_mod_path){
 
