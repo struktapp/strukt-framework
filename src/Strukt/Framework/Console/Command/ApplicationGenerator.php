@@ -79,7 +79,8 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 			$file = str($file)->replace(env("root_dir"),"")->yield();
 
-			if(is_numeric($tpl_file)){
+			$use_cache = is_numeric($tpl_file);
+			if($use_cache){
 				
 				if(!$fs_root->isFile($file))
 					continue;
@@ -109,6 +110,9 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				$module_name = sprintf("%sAuthModule.php", $app_name->yield());
 				$outputfile = $outputfile->replace("_AuthModule.php", $module_name);
 			}
+
+			if($use_cache)
+				$fs_root = fs(null);
 
 			$outputfile = $outputfile->yield();
 			if(!$fs_root->touchWrite($outputfile, $output))
