@@ -49,6 +49,10 @@ class CacheMake extends \Strukt\Console\Command{
 			return $v;
 		});
 
+		$fsRoot = fs();
+		if(!$fsRoot->isDir(".cache/cfg"))
+			$fsRoot->mkdir(".cache/cfg");
+		
 		$fsCfg = fs(".cache/cfg");
 		$fsCfg->rm("cfg.php");
 		$fsCfg->touchWrite("cfg.php", "<?php\n return ");
