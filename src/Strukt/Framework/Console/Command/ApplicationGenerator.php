@@ -43,7 +43,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			->concat(sprintf("/%s", $mod_ini))
 			->yield();
 
-		$fs_root = fs();
+		$fs_root = fs(env("roo_dir"));
 		if(!$fs_root->isFile($mod_ini))
 			raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
 
@@ -60,14 +60,12 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 
 		$fs_root->mkdir($authmod_dir);
 		$files = $fs_root->lsr($tpl_app_dir);
-
 		foreach($files as $file){
 
 			if(!$fs_root->isFile($file))
 				continue;
 			
 			$tpl_file = $fs_root->cat($file);
-
 			$output = template($tpl_file, array(
 
 				"app"=>$app_name->yield()
