@@ -4,11 +4,13 @@ if(!function_exists("config")){
 
 	function config(string $key, array|string $options = null){
 
+		$cache_cfg = false;
 		if(!reg()->exists("config")){
 
 			$cfg = fs(".cache/cfg");
 			if($cfg->isFile("cfg.php")){
 
+				$cache_cfg = true;
 				$cfg_ls = $cfg->req("cfg.php");
 				reg("config", $cfg_ls);
 			}
@@ -50,34 +52,5 @@ if(!function_exists("config")){
 			return reg("config")->get($key);
 
 		return null;
-	}
-}
-
-// if(!function)
-
-if(!function_exists("undot")){
-
-	function undot(array $list){
-
-		// $app_name = $list["app"]["app-name"];
-		// unset($list["app"]["app-name"]);
-		// $list["app"]["name"] = $app_name;
-		arr($list)->recur(function($k, $v) use(&$d){
-
-			if(str_contains($k, ".")){
-
-				list($a, $b, $c) = explode(".", $k);
-
-				if(!empty($c))
-					$d[$a][$b] = $v;
-
-				if(empty($c))
-					$d[$a][$b][$c] = $v;				
-			}
-
-			$d[$k] = $v;
-		});
-
-		return $d;
 	}
 }
