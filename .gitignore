@@ -27,3 +27,4 @@ logs/
 .bak
 ./xcli
 xcli
+.cache
