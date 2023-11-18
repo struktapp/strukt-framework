@@ -15,8 +15,8 @@ use Strukt\Console\Output;
 * Arguments:
 *
 *       application_name   application name
-*                           underscored names changed to camel case
-*                            example:app -> App, app_name -> AppName
+*                          underscored names changed to camel case
+*                          example:app -> App, app_name -> AppName
 */
 class ApplicationGenerator extends \Strukt\Console\Command{
 
@@ -62,6 +62,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 		$files = $fs_root->lsr($tpl_app_dir);
 		foreach($files as $file){
 
+			$file = str($file)->replace(env("root_dir"),"")->yield();
 			if(!$fs_root->isFile($file))
 				continue;
 			
@@ -81,7 +82,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			$outputfile = str($file)
 				->replace(str(".tpl/")->concat("sgf/")->yield(),"")
 				->replace("/App/", sprintf("/%s/", $app_name->yield()))
-				->replace(".sgf", ".php");	
+				->replace(".sgf", ".php");
 
 			if($outputfile->contains("_AuthModule.php")){
 
