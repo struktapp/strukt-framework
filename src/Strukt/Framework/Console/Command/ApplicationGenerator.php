@@ -67,14 +67,23 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			->yield();
 
 		$fs_root->mkdir($authmod_dir);
-		$files = $fs_root->lsr($tpl_app_dir);
-		foreach($files as $file){
+
+		$fsFilesCache = fs(".cache/files");
+		if(!$fsFilesCache->isFile("tpl_app.php"))
+			$files = array_flip($fs_root->lsr($tpl_app_dir));
+
+		if($fsFilesCache->isFile("tpl_app.php"))
+			$files = $fsFilesCache->req("tpl_app.php");			
+
+		foreach($files as $file=>$tpl_file){
 
 			$file = str($file)->replace(env("root_dir"),"")->yield();
 			if(!$fs_root->isFile($file))
 				continue;
 			
-			$tpl_file = $fs_root->cat($file);
+			if(is_numeric($tpl_file))
+				$tpl_file = $fs_root->cat($file);
+			
 			$output = template($tpl_file, array(
 
 				"app"=>$app_name->yield()
