@@ -66,5 +66,10 @@ class CacheMake extends \Strukt\Console\Command{
 		$fsFiles->rm("tpl_ls.php");
 		$fsFiles->touchWrite("tpl_ls.php", "<?php\n return ");
 		$fsFiles->appendWrite("tpl_ls.php", str(var_export($tpl_ls, true))->concat(";")->yield());
+
+		$tpl_app = arr(array_flip(fs()->lsr(".tpl/sgf/app")))->each(fn($k, $v)=>fs()->cat($k))->yield();
+		$fsFiles->rm("tpl_app.php");
+		$fsFiles->touchWrite("tpl_app.php", "<?php\n return ");
+		$fsFiles->appendWrite("tpl_app.php", str(var_export($tpl_app, true))->concat(";")->yield());
 	}
 }
