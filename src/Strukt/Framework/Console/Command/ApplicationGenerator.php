@@ -43,7 +43,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			->concat(sprintf("/%s", $mod_ini))
 			->yield();
 
-		$fs_root = fs(env("roo_dir"));
+		$fs_root = fs(env("root_dir"));
 		if(!$fs_root->isFile($mod_ini))
 			raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
 
