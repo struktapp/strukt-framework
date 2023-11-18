@@ -115,7 +115,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 				$fs_root = fs(null);
 
 			$outputfile = $outputfile->yield();
-			if(!$fs_root->touchWrite($outputfile, $output))
+			if(!fs(getcwd())->touchWrite($outputfile, $output))
 				raise(sprintf("%s did not generate!", $outputfile));
 		}
 
@@ -128,7 +128,7 @@ class ApplicationGenerator extends \Strukt\Console\Command{
 			"app"=>$app_name->yield()
 		));
 
-		$fs_root->touchWrite($app_ini, $app_ini_output);
+		fs(getcwd())->touchWrite($app_ini, $app_ini_output);
 		$out->add(sprintf("Successfully generated %s application!\n", $app_name->yield()));
 	}
 }
