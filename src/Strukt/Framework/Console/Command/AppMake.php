@@ -30,7 +30,7 @@ class AppMake extends \Strukt\Console\Command{
 		$fsWrite = fs(str($root_dir)->replace("phar://","")->yield());
 
 		$mod_ini_path = env("rel_mod_ini");
-		if(!path_exists($mod_ini_path))
+		if(!$fsRead->isFile($mod_ini_path))
 			raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
 
 		$app_src = env("rel_appsrc");
