@@ -115,7 +115,7 @@ class Auth extends \Strukt\Framework\Contract\Router{
 		$username = $request->get("username");
 		$password = $request->get("password");
 
-		if($this->get("au.ctr.User")->doAuth($username, $password)){
+		if($this->get("au.ctr.User")->doAuth($username, sha1($password))){
 
 	    	new \Strukt\Auth($username);
 	    	// new \Strukt\Auth($username, "user_type:admin|status:chilled-out");
