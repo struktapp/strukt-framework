@@ -50,7 +50,7 @@ class User extends \Strukt\Framework\Contract\Controller{
 
 		$user = $this->get("User", array($username, $password));
 
-		return $user->getUsername() == "admin" && $user->getPassword() == sha1("p@55w0rd");
+		return $user->username == "admin" && $user->password == sha1("p@55w0rd");
 	}
 }
 
@@ -85,12 +85,12 @@ class User extends \Strukt\Entity{
 	/**
 	* @Type(string)
 	*/
-	private $username;
+	public $username;
 
 	/**
 	* @Type(string)
 	*/
-	private $password;
+	public $password;
 }
 
 

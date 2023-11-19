@@ -97,8 +97,8 @@ $_SERVER["REQUEST_URI"] = $uri;
 $_SERVER["REQUEST_METHOD"] = strtoupper(trim($method));
 $_REQUEST = $_POST = $params;
 
-Env::withFile();
-Env::set("root_dir", getcwd());
+// Env::withFile();
+// Env::set("root_dir", getcwd());
 Env::set("json.validation.err", true);
 
 config("app.type","App:Cli");
