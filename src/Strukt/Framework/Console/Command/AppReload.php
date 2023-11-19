@@ -11,7 +11,7 @@ use Strukt\Fs;
 /**
 * app:reload     Generate Application Loader
 */
-class ApplicationLoaderGenerator extends \Strukt\Console\Command{
+class AppReload extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 

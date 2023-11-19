@@ -902,12 +902,15 @@ return $loader;
 
 ');
 
-Strukt\Fs::touchWrite(".env", 'rel_appsrc_dir = app'.DS.'src'.DS.'
-rel_tpl_dir = .tpl'.DS.'sgf
-rel_tplapp_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'
-rel_tplappsrc_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'
-rel_tplauthmod_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'App'.DS.'AuthModule'.DS.'
+Strukt\Fs::touchWrite(".env", 'authmod_name = AuthModule
+rel_appsrc = app'.DS.'src
+rel_tplsgf_dir = .tpl'.DS.'sgf
+rel_tplapp_dir = .tpl'.DS.'sgf'.DS.'app
+rel_tplappsrc_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src
+rel_tplapproot_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'App
 rel_apptpl_ini = .tpl'.DS.'sgf'.DS.'cfg'.DS.'app.sgf
+tpt_appcfg = app.sgf
+
 rel_loader_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
 rel_app_lib = lib'.DS.'App
 rel_static_dir = public'.DS.'static

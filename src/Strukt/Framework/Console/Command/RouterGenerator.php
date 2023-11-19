@@ -53,7 +53,7 @@ class RouterGenerator extends \Strukt\Console\Command{
 	public function execute(Input $in, Output $out){
 
 		$root_dir = env("root_dir");
-		$app_dir = env("rel_appsrc_dir");
+		$app_dir = env("rel_appsrc");
 
 		$routeList = [];
 		$moduleList = [];

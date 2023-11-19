@@ -24,7 +24,7 @@ use Strukt\Templator as Tpl;
 *
 *      --log -l   Flag to enable logs
 */
-class ApplicationExec extends \Strukt\Console\Command{
+class AppExec extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 

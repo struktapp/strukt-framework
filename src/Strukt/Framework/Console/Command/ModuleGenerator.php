@@ -13,26 +13,26 @@ use Strukt\Framework\Contract\Module;
 *
 * Usage:
 *
-*       make:module <application_name> <module_name> <alias_name>
+*       make:module <app_name> <module_name> <alias_name>
 *
 * Arguments:
 *
-*       application_name  your application name
+*       app_name          your application name
 *       module_name       your module name
-*       alias_name       your module alias name
+*       alias_name        your module alias name
 */
 class ModuleGenerator extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
 		$root_dir = env("root_dir");
-		$app_dir = env("rel_appsrc_dir");
+		$app_dir = env("rel_appsrc");
 		$mod_ini = env("rel_mod_ini");
 
 		/**
 		* Application Name
 		*/
-		$raw_app_name = $in->get("application_name");
+		$raw_app_name = $in->get("app_name");
 
 		$app_name = str($raw_app_name)->toCamel();
 

@@ -5,7 +5,8 @@ namespace Strukt\Framework;
 use Strukt\Env;
 use Strukt\Console\DocBlockParser;
 
-use Strukt\Framework\Console\Command\ApplicationGenerator;
+// use Strukt\Framework\Console\Command\ApplicationGenerator;
+use Strukt\Framework\Console\Command\AppMake;
 use Strukt\Framework\Console\Command\ApplicationLoaderGenerator;
 use Strukt\Framework\Console\Command\ApplicationExec;
 use Strukt\Framework\Console\Command\RouterGenerator;
@@ -34,7 +35,7 @@ class Shell extends \Strukt\Console\Application{
 
 		if($load_native_cmds){
 
-			$this->add(new ApplicationGenerator);
+			$this->add(new AppMake);
 			$this->add(new ApplicationLoaderGenerator);
 			$this->add(new ApplicationExec);
 			$this->add(new RouterGenerator);
