@@ -25,6 +25,10 @@ class AppMake extends \Strukt\Console\Command{
 		$app_name = $in->get("app_name");
 		$app_name = str($app_name)->toCamel();
 
+		$root_dir = env("root_dir");
+		$fsRead = fs($root_dir);
+		$fsWrite = fs(str($root_dir)->replace("phar://","")->yield());
+
 		$mod_ini_path = env("rel_mod_ini");
 		if(!path_exists($mod_ini_path))
 			raise(sprintf("Failed to find [%s] file!\n", $mod_ini_path));
@@ -35,30 +39,38 @@ class AppMake extends \Strukt\Console\Command{
 						->concat(ds($app_name))
 						->concat($authmod_name);
 
-		fs()->mkdir($authmod_dir->yield());
-		$mod_ini = fs()->ini($mod_ini_path);
-		arr($mod_ini["folder"])->each(function($k, $folder) use($authmod_dir){
+		$fsRead->mkdir($authmod_dir->yield());
+		$mod_ini = $fsRead->ini($mod_ini_path);
+		arr($mod_ini["folder"])->each(function($k, $folder) use($authmod_dir, $fsRead){
 
-			fs()->mkdir($authmod_dir->concat(sprintf("/%s", $folder))->yield());
+			$fsRead->mkdir($authmod_dir->concat(sprintf("/%s", $folder))->yield());
 		});
 
 		$tpl_appdir = env("rel_tplapp_dir");
 		$tpl_approot = env("rel_tplapproot_dir");
 		$approot = str(ds($app_src))->concat($app_name)->yield();
-		arr(fs()->lsr($tpl_appdir))->each(function($k, $tpl_path) use($tpl_approot, $approot, $app_name){
+		arr($fsRead->lsr($tpl_appdir))->each(function($k, $tpl_path) use($root_dir, 
+																			$tpl_approot, 
+																			$approot, 
+																			$app_name,
+																			$fsWrite,
+																			$fsRead){
 
 			$path = str($tpl_path)
+					->replace($root_dir, "")
 					->replace($tpl_approot, $approot)
 					->replace(".sgf", ".php")
 					->replace("_", $app_name)
 					->yield();
 
-			$output = template(fs()->cat($tpl_path), array(
+			$tpl_path = str($tpl_path)->replace($root_dir, "")->yield();
+
+			$output = template($fsRead->cat($tpl_path), array(
 
 				"app"=>$app_name
 			));
 
-			fs()->touchWrite($path, $output);
+			$fsWrite->touchWrite(ds($path), $output);
 		});
 
 		$tpl_appini = env("rel_apptpl_ini");
@@ -68,12 +80,12 @@ class AppMake extends \Strukt\Console\Command{
 						->replace(".sgf", ".ini")
 						->yield();
 
-		$output = template(fs()->cat($tpl_appini), array(
+		$output = template($fsRead->cat($tpl_appini), array(
 
 			"app"=>$app_name
 		));
 
-		fs()->touchWrite($appini_path, $output);
+		$fsWrite->touchWrite($appini_path, $output);
 		$out->add(sprintf("Successfully generated %s application!\n", $app_name));
 	}
 }
