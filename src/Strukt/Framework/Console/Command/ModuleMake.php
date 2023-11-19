@@ -9,11 +9,11 @@ use Strukt\Fs;
 use Strukt\Framework\Contract\Module;
 
 /**
-* make:module     Generate Application Module
+* module:make     Generate Application Module
 *
 * Usage:
 *
-*       make:module <app_name> <module_name> <alias_name>
+*       module:make <app_name> <module_name> <alias_name>
 *
 * Arguments:
 *
@@ -21,7 +21,7 @@ use Strukt\Framework\Contract\Module;
 *       module_name       your module name
 *       alias_name        your module alias name
 */
-class ModuleGenerator extends \Strukt\Console\Command{
+class ModuleMake extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 

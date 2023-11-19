@@ -7,10 +7,10 @@ use Strukt\Console\DocBlockParser;
 
 // use Strukt\Framework\Console\Command\ApplicationGenerator;
 use Strukt\Framework\Console\Command\AppMake;
-use Strukt\Framework\Console\Command\ApplicationLoaderGenerator;
-use Strukt\Framework\Console\Command\ApplicationExec;
-use Strukt\Framework\Console\Command\RouterGenerator;
-use Strukt\Framework\Console\Command\ModuleGenerator;
+use Strukt\Framework\Console\Command\AppReload;
+use Strukt\Framework\Console\Command\AppExec;
+use Strukt\Framework\Console\Command\RouteMake;
+use Strukt\Framework\Console\Command\ModuleMake;
 use Strukt\Framework\Console\Command\RouteList;
 use Strukt\Framework\Console\Command\ShellExec;
 use Strukt\Framework\Console\Command\SysUtil;
@@ -36,11 +36,11 @@ class Shell extends \Strukt\Console\Application{
 		if($load_native_cmds){
 
 			$this->add(new AppMake);
-			$this->add(new ApplicationLoaderGenerator);
-			$this->add(new ApplicationExec);
-			$this->add(new RouterGenerator);
-			$this->add(new ModuleGenerator);
+			$this->add(new AppReload);
+			$this->add(new AppExec);
+			$this->add(new RouteMake);
 			$this->add(new RouteList);
+			$this->add(new ModuleMake);
 			$this->add(new ShellExec);
 			$this->add(new SysUtil);
 			$this->add(new SysList);

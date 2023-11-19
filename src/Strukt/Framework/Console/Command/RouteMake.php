@@ -15,7 +15,7 @@ use Strukt\Core\Registry;
 
 
 /**
-* make:router     Generate Module Router - ACCEPTS NO ARGS
+* route:make     Generate Module Router - ACCEPTS NO ARGS
 *
 * Usage:
 *
@@ -48,7 +48,7 @@ use Strukt\Core\Registry;
 *			default: GET
 *			options: GET, POST, DELETE
 */
-class RouterGenerator extends \Strukt\Console\Command{
+class RouteMake extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
