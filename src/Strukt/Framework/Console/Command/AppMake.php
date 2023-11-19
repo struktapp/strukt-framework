@@ -41,9 +41,9 @@ class AppMake extends \Strukt\Console\Command{
 
 		$fsRead->mkdir($authmod_dir->yield());
 		$mod_ini = $fsRead->ini($mod_ini_path);
-		arr($mod_ini["folder"])->each(function($k, $folder) use($authmod_dir, $fsRead){
+		arr($mod_ini["folder"])->each(function($k, $folder) use($authmod_dir, $fsWrite){
 
-			$fsRead->mkdir($authmod_dir->concat(sprintf("/%s", $folder))->yield());
+			$fsWrite->mkdir($authmod_dir->concat(sprintf("/%s", $folder))->yield());
 		});
 
 		$tpl_appdir = env("rel_tplapp_dir");
