@@ -30,7 +30,7 @@ class Reloader{
 	public function __construct(){
 
 		$root_dir = env("root_dir");
-		$app_dir = env("rel_appsrc_dir");
+		$app_dir = env("rel_appsrc");
 		$loader_sgf_file = env("rel_loader_sgf");
 
 		$appsrc_path = sprintf("%s/%s", $root_dir, $app_dir);
@@ -45,8 +45,7 @@ class Reloader{
 
 		foreach($apps as $app){
 
-			$app_path = sprintf("%s%s", $appsrc_path, $app);
-
+			$app_path = sprintf("/%s%s", ds($appsrc_path), $app);
 			foreach(scandir($app_path) as $appItem)
 				if(!preg_match("/(.\.php|\.)/", $appItem))
 					$all[$app][] = $appItem;
@@ -59,7 +58,7 @@ class Reloader{
 											$name, $mod, $name, $mod);
 
 		if(!Fs::isFile($loader_sgf_file))
-			throw new \Exception(sprintf("File [%s] was not found!", $loader_sgf_file));
+			raise(sprintf("File [%s] was not found!", $loader_sgf_file));
 			
 		$tpl_file = Fs::cat($loader_sgf_file);
 

@@ -27,7 +27,11 @@ class AppReload extends \Strukt\Console\Command{
 		if(Fs::isFile($loader_file))
 			Fs::rm($loader_file);
 
-		$is_loader_created = Fs::touchWrite($loader_file, new Reloader());
+		// dd((string)new Reloader());
+		// dd($loader_file);
+
+		$loader = (string) new Reloader();
+		$is_loader_created = Fs::touchWrite($loader_file, $loader);
 
 		if(!$is_loader_created)
 			$out->add("***Error occured: loader generation failed!.\n");
