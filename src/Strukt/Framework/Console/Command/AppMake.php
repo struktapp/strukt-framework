@@ -26,8 +26,13 @@ class AppMake extends \Strukt\Console\Command{
 		$app_name = str($app_name)->toCamel();
 
 		$root_dir = env("root_dir");
+
+		$phar_root = dirname(str($root_dir)->replace("phar://","")->yield());
+		if(!env("phar"))
+			$phar_root = $root_dir;
+
 		$fsRead = fs($root_dir);
-		$fsWrite = fs(str($root_dir)->replace("phar://","")->yield());
+		$fsWrite = fs($phar_root);
 
 		$mod_ini_path = env("rel_mod_ini");
 		if(!$fsRead->isFile($mod_ini_path))
@@ -49,6 +54,7 @@ class AppMake extends \Strukt\Console\Command{
 		$tpl_appdir = env("rel_tplapp_dir");
 		$tpl_approot = env("rel_tplapproot_dir");
 		$approot = str(ds($app_src))->concat($app_name)->yield();
+		echo("\n");
 		arr($fsRead->lsr($tpl_appdir))->each(function($k, $tpl_path) use($root_dir, 
 																			$tpl_approot, 
 																			$approot, 
@@ -64,13 +70,15 @@ class AppMake extends \Strukt\Console\Command{
 					->yield();
 
 			$tpl_path = str($tpl_path)->replace($root_dir, "")->yield();
-
 			$output = template($fsRead->cat($tpl_path), array(
 
 				"app"=>$app_name
 			));
 
-			$fsWrite->touchWrite(ds($path), $output);
+			$path = trim(ds($path), "/");
+			echo(str(" ")->concat($path)->concat("\n")->yield());
+			echo(str($fsWrite->path($path))->concat("\n")->yield());
+			$fsWrite->touchWrite($path, $output);
 		});
 
 		$tpl_appini = env("rel_apptpl_ini");
@@ -80,11 +88,13 @@ class AppMake extends \Strukt\Console\Command{
 						->replace(".sgf", ".ini")
 						->yield();
 
+
 		$output = template($fsRead->cat($tpl_appini), array(
 
 			"app"=>$app_name
 		));
 
+		echo(str(" ")->concat($appini_path)->concat("\n")->yield());
 		$fsWrite->touchWrite($appini_path, $output);
 		$out->add(sprintf("Successfully generated %s application!\n", $app_name));
 	}
