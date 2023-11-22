@@ -71,7 +71,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 		arr($pkg->getFiles())->each(function($key, $relpath) use (
 			$pkgname, $vendor_pkg, $appname){
 
-			$vendor_appbase = Fs::ds(str(env("rel_appsrc_dir"))
+			$vendor_appbase = Fs::ds(str(env("rel_appsrc"))
 										->concat("App")
 										->yield());
 
