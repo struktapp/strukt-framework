@@ -28,3 +28,7 @@ logs/
 ./xcli
 xcli
 .cache
+package.json
+pkg-roles/
+src/Strukt/Package/PkgRoles.php
+

@@ -15,23 +15,17 @@ class AppReload extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$root_dir = Env::get("root_dir");
-		$app_lib = Env::get("rel_app_lib");
+		$root_dir = env("root_dir");
+		$app_lib = env("rel_app_lib");
 
-		$loader_dir = sprintf("%s/%s", $root_dir, $app_lib);
-		
-		Fs::mkdir($loader_dir);
-
-		$loader_file = sprintf("%s/Loader.php", $loader_dir);
-		
-		if(Fs::isFile($loader_file))
-			Fs::rm($loader_file);
-
-		// dd((string)new Reloader());
-		// dd($loader_file);
+		$fs = fs($root_dir);
+		$fs->mkdir($app_lib);
+		$loader_file = sprintf("%s/Loader.php", $app_lib);
+		if($fs->isFile($loader_file))
+			$fs->rm($loader_file);
 
 		$loader = (string) new Reloader();
-		$is_loader_created = Fs::touchWrite($loader_file, $loader);
+		$is_loader_created = $fs->touchWrite($loader_file, $loader);
 
 		if(!$is_loader_created)
 			$out->add("***Error occured: loader generation failed!.\n");

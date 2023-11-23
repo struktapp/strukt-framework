@@ -23,11 +23,11 @@ class PackageList extends \Strukt\Console\Command{
 
 		foreach($packages as $package){
 
-			$status = Color::write("red", "unavailable");
+			$status = color("red", "unavailable");
 			if(in_array($package, $published))
-				$status = Color::write("yellow", "published");
+				$status = color("yellow", "published");
 			elseif(in_array($package, $installed))
-				$status = Color::write("green:bold", "installed");
+				$status = color("green:bold", "installed");
 			
 			if($package == "core")
 				continue;

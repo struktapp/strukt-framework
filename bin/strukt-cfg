@@ -53,8 +53,6 @@ class User extends \Strukt\Framework\Contract\Controller{
 		return $user->username == "admin" && $user->password == sha1("p@55w0rd");
 	}
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Form/User.sgf", '<?php
@@ -73,8 +71,6 @@ class User extends \Strukt\Framework\Contract\Form{
 	*/
 	public string $password;
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/User.sgf", '<?php
@@ -92,8 +88,6 @@ class User extends \Strukt\Entity{
 	*/
 	public $password;
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf", '<?php
@@ -157,8 +151,6 @@ class Auth extends \Strukt\Framework\Contract\Router{
 		return "Successfully logged out.";
 	}
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Index.sgf", '<?php
@@ -228,8 +220,6 @@ class Index extends \Strukt\Framework\Contract\Router{
 		throw new \RuntimeException("Whoops!");
 	}	
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf", '<?php
@@ -239,8 +229,6 @@ class {{app}}AuthModule extends \Strukt\Framework\Contract\Module{
 
 	protected $alias="Au";
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
@@ -267,15 +255,13 @@ class UserTest extends TestCase{
 		$this->assertTrue($isSuccess);
 	}
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/src/Strukt/Package/Pkg_.sgf", '<?php
 
 namespace Strukt\Package;
 
-class Pkg{{name}} implements Strukt\Framework\Contract\Package{
+class Pkg{{name}} implements \Strukt\Framework\Contract\Package{
 
 	private $manifest;
 
@@ -339,8 +325,6 @@ class Pkg{{name}} implements Strukt\Framework\Contract\Package{
 		return null;
 	}
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Loader.sgf", '<?php
@@ -380,8 +364,6 @@ class Loader{
 		return $this->app;
 	}
 }
-
-
 ');
 
 Strukt\Fs::touchWrite(".tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
@@ -397,8 +379,6 @@ providers[] = facet
 providers[] = valid
 ; providers[] = logger
 ; providers[] = strukt.asset
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Contract/AbstractCommand.php", '<?php
@@ -409,10 +389,6 @@ abstract class AbstractCommand extends \Strukt\Console\Command{
 
 	// use CoreTraits;
 }
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Middleware/Cors.php", '<?php
@@ -442,10 +418,6 @@ class Cors implements MiddlewareInterface{
     	return $next($request, $response);
 	}
 }
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Middleware/XSession.php", '<?php
@@ -489,10 +461,6 @@ class XSession implements MiddlewareInterface{
 		return $next($request, $response);
 	}
 }
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Provider/Facet.php",'<?php
@@ -533,7 +501,6 @@ class Facet implements ProviderInterface{
 		});
 	}
 }
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
@@ -584,10 +551,6 @@ class Logger implements ProviderInterface{
 		});	
 	}
 }
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Validator.php", '<?php
@@ -617,10 +580,6 @@ class Validator extends ValidatorContract{
 		return $this;
 	}
 }
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("cfg/module.ini", '[folders]
@@ -631,10 +590,6 @@ folder["tes"] = "Tests"
 ; folder["fix"] = "Fixture"
 ; folder["rep"] = "Repository"
 ; folder["sdr"] = "Seeder"
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
@@ -643,10 +598,6 @@ pkg-db = PkgDb
 pkg-book = PkgBook
 pkg-tests = PkgTests
 pkg-asset = PkgAsset
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("cfg/cmd.ini", 'pub-pak.title = Package Publisher
@@ -751,10 +702,6 @@ class Kernel{
 		return $this->app->run();
 	}
 }
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
@@ -817,10 +764,6 @@ class Injectable{
 		return new Session;
 	}
 }
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("xcli", '#!/usr/bin/php
@@ -846,10 +789,6 @@ if(!is_null($app)){
 $sh = new Shell();
 
 exit($sh->run($_SERVER["argv"]));
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("index.php", '<?php
@@ -864,10 +803,6 @@ config("app.type","App:Idx");
 
 $kernel = new App\Kernel(new Configuration());
 exit($kernel->run());
-
-
-
-
 ');
 
 Strukt\Fs::touchWrite("bootstrap.php", '<?php
@@ -898,8 +833,6 @@ Env::set("phar", !empty($phar_path));
 $loader->add(sprintf("%s\\\", config("app.name")), __DIR__."/app/src/");			
 
 return $loader;
-
-
 ');
 
 Strukt\Fs::touchWrite(".env", 'authmod_name = AuthModule
@@ -936,10 +869,6 @@ serve_host = 127.0.0.1
 serve_port = 8080
 serve_ctx = .
 serve_file = index.php
-
-
-
-
 ');
 
 chmod('./xcli', 0755);

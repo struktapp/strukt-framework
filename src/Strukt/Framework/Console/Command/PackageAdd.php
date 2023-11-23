@@ -25,31 +25,49 @@ class PackageAdd extends \Strukt\Console\Command{
 	public function execute(Input $in, Output $out){
 
 		$folder = $in->get("folder");
+		$fs = fs(env("root_dir"));
 
-		if(!Fs::isFile("package.json")){
+		try{
 
-			$pkg = array("files"=>[]);
-			$pkg = Json::pp($pkg);
-			Fs::touchWrite("package.json", $pkg);
+			if(!$fs->isFile("package.json")){
+
+				$pkg = array("files"=>[]);
+				$pkg = json($pkg)->pp();
+				$fs->touchWrite("package.json", $pkg);
+			}
+
+			if($fs->isFile("package.json")){
+
+				$pkg = $fs->cat("package.json");
+				$pkg = json($pkg)->decode();
+			}
+
+			if($fs->isDir($folder)){
+
+				$files = $fs->lsr($folder);
+				$pkg["files"] = array_merge($pkg["files"], $files);
+			}
+
+			if($fs->isFile($folder))
+				$pkg["files"][] = $folder;
+
+			$paths = arr($pkg["files"])->each(function($k, $path){
+
+				return ltrim(str($path)->replace(env("root_dir"), "")->yield(),"/");
+			});
+
+			$paths = array_values(array_flip(array_flip($paths->yield())));
+			$pkg["files"] = $paths;
+			$pkg = json($pkg)->pp();
+			$fs->overwrite("package.json", $pkg);
+			$fs->rm("package.json_*");
+
+			print_r(str("\n")->concat(implode("\n", $paths))->concat("\n")->yield());
+			$out->add("Files paths successfully added to package.json");
 		}
+		catch(\Exception $e){
 
-		if(Fs::isFile("package.json")){
-
-			$pkg = Fs::cat("package.json");
-			$pkg = Json::decode($pkg);
+			raise($e->getMessage());
 		}
-
-		if(Fs::isDir($folder)){
-
-			$files = Fs::lsr($folder);
-			$pkg["files"] = array_merge($pkg["files"], $files);
-		}
-
-		if(Fs::isFile($folder))
-			$pkg["files"][] = $folder;
-
-		$pkg = Json::pp($pkg);
-		Fs::overwrite("package.json", $pkg);
-		Fs::rm("package.json_*");
 	}
 }

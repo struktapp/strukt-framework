@@ -4,10 +4,6 @@ namespace Strukt\Framework\Console\Command;
 
 use Strukt\Console\Input;
 use Strukt\Console\Output;
-// use Strukt\Fs;
-// use Strukt\Type\Str;
-// use Strukt\Type\Json;
-// use Strukt\Env;
 
 /**
 * package:export  Export package
@@ -51,39 +47,39 @@ class PackageExport extends \Strukt\Console\Command{
 		    "minimum-stability"=>"dev"
 		);
 
-		$fsRoot = fs();
-		$fsRoot->mkdir($pkg_fldr);
+		try{
 
-		$fsPkg = fs($pkg_fldr);
-		$fsPkg->mkdir("package");
-		$fsPkg->mkdir("src");
+			$fsRoot = fs();
+			$fsRoot->mkdir($pkg_fldr);
 
-		$fsRoot->cpr("../package", "package");
-		$fsRoot->cpr("../src", "src");
-		$fsRoot->cpr("../.env", ".env");
-		$fsRoot->cpr("../.gitignore", ".gitignore");
+			$fsPkg = fs($pkg_fldr);
+			$fsPkg->mkdir("package");
+			$fsPkg->mkdir("src");
 
-		$fsPkg->touchWrite("composer.json", json($composer)->encode());
-		$fsPkg->touchWrite("README.md", implode("\n", array(
+			$name = ucfirst(str($name)->toCamel()->yield());
+			$fsRoot->cpr("package", $fsPkg->path("package"));
 
-			sprintf("Strukt %s", ucfirst($name)),
-			"==="
-		)));
+			$pkg_dir_cls = str($fsPkg->path("src"))->concat("/")->concat("Strukt/Package")->yield();
+			$source_pkg_cls = sprintf("src/Strukt/Package/Pkg%s.php", $name);
+			$dest_pkg_cls = sprintf("%s/Pkg%s.php", $pkg_dir_cls, $name);
+			
+			$fsRoot->mkdir($pkg_dir_cls);
+			$fsRoot->cpr($source_pkg_cls, $dest_pkg_cls);
+			$fsRoot->cpr(".env", $fsPkg->path(".env"));
+			$fsRoot->cpr(".gitignore", $fsPkg->path(".gitignore"));
 
-		// Fs::mkdir($pkg_fldr);
-		// Fs::mkdir(sprintf("%s/package", $pkg_fldr));
-		// Fs::mkdir(sprintf("%s/src", $pkg_fldr));
+			$fsPkg->touchWrite("composer.json", json($composer)->encode());
+			$fsPkg->touchWrite("README.md", implode("\n", array(
 
-		// Fs::cpr("package", sprintf("%s/package", $pkg_fldr));
-		// Fs::cpr("src", sprintf("%s/src", $pkg_fldr));
-		// copy("composer.json", sprintf("%s/composer.json", $pkg_fldr));
-		// copy(".env", sprintf("%s/.env", $pkg_fldr));
-		// copy(".gitignore", sprintf("%s/.gitignore", $pkg_fldr));
-		// Fs::touchWrite(sprintf("%s/composer.json", $pkg_fldr), Json::pp($composer));
-		// Fs::touchWrite(sprintf("%s/README.md", $pkg_fldr), implode("\n", array(
+				sprintf("Strukt %s", ucfirst($name)),
+				"==="
+			)));
 
-			// sprintf("Strukt %s", ucfirst($as_name)),
-			// "==="
-		// )));
+			$out->add(sprintf("Files moved to [pkg-%s]!", str($name)->toSnake()->yield()));
+		}
+		catch(\Exception $e){
+
+			raise($e->getMessage());
+		}
 	}
 }

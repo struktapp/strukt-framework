@@ -54,3 +54,14 @@ if(!function_exists("config")){
 		return null;
 	}
 }
+
+if(!function_exists("repos")){
+
+	function repos(string $type = null){
+
+		if(is_null($type))
+			return \Strukt\Package\Repos::available();
+
+		return \Strukt\Package\Repos::packages($type);		
+	}
+}
