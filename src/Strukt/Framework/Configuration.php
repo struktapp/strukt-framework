@@ -67,11 +67,15 @@ class Configuration{
 								if(is_null(@$aliases[$facet]))
 									$aliases[$facet] = [];
 								
+								$alias = null;
 								if(!is_null($facet_configs))
 									if(!in_array($facet_configs["config"]["name"], $aliases[$facet]))
-										$aliases[$facet][] = $facet_configs["config"]["name"];
+										$aliases[$facet][] = $alias = $facet_configs["config"]["name"];
 
-								return $facet_class;
+								if(!is_null($alias))
+									return $facet_class;
+
+								return null;
 							}
 						})->yield()));
 				})->yield();
@@ -111,13 +115,13 @@ class Configuration{
 		$oldset = $this->settings[$key];
 		$change = array_diff($settings, $oldset);
 
-		$reject = arr($change)->each(function($k, $class){
+		$reject = arr($change)->each(function($k, $class) use($key){
 
 			@$inj_facet = new InjectableFacet(new \ReflectionClass($class));	
 			$facet_configs = $inj_facet->getConfigs();
 
 			$alias = @$facet_configs["config"]["name"];
-			if(!arr(config("app.middlewares"))->has($alias))
+			if(!arr(config(sprintf("app.%s", $key)))->has($alias))
 				return $class;
 
 			return null;
