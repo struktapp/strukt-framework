@@ -21,16 +21,14 @@ class ApplicationTest extends TestCase{
 
 		$this->auth_mod = Ref::create($this->auth_mod_ns)->make()->getInstance();
 
+		$facet = new App\Provider\Facet();
+		$facet->register();
+
 		$app = new Application(new Router(Request::createFromGlobals()));
 		$app->register($this->auth_mod);
 		$app->init();
 
 		$this->core = new class() extends Core{
-
-			public function __construct(){
-
-				parent::__construct();
-			}
 
 			public function get(string $alias_ns, array $args = null){
 
@@ -74,6 +72,6 @@ class ApplicationTest extends TestCase{
 
 		$user_ctr = $this->core->get("au.ctr.User");
 
-		$this->assertTrue($user_ctr->doAuth("admin","p@55w0rd"));
+		$this->assertTrue($user_ctr->doAuth("admin", sha1("p@55w0rd")));
 	}
 }

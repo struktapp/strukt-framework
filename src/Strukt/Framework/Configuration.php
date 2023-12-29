@@ -34,7 +34,11 @@ class Configuration{
 		$aliases = [];
 		$commands = [];
 
-		arr($packages)->each(function($name, $class) use($published, $app_type, &$settings, &$aliases, &$commands){
+		arr($packages)->each(function($name, $class) use($published, 
+															$app_type, 
+															&$settings, 
+															&$aliases, 
+															&$commands){
 
 			if(class_exists($class) && in_array($name, $published)){
 
@@ -46,7 +50,9 @@ class Configuration{
 					$commands = array_merge($commands, $config["commands"]);
 
 				$facet = arr(["middlewares"=>[], 
-								"providers"=>[]])->each(function($facet, $value) use($config, $helper, &$aliases){
+								"providers"=>[]])->each(function($facet, $value) use($config, 
+																						$helper, 
+																						&$aliases){
 
 					if(arr(array_keys($config))->has($facet))
 						return array_values(array_filter(arr($config[$facet])
@@ -58,7 +64,7 @@ class Configuration{
 								$inj_facet = new InjectableFacet(new \ReflectionClass($facet_class));
 								$facet_configs = $inj_facet->getConfigs();
 
-								if(is_null($aliases[$facet]))
+								if(is_null(@$aliases[$facet]))
 									$aliases[$facet] = [];
 								
 								if(!is_null($facet_configs))
@@ -102,7 +108,22 @@ class Configuration{
 	 */
 	public function set(string $key, array $settings){
 
-		$this->settings[$key] = $settings;
+		$oldset = $this->settings[$key];
+		$change = array_diff($settings, $oldset);
+
+		$reject = arr($change)->each(function($k, $class){
+
+			@$inj_facet = new InjectableFacet(new \ReflectionClass($class));	
+			$facet_configs = $inj_facet->getConfigs();
+
+			$alias = @$facet_configs["config"]["name"];
+			if(!arr(config("app.middlewares"))->has($alias))
+				return $class;
+
+			return null;
+		});
+
+		$this->settings[$key] = array_column(array_unique(array_diff($settings, $reject->yield())), null);
 	}
 
 	/**

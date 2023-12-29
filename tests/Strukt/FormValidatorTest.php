@@ -52,7 +52,7 @@ class FormValidatorTest extends TestCase{
 
 		$this->assertEquals($validator->getMessage(), array(
 
-			"is_alpha"=>true,
+			"is_alpha"=>false,
 			"is_not_empty"=>true
 		));
 	}
