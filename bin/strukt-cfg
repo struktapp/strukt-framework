@@ -667,8 +667,8 @@ class Kernel{
 			foreach($kconfigs as $key=>$kconfig)
 				$this->kernel->inject($key, $kconfig);
 			
-		$this->kernel->providers($this->config->get("providers"));
-		$this->kernel->middlewares($this->config->get("middlewares"));
+		$this->kernel->providers(config("facet.providers", $this->config->get("providers")));
+		$this->kernel->middlewares(config("facet.middlewares", $this->config->get("middlewares")))
 
 		if(class_exists(AppLoader::class)){
 

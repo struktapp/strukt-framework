@@ -12,15 +12,11 @@ use Strukt\Framework\Configuration;
 * 
 * Usage:
 *	
-*      sys:ls [<type>] [--idx]
+*      sys:ls [<type>]
 *
 * Arguments:
 *
 *      type     optional: (providers|middlewares)
-*
-* Options:
-*
-*      --idx -i   Flag app type
 */
 class SysList extends \Strukt\Console\Command{
 
@@ -52,21 +48,21 @@ class SysList extends \Strukt\Console\Command{
 				"providers"
 			);
 
-		$config = new Configuration();
-		$lsmdl = $config->get("middlewares");
-		$lsprv = $config->get("providers");
+		// $config = new Configuration();
+		// $lsmdl = $config->get("middlewares");
+		// $lsprv = $config->get("providers");
 
 		if(in_array("middlewares", $types)){
 
 			$out->add("\nMiddlewares\n");
-			foreach($lsmdl as $facet)
+			foreach(config("facet.middlewares") as $facet)
 				$out->add(Color::write("yellow", sprintf(" %s\n", $facet)));
 		}
 
 		if(in_array("providers", $types)){
 
 			$out->add("\nProviders\n");
-			foreach($lsprv as $facet)
+			foreach(config("facet.providers") as $facet)
 				$out->add(Color::write("yellow", sprintf(" %s\n", $facet)));
 		}
 	}
