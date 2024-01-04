@@ -668,7 +668,7 @@ class Kernel{
 				$this->kernel->inject($key, $kconfig);
 			
 		$this->kernel->providers(config("facet.providers", $this->config->get("providers")));
-		$this->kernel->middlewares(config("facet.middlewares", $this->config->get("middlewares")))
+		$this->kernel->middlewares(config("facet.middlewares", $this->config->get("middlewares")));
 
 		if(class_exists(AppLoader::class)){
 
