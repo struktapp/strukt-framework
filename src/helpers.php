@@ -4,18 +4,18 @@ if(!function_exists("config")){
 
 	function config(string $key, array|string $options = null){
 
-		$cache_cfg = false;
+		// $cache_cfg = false;
 		if(!reg()->exists("config")){
 
-			$cfg = fs(".cache/cfg");
-			if($cfg->isFile("cfg.php")){
+			// $cfg = fs(".cache/cfg");
+			// if($cfg->isFile("cfg.php")){
 
-				$cache_cfg = true;
-				$cfg_ls = $cfg->req("cfg.php");
-				reg("config", $cfg_ls);
-			}
+			// 	$cache_cfg = true;
+			// 	$cfg_ls = $cfg->req("cfg.php");
+			// 	reg("config", $cfg_ls);
+			// }
 
-			if(!$cfg->isFile("cfg.php")){
+			// if(!$cfg->isFile("cfg.php")){
 
 				$cfg_dir = fs("cfg");
 				$ini_files = $cfg_dir->ls();
@@ -34,7 +34,7 @@ if(!function_exists("config")){
 					$app_config->remove("app-name");
 					$app_config->set("name", $app_name);
 				}
-			}
+			// }
 		}
 
 		$nkey = sprintf("config.%s", rtrim($key, "*"));

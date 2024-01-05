@@ -54,7 +54,7 @@ class AppMake extends \Strukt\Console\Command{
 		$tpl_appdir = env("rel_tplapp_dir");
 		$tpl_approot = env("rel_tplapproot_dir");
 		$approot = str(ds($app_src))->concat($app_name)->yield();
-		echo("\n");
+		// echo("\n");
 		arr($fsRead->lsr($tpl_appdir))->each(function($k, $tpl_path) use($root_dir, 
 																			$tpl_approot, 
 																			$approot, 
@@ -76,8 +76,8 @@ class AppMake extends \Strukt\Console\Command{
 			));
 
 			$path = trim(ds($path), "/");
-			echo(str(" ")->concat($path)->concat("\n")->yield());
-			echo(str($fsWrite->path($path))->concat("\n")->yield());
+			// echo(str(" ")->concat($path)->concat("\n")->yield());
+			// echo(str($fsWrite->path($path))->concat("\n")->yield());
 			$fsWrite->touchWrite($path, $output);
 		});
 
@@ -94,7 +94,7 @@ class AppMake extends \Strukt\Console\Command{
 			"app"=>$app_name
 		));
 
-		echo(str(" ")->concat($appini_path)->concat("\n")->yield());
+		// echo(str(" ")->concat($appini_path)->concat("\n")->yield());
 		$fsWrite->touchWrite($appini_path, $output);
 		$out->add(sprintf("Successfully generated %s application!\n", $app_name));
 	}

@@ -44,7 +44,7 @@ class Shell extends \Strukt\Console\Application{
 			$this->add(new ShellExec);
 			$this->add(new SysUtil);
 			$this->add(new SysList);
-			$this->add(new CacheMake);
+			// $this->add(new CacheMake);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");

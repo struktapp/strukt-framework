@@ -93,6 +93,12 @@ class Configuration{
 
 		$settings["aliases"] = $aliases;
 
+		if(!array_key_exists("providers", $settings))
+			$settings["providers"] = [];
+
+		if(!array_key_exists("middlewares", $settings))
+			$settings["middlewares"] = [];
+
 		$this->settings = $settings;
 	}
 
