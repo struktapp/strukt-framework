@@ -26,13 +26,40 @@ class Configuration{
 		// if(array_key_exists("ignore", $options))
 			// $this->ignore = $ignore = $options["ignore"];
 
+		$settings = [];
 		$app_type = config("app.type");
+
+		//app.json exists
+		if(cache("app")->empty()){
+
+			$settings = $this->create($app_type);
+			cache("app")->put($app_type, $settings)->save();
+		}
+
+		//app.json doesn't exist
+		if(empty($settings)){			
+
+			if(!cache("app")->exists($app_type)){
+
+				$settings = $this->create($app_type);
+				cache("app")->put($app_type, $settings)->save();
+			}
+
+			if(empty($settings))
+				$settings = cache("app")->get($app_type);
+		}
+
+		$this->settings = $settings;
+	}
+
+	public static function create(string $app_type){
+
 		$published = Repos::packages("published");
 		$packages = Repos::available();
-
-		$settings = [];
+		
 		$aliases = [];
 		$commands = [];
+		$settings = [];
 
 		arr($packages)->each(function($name, $class) use($published, 
 															$app_type, 
@@ -84,10 +111,11 @@ class Configuration{
 			}
 		});
 
-		$self = $this;
-		$settings["commands"] = arr($commands)->each(function($k, $class) use($self){
+		$settings["commands"] = arr($commands)->each(function($k, $class){
 
-			return $self->getClass($class);
+			$helper = new class(){use ClassHelper;};
+
+			return $helper->getClass($class);
 
 		})->yield();
 
@@ -99,41 +127,12 @@ class Configuration{
 		if(!array_key_exists("middlewares", $settings))
 			$settings["middlewares"] = [];
 
-		$this->settings = $settings;
+		return $settings;
 	}
 
 	public function getInjectables(){
 
 		return new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
-	}
-
-	/**
-	 * @param string $key
-	 * 
-	 * - commands
-	 * - providers
-	 * - middlewares
-	 * 
-	 * @param array $settings
-	 */
-	public function set(string $key, array $settings){
-
-		$oldset = $this->settings[$key];
-		$change = array_diff($settings, $oldset);
-
-		$reject = arr($change)->each(function($k, $class) use($key){
-
-			@$inj_facet = new InjectableFacet(new \ReflectionClass($class));	
-			$facet_configs = $inj_facet->getConfigs();
-
-			$alias = @$facet_configs["config"]["name"];
-			if(!arr(config(sprintf("app.%s", $key)))->has($alias))
-				return $class;
-
-			return null;
-		});
-
-		$this->settings[$key] = array_column(array_unique(array_diff($settings, $reject->yield())), null);
 	}
 
 	/**
@@ -150,13 +149,13 @@ class Configuration{
 	public function get(string $key){
 
 		if(in_array($key, ["providers", "middlewares", "commands"]))
-			return $this->settings[$key];
+			return is_array($this->settings)?$this->settings[$key]:$this->settings?->get($key);
 
 		return null;
 	}
 
 	public function getAliases(){
 
-		return $this->settings["aliases"];
+		return $this->settings->get("aliases");
 	}
 }

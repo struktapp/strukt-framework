@@ -12,11 +12,15 @@ use Strukt\Framework\Configuration;
 * 
 * Usage:
 *	
-*      sys:ls [<type>]
+*      sys:ls [<type>] [--idx]
 *
 * Arguments:
 *
 *      type     optional: (providers|middlewares)
+*
+* Options:
+*
+*      --idx -i   Flag for running non-cli app
 */
 class SysList extends \Strukt\Console\Command{
 
@@ -30,7 +34,8 @@ class SysList extends \Strukt\Console\Command{
 
 		if(array_key_exists("idx", $inputs)){
 
-			reg("config.app")->remove("type");
+			// print_r("abc");
+			reg()->remove("config.app.type");
 			config("app.type","App:Idx");
 		}
 

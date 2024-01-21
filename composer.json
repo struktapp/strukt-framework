@@ -13,10 +13,9 @@
     "require": {
     
         "php": "^8.1",
-        "strukt/generator": "v1.1.0-alpha",
+        "strukt/generator": "v1.1.1-alpha",
         "strukt/console": "1.0.0",
-        "strukt/fs":"1.1.0",
-        "strukt/router":"v1.1.4-alpha",
+        "strukt/router":"v1.1.5-alpha",
         "symfony/http-foundation": "^4.3",
         "phplucidframe/console-table": "^1.2",
         "psy/psysh": "^v0.11.21",

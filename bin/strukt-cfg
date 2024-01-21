@@ -366,21 +366,6 @@ class Loader{
 }
 ');
 
-Strukt\Fs::touchWrite(".tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
-middlewares[] = auth
-middlewares[] = authz
-middlewares[] = except
-middlewares[] = xsess
-middlewares[] = sess
-middlewares[] = valid
-; middlewares[] = asset
-; middlewares[] = cors
-providers[] = facet
-providers[] = valid
-; providers[] = logger
-; providers[] = strukt.asset
-');
-
 Strukt\Fs::touchWrite("lib/App/Contract/AbstractCommand.php", '<?php
 
 namespace App\Contract;
@@ -582,14 +567,29 @@ class Validator extends ValidatorContract{
 }
 ');
 
+Strukt\Fs::touchWrite(".tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
+middlewares[] = auth
+middlewares[] = authz
+middlewares[] = except
+middlewares[] = xsess
+middlewares[] = sess
+middlewares[] = valid
+; middlewares[] = asset
+; middlewares[] = cors
+providers[] = facet
+providers[] = valid
+; providers[] = logger
+; providers[] = strukt.asset
+');
+
 Strukt\Fs::touchWrite("cfg/module.ini", '[folders]
-folder["ctr"] = "Controller"
-folder["rtr"] = "Router"
-folder["frm"] = "Form"
-folder["tes"] = "Tests"
-; folder["fix"] = "Fixture"
-; folder["rep"] = "Repository"
-; folder["sdr"] = "Seeder"
+ctr = Controller
+rtr = Router
+frm = Form
+tes = Tests
+; fix = Fixture
+; rep = Repository
+; sdr = Seeder
 ');
 
 Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
@@ -600,37 +600,46 @@ pkg-tests = PkgTests
 pkg-asset = PkgAsset
 ');
 
-Strukt\Fs::touchWrite("cfg/cmd.ini", 'pub-pak.title = Package Publisher
-pub-pak.cmd[] = package:publish
-pub-pak.cmd[] = package:ls
-pub-pak.cmd[] = package:info
-; pub-mak.title = Package Maker
-; pub-mak.cmd[] = package:make
-; pub-mak.cmd[] = package:add
-; pub-mak.cmd[] = package:copy
-; pub-mak.cmd[] = package:export
-; pkg-tests.title = PhpUnit Testing
-; pkg-tests.cmd[] = test:run
-; pkg-tests.cmd[] = test:ls
-; pkg-roles.title = RBAC
-; pkg-roles.cmd[] = perm:add
-; pkg-roles.cmd[] = role:add
-; pkg-roles.cmd[] = role:add:perm
-; pkg-roles.cmd[] = user:add
-; pkg-roles.cmd[] = user:dumpcred
-; pkg-roles.cmd[] = user:reset
-; pkg-book.title = Ledger
-; pkg-book.cmd[] = period:make   
-; pkg-book.cmd[] = make:trx-alloc     
-; pkg-db.title = Database
-; pkg-db.cmd[] = model:make   
-; pkg-db.cmd[] = db:make-models       
-; pkg-db.cmd[] = db:make
-; pkg-db.cmd[] = db:seed 
-; pkg-db.cmd[] = db:wipe 
-; pkg-asset.title = Asset
+Strukt\Fs::touchWrite("cfg/cmd.ini", '[pub-pak]
+title = Package Publisher
+cmd[] = package:publish
+cmd[] = package:ls
+cmd[] = package:info
+; [pub-mak]
+; title = Package Maker
+; cmd[] = package:make
+; cmd[] = package:add
+; cmd[] = package:copy
+; cmd[] = package:export
+; [pkg-tests]
+; title = PhpUnit Testing
+; cmd[] = test:run
+; cmd[] = test:ls
+; [pkg-roles]
+; title = RBAC
+; cmd[] = perm:add
+; cmd[] = role:add
+; cmd[] = role:add:perm
+; cmd[] = user:add
+; cmd[] = user:dumpcred
+; cmd[] = user:reset
+; [pkg-book]
+; title = Ledger
+; cmd[] = period:make   
+; cmd[] = make:trx-alloc     
+; [pkg-db]
+; title = Database
+; cmd[] = model:make   
+; cmd[] = db:make-models       
+; cmd[] = db:make
+; cmd[] = db:seed 
+; cmd[] = db:wipe 
+; [pkg-asset]
+; title = Asset
 ; pkg-asset.cmd[] = md:html
 ');
+
+Strukt\Fs::touchWrite("cfg/cache.ini", 'disable = true');
 
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 

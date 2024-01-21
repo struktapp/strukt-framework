@@ -32,7 +32,7 @@ class Application{
 				$module_class) = explode("\\", $ns);
 
 		$base_ns = str($app_name)->concat("\\")->concat($module_name)->yield();
-		$facets = array_flip(config("module.folder"));
+		$facets = array_flip(config("module.folders"));
 		$alias = str($alias)->toLower()->yield();
 
 		$route_nss = arr(Fs::lsr($dir))->each(function($k, $v) use($dir, $base_ns, $facets, $alias, $module_class){

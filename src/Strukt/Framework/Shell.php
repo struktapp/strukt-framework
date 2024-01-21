@@ -15,7 +15,7 @@ use Strukt\Framework\Console\Command\RouteList;
 use Strukt\Framework\Console\Command\ShellExec;
 use Strukt\Framework\Console\Command\SysUtil;
 use Strukt\Framework\Console\Command\SysList;
-use Strukt\Framework\Console\Command\CacheMake;
+use Strukt\Framework\Console\Command\CacheClear;
 
 /**
 * Console Loader
@@ -44,7 +44,8 @@ class Shell extends \Strukt\Console\Application{
 			$this->add(new ShellExec);
 			$this->add(new SysUtil);
 			$this->add(new SysList);
-			// $this->add(new CacheMake);
+			$this->addCmdSect("\nCache");
+			$this->add(new CacheClear);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");
@@ -58,10 +59,14 @@ class Shell extends \Strukt\Console\Application{
 				$cls[$alias] = $cmd;
 			}
 
-			$cmds = arr(array_flip(config("cmd")->getKeys()))->each(function($k,$v){
+			// dd(config("cmd"));
 
-				return config(sprintf("cmd.%s*", $k));
+			$cmds = arr(array_flip(config("cmd")->keys()))->each(function($k,$v){
+
+				return config(sprintf("cmd.%s", $k));
 			});
+
+			// dd($cmds, $cls);
 
 			foreach($cmds->yield() as $key => $val){
 
