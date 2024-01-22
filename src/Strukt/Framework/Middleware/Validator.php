@@ -29,15 +29,12 @@ class Validator implements MiddlewareInterface{
 
 		$route = reg("route.current");
 		$configs = reg("route.configs");
-
-		// dd(reg("route.configs"));
-		// dd(reg("@strukt.permissions"));
 		
 		$name = sprintf("type:route|path:%s|action:%s", $route, $request->getMethod());
 
-		if(array_key_exists($name, $configs)){
-		
-			$tokq = token($configs[$name]);
+		if($configs->exists($name)){
+
+			$tokq = token($configs->get($name));
 
 			if($tokq->has("form")){	
 

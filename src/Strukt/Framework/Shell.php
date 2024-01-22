@@ -63,7 +63,7 @@ class Shell extends \Strukt\Console\Application{
 
 			$cmds = arr(array_flip(config("cmd")->keys()))->each(function($k,$v){
 
-				return config(sprintf("cmd.%s", $k));
+				return config(sprintf("cmd.%s*", $k));
 			});
 
 			// dd($cmds, $cls);
