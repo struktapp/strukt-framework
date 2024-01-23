@@ -639,7 +639,7 @@ cmd[] = package:info
 ; pkg-asset.cmd[] = md:html
 ');
 
-Strukt\Fs::touchWrite("cfg/cache.ini", 'disable = true');
+Strukt\Fs::touchWrite("cfg/cache.ini", 'disable = false');
 
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 

@@ -24,7 +24,10 @@ class RouteList extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$routes = arr(reg("route.configs"))->each(function($route, $permission){
+		$configs = reg("route.configs");
+		$configs = arr(array_flip($configs->keys()))->each(fn($k,$v)=>$configs->get($k));
+
+		$routes = $configs->each(function($route, $permission){
 
 			$route = token($route);
 			$permission = token($permission);
