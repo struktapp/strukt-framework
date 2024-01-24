@@ -45,8 +45,10 @@ class AppMake extends \Strukt\Console\Command{
 						->concat($authmod_name);
 
 		$fsRead->mkdir($authmod_dir->yield());
-		$mod_ini = $fsRead->ini($mod_ini_path);
-		arr($mod_ini["folder"])->each(function($k, $folder) use($authmod_dir, $fsWrite){
+		// $mod_ini = $fsRead->ini($mod_ini_path);
+		// dd($mod_ini);
+		// dd();
+		arr(config("module.folders*"))->each(function($k, $folder) use($authmod_dir, $fsWrite){
 
 			$fsWrite->mkdir($authmod_dir->concat(sprintf("/%s", $folder))->yield());
 		});
