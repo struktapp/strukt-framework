@@ -15,6 +15,7 @@ use Strukt\Framework\Console\Command\RouteList;
 use Strukt\Framework\Console\Command\ShellExec;
 use Strukt\Framework\Console\Command\SysUtil;
 use Strukt\Framework\Console\Command\SysList;
+use Strukt\Framework\Console\Command\CacheMake;
 use Strukt\Framework\Console\Command\CacheClear;
 
 /**
@@ -45,6 +46,7 @@ class Shell extends \Strukt\Console\Application{
 			$this->add(new SysUtil);
 			$this->add(new SysList);
 			$this->addCmdSect("\nCache");
+			$this->add(new CacheMake);
 			$this->add(new CacheClear);
 
 			$config = new \Strukt\Framework\Configuration();
