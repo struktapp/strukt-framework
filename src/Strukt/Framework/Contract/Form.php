@@ -48,11 +48,26 @@ abstract class Form{
 	*/
 	public function validate(){
 
-		$rValdInj = new InjectableValidator(new \ReflectionClass($this));
+		$helper = new class(){use \Strukt\Traits\Collection{
+
+			disassemble as public toArray;
+		}};
+
+		$configs = [];
+		if(cache("validator")->empty() || !cache("validator")->exists(get_called_class())){
+
+			$rValdInj = new InjectableValidator(new \ReflectionClass($this));
+			$configs = $rValdInj->getConfigs();
+
+			cache("validator")->put(get_called_class(), $configs)->save();
+		}
+
+		if(empty($configs))
+			$configs = $helper->toArray(cache("validator")->get(get_called_class()));
 
 		$factory = event("provider.validator")->exec();
 
-		foreach($rValdInj->getConfigs() as $key=>$props){
+		foreach($configs as $key=>$props){
 
 			$service = $factory->getNew($this->get($key));
 

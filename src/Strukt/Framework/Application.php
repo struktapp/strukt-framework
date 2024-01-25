@@ -74,27 +74,35 @@ class Application{
 		reg("nr.modules", $this->modules);
 
 		$configs = [];
-		arr($this->aliases)->each(function($key, $alias) use(&$configs){
+		if(cache("router")->empty()){
 
-			arr(reg(sprintf("nr.routes.%s", $alias)))->each(function($key, $class) use(&$configs, $alias){
+			arr($this->aliases)->each(function($key, $alias) use(&$configs){
 
-				$inj_rtr = new InjectableRouter(new \ReflectionClass($class));
-				arr($inj_rtr->getConfigs())->each(function($key, $config) use(&$configs, $alias){
+				arr(reg(sprintf("nr.routes.%s", $alias)))->each(function($key, $class) use(&$configs, $alias){
 
-					$configs[] = array(
+					$inj_rtr = new InjectableRouter(new \ReflectionClass($class));
+					arr($inj_rtr->getConfigs())->each(function($key, $config) use(&$configs, $alias){
 
-						"action"=>$config["http.method"],
-						"route"=>$config["route.path"],
-						"class"=>$config["ref.class"],
-						"callable"=>$config["ref.method"],
-						"permissions"=>$config["route.perm"],
-						"form"=>$config["route.form"],
-						"middlewares"=>$config["route.middlewares"],
-						"module"=>$alias
-					);
+						$configs[] = array(
+
+							"action"=>$config["http.method"],
+							"route"=>$config["route.path"],
+							"class"=>$config["ref.class"],
+							"callable"=>$config["ref.method"],
+							"permissions"=>$config["route.perm"],
+							"form"=>$config["route.form"],
+							"middlewares"=>$config["route.middlewares"],
+							"module"=>$alias
+						);
+					});
 				});
 			});
-		});
+
+			cache("router")->put("configs", $configs)->save();
+		}
+
+		if(empty($configs))
+			$configs = cache("router")->get("configs");
 
 		foreach($configs as $config){
 
