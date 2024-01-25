@@ -1,6 +1,8 @@
 <?php
 
-if(!function_exists("repos")){
+helper("framework");
+
+if(helper_add("repos")){
 
 	function repos(string $type = null){
 
@@ -11,7 +13,7 @@ if(!function_exists("repos")){
 	}
 }
 
-if(!function_exists("ddd")){
+if(helper_add("ddd")){
 
 	// ini_set("xdebug.var_display_max_depth", 10);
 
