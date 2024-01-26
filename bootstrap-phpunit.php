@@ -13,3 +13,6 @@ $loader->add($cfg_app["app-name"], __DIR__.'/app/src/');
 
 Env::withFile();
 Env::set("root_dir", getcwd());
+config("app.type", "App:Idx");
+reg("config.cache")->remove("disable");
+reg("config.cache.disable", true);

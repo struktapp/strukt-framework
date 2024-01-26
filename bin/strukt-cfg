@@ -728,13 +728,13 @@ use Strukt\Traits\ClassHelper;
 
 class Injectable{
 
-	use ClassHelper;
+	// use ClassHelper;
 
 	/**
 	 * @Package(core)
 	 * @Inject(permissions)
 	 */
-	public function getPkgCorePermissions(SessionInterface $session){
+	public function getPermissions(SessionInterface $session){
 
 		// $permissions["permissions"] = [];
 		$permissions = [];
@@ -753,7 +753,7 @@ class Injectable{
 	 * @Package(core)
 	 * @Inject(verify)
 	 */
-	public function getPkgCoreVerify(SessionInterface $session):UserInterface{
+	public function toVerify(SessionInterface $session):UserInterface{
 
 		$user = new \Strukt\User();
 		$user->setUsername($session->get("username"));
@@ -765,7 +765,7 @@ class Injectable{
 	 * @Package(core)
 	 * @Inject(session)
 	 */
-	public function getPkgCoreSession():SessionInterface{
+	public function getSession():SessionInterface{
 
 		if(config("app.type") == "App:Cli")
 			return new XSession;
