@@ -784,7 +784,8 @@ use Strukt\Framework\Configuration;
 
 $loader = require "bootstrap.php";
 
-Env::set("json.validation.err", true);
+env("json_validation_err", true);
+env("res_send_headers", false);
 config("app.type","App:Cli");
 
 $kernel = new App\Kernel(new Configuration());
@@ -807,7 +808,8 @@ use Strukt\Framework\Configuration;
 
 require "bootstrap.php";
 
-Env::set("json.validation.err", false);
+env("json_validation_err", true);
+env("res_send_headers", true);
 config("app.type","App:Idx");
 
 $kernel = new App\Kernel(new Configuration());

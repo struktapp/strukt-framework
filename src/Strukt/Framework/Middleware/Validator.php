@@ -24,7 +24,7 @@ class Validator implements MiddlewareInterface{
 		$action = $request->getMethod(); 
 
 		$headers = [];
-		if(env("json.validation.err"))
+		if(env("json_validation_err"))
 			$headers = ["Content-Type"=>"application/json"];
 
 		$route = reg("route.current");

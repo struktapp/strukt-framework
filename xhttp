@@ -99,7 +99,7 @@ $_REQUEST = $_POST = $params;
 
 // Env::withFile();
 // Env::set("root_dir", getcwd());
-Env::set("json.validation.err", true);
+Env::set("json_validation_err", true);
 
 config("app.type","App:Cli");
 // Repos::available();
