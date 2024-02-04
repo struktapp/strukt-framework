@@ -16,28 +16,30 @@ Rarely should anyone use this on its own.
 
 ```sh
 echo {"minimum-stability":"dev"} > composer.json
-composer require "strukt/framework:1.1.5-alpha" --prefer-dist
+composer require "strukt/framework:1.1.7-alpha" --prefer-dist
 ```
 
 # Setup, Configuration & Environment
 
+## Shell
+
+Drop into shell
+
+```sh
+./xcli shell:exec
+```
+
 ## Setting Application Type
 
 ```php
-use Strukt\Framework\App as FrameworkApp;
-
-FrameworkApp::create($type); //Can only be "App:Idx" for web or "App:Cli" for command line
-FrameworkApp::getType(); //get application type
-FrameworkApp::getConfig();// Strukt\Framework\Configuration
+config("app.type", "App:Idx")// for index.php, alternative App:Cli for console
 ```
 
 ## Configuration
 
 ```php
-$cfg = new Strukt\Framework\Configuration();
-$cfg->getInjectables();//Get package configurations from App\Injectables
-$cfg->getSetup();//Already called in instance above
-$cfg->get($type);//Configuration type "providers", "middlewares" or "commands"
+config("facet.middlewares")
+config("facet.providers")
 ```
 
 ## Environment Setup
@@ -55,41 +57,13 @@ Strukt\Env::get("root_dir");
 
 File location `./cfg/repo.ini`
 
-```ini
-core = Core # Default in built package for default middlewares and providers
-pkg-do = PkgDo # https://github.com/samweru/pkg-do
-pkg-roles = PkgRoles # https://github.com/samweru/pkg-roles
-pkg-audit = PkgAudit # https://github.com/samweru/pkg-audit
-pkg-books = PkgBooks # https://github.com/samweru/pkg-books
-pkg-tests = PkgTests # https://github.com/samweru/pkg-tests
-pkg-asset = PkgAsset # https://github.com/samweru/pkg-asset
-```
-Repo packages load and list.
-
 ```php
-FrameworkApp::mayBeRepo(); //Load repo names
-FrameworkApp::getRepo(); //Get loaded repo names
-```
-
-## Some Application Methods
-
-```php
-// The line below sets up namespace with the application name
-//	the ns will translate into Payroll\AuthModule\Command\PermissionAdd
-//	if your app's name is payroll
-$cls = FrameworkApp::newCls("{{app}}\AuthModule\Command\PermissionAdd");
-
-//Get app_name from cfg/app.ini file
-$app_name = FrameworkApp::getName(); //payroll
+repos(); //list all repositories
+repos("published");//list all published strukt packages
+repos("installed");//list all installed strukt packages
 ```
 
 # Packages
-
-```php
-//Get installed and published packages
-FrameworkApp::packages("installed"); 
-FrameworkApp::packages("published"); 
-```
 
 ## Default Package
 
@@ -203,20 +177,11 @@ class User extends \Strukt\Contract\Form{
 
 ## Adding Validators
 
-New validators can be added is in your `lib/App/Validator/Extra.php`
-There you can find an example `App\Validator\Extra::isLenGt`
+New validators can be added is in your `lib/App/Validator.php`
+There you can find an example `App\Validator::isLenGt`
 
 ```php
 /**
 * @IsLenGt(10)
 */
-```
-
-# Notes
-
-Somes notable mentions that can be explored via repl `./console shell:exec` console.
-
-```php
-$reg->get("strukt.router")
-$reg->get("module-list")
 ```
