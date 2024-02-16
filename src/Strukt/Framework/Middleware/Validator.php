@@ -49,7 +49,7 @@ class Validator implements MiddlewareInterface{
 
 				$messages = \Strukt\Ref::create($class)->makeArgs([$request])->method("validate")->invoke();
 				if(!$messages["success"])
-					$response = new BadRequest(json($messages)->encode(), $headers);
+					$response = new BadRequest($messages, $headers);
 			}
 		}
 	
