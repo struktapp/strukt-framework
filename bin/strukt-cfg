@@ -10,27 +10,59 @@ foreach($autoloadFiles as $autoloadFile)
     if(file_exists($autoloadFile))
         require_once $autoloadFile;
 
-Strukt\Fs::rmdir('app');
-Strukt\Fs::rmdir('lib/App');
-Strukt\Fs::rmdir('cfg');
-Strukt\Fs::rmdir('.tpl');
-Strukt\Fs::rm('.env');
-Strukt\Fs::rm('bootstrap.php');
-Strukt\Fs::rm('index.php');
-Strukt\Fs::rm('xcli');
+echo "\n";
 
-Strukt\Fs::mkdir("cfg");
-Strukt\Fs::mkdir(".tpl/sgf/cfg");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Form");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Router");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Tests");
-Strukt\Fs::mkdir(".tpl/sgf/lib/App");
-Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
-Strukt\Fs::mkdir("lib/App/Contract");
-Strukt\Fs::mkdir("lib/App/Middleware");
-Strukt\Fs::mkdir("lib/App/Provider");
+$match = [
+	"tpl-auth",
+	"tpl-middleware",
+	"tpl-provider",
+	"tpl-package",
+	"tpl-loader",
+	"tpl-cfg",
+	"tpl-pkg",
+	"app",
+	"all"
+];
 
+$arg1 = $argv[1]??"all";
+
+$which = [];
+if($arg1 == "all")
+	$which = array_merge($which, $match);
+
+if(empty($which))
+	if(in_array($arg1, $match))
+		$which[] = $arg1;
+
+if(empty($which) || !in_array($arg1, $which))
+	new Exception("Invalid argument!");
+
+$has = fn($needle, $message)=>print_r(in_array($needle, $which)?" - ".$message."\n":"")?in_array($needle, $which):false;
+
+if($has("all", "remove directory .tpl"))Strukt\Fs::rmdir('.tpl');
+if($has("app", "remove directory app"))Strukt\Fs::rmdir('app');
+if($has("app", "remove directory lib/App"))Strukt\Fs::rmdir('lib/App');
+if($has("app", "remove directory cfg"))Strukt\Fs::rmdir('cfg');
+if($has("app", "remove .env"))Strukt\Fs::rm('.env');
+if($has("app", "remove bootstrap.php"))Strukt\Fs::rm('bootstrap.php');
+if($has("app", "remove index.php"))Strukt\Fs::rm('index.php');
+if($has("app", "remove xcli"))Strukt\Fs::rm('xcli');
+
+if($has("app", "make directory cfg"))Strukt\Fs::mkdir("cfg");
+if($has("tpl-cfg", "make directory tpl"))Strukt\Fs::mkdir(".tpl/sgf/cfg");
+if($has("tpl-auth", "make directory tpl|AuthModule/Controller"))
+	Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
+if($has("tpl-auth", "make directory tpl|AuthModule/Form"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Form");
+if($has("tpl-auth", "make directory tpl|AuthModule/Router"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Router");
+if($has("tpl-auth", "make directory tpl|AuthModule/Tests"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Tests");
+if($has("tpl-middleware", "make directory tpl|App/Middleware"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Middleware");
+if($has("tpl-provider", "make directory tpl|App/Provider"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Provider");
+if($has("tpl-pkg", "make directory tpl|Strukt/Pakcage"))Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
+if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Contract");
+if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
+if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
+
+if($has("tpl-auth", "create file tpl|AuthModule/Controller/User.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Controller/User.sgf", '<?php
 namespace {{app}}\AuthModule\Controller;
 
@@ -55,6 +87,7 @@ class User extends \Strukt\Framework\Contract\Controller{
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/Form/User.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Form/User.sgf", '<?php
 namespace {{app}}\AuthModule\Form;
 
@@ -73,6 +106,8 @@ class User extends \Strukt\Framework\Contract\Form{
 }
 ');
 
+
+if($has("tpl-auth", "create file tpl|model|App/User.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/User.sgf", '<?php
 namespace {{app}};
 
@@ -90,6 +125,7 @@ class User extends \Strukt\Entity{
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/Router/Auth.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf", '<?php
 
 namespace {{app}}\AuthModule\Router;
@@ -153,6 +189,7 @@ class Auth extends \Strukt\Framework\Contract\Router{
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/Router/Index.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Index.sgf", '<?php
 namespace {{app}}\AuthModule\Router;
 
@@ -222,6 +259,7 @@ class Index extends \Strukt\Framework\Contract\Router{
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/_AuthModule.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf", '<?php
 namespace {{app}}\AuthModule;
 
@@ -231,6 +269,7 @@ class {{app}}AuthModule extends \Strukt\Framework\Contract\Module{
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/Tests/UserTest.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
 namespace {{app}}\AuthModule\Tests;
 
@@ -257,6 +296,7 @@ class UserTest extends TestCase{
 }
 ');
 
+if($has("tpl-pkg", "create file tpl|Package/Pkg_.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/src/Strukt/Package/Pkg_.sgf", '<?php
 
 namespace Strukt\Package;
@@ -327,6 +367,54 @@ class Pkg{{name}} implements \Strukt\Framework\Contract\Package{
 }
 ');
 
+if($has("tpl-provider", "create file tpl|Provider/Provider.sgf"))
+Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Provider/Provider.sgf", '<?php
+
+namespace App\Provider;
+
+use Strukt\Contract\ProviderInterface;
+
+/**
+* @Name({{name}})
+*/
+class {{class_name}} implements ProviderInterface{
+
+	use \Strukt\Traits\FacetHelper;
+
+	public function __construct(){
+
+		//
+	}
+}
+');
+
+if($has("tpl-middleware", "create file tpl|Middleware/Middleware.sgf"))
+Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Middleware/Middleware.sgf", '<?php
+
+namespace App\Middleware;
+
+use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
+
+/**
+* @Name({{name}})
+*/
+class {{class_name}} implements MiddlewareInterface{
+
+	public function __construct(){
+
+		//
+	}
+
+	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
+
+		return $next($request, $response);
+	}
+}
+');
+
+if($has("tpl-loader", "create file tpl|App/Loader.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Loader.sgf", '<?php
 namespace App;
 
@@ -366,6 +454,7 @@ class Loader{
 }
 ');
 
+if($has("app", "create file App/Contract/AbstractCommand.php"))
 Strukt\Fs::touchWrite("lib/App/Contract/AbstractCommand.php", '<?php
 
 namespace App\Contract;
@@ -376,6 +465,7 @@ abstract class AbstractCommand extends \Strukt\Console\Command{
 }
 ');
 
+if($has("app", "create file App/Middleware/Cors.php"))
 Strukt\Fs::touchWrite("lib/App/Middleware/Cors.php", '<?php
 
 namespace App\Middleware;
@@ -405,6 +495,7 @@ class Cors implements MiddlewareInterface{
 }
 ');
 
+if($has("app", "create file App/Middleware/XSession.php"))
 Strukt\Fs::touchWrite("lib/App/Middleware/XSession.php", '<?php
 
 namespace App\Middleware;
@@ -448,6 +539,7 @@ class XSession implements MiddlewareInterface{
 }
 ');
 
+if($has("app", "create file App/Provider/Facet.php"))
 Strukt\Fs::touchWrite("lib/App/Provider/Facet.php",'<?php
 
 namespace App\Provider;
@@ -488,6 +580,7 @@ class Facet implements ProviderInterface{
 }
 ');
 
+if($has("app", "create file App/Provider/Logger.php"))
 Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
 
 namespace App\Provider;
@@ -538,6 +631,7 @@ class Logger implements ProviderInterface{
 }
 ');
 
+if($has("app", "create file App/Validator.php"))
 Strukt\Fs::touchWrite("lib/App/Validator.php", '<?php
 
 namespace App;
@@ -567,6 +661,7 @@ class Validator extends ValidatorContract{
 }
 ');
 
+if($has("tpl-cfg", "create file tpl|cfg/app.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
 middlewares[] = auth
 middlewares[] = authz
@@ -582,6 +677,7 @@ providers[] = valid
 ; providers[] = strukt.asset
 ');
 
+if($has("app", "create file cfg/module.ini"))
 Strukt\Fs::touchWrite("cfg/module.ini", '[folders]
 ctr = Controller
 rtr = Router
@@ -592,6 +688,7 @@ tes = Tests
 ; sdr = Seeder
 ');
 
+if($has("app", "create file cfg/repo.ini"))
 Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
 pkg-auth = PkgAuth
 pkg-db = PkgDb
@@ -600,6 +697,7 @@ pkg-tests = PkgTests
 pkg-asset = PkgAsset
 ');
 
+if($has("app", "create file cfg/cmd.ini"))
 Strukt\Fs::touchWrite("cfg/cmd.ini", '[pub-pak]
 title = Package Publisher
 cmd[] = package:publish
@@ -639,8 +737,10 @@ cmd[] = package:info
 ; pkg-asset.cmd[] = md:html
 ');
 
+if($has("app", "create file cfg/cache.ini"))
 Strukt\Fs::touchWrite("cfg/cache.ini", 'disable = false');
 
+if($has("app", "create file App/Kernel.php"))
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 
 namespace App;
@@ -713,6 +813,7 @@ class Kernel{
 }
 ');
 
+if($has("app", "create file App/Injectable.php"))
 Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
 
 namespace App;
@@ -775,6 +876,7 @@ class Injectable{
 }
 ');
 
+if($has("app", "create file xcli"))
 Strukt\Fs::touchWrite("xcli", '#!/usr/bin/php
 <?php
 
@@ -801,6 +903,7 @@ $sh = new Shell();
 exit($sh->run($_SERVER["argv"]));
 ');
 
+if($has("app", "create file index.php"))
 Strukt\Fs::touchWrite("index.php", '<?php
 
 use Strukt\Env;
@@ -816,6 +919,7 @@ $kernel = new App\Kernel(new Configuration());
 exit($kernel->run());
 ');
 
+if($has("app", "create file bootstrap.php"))
 Strukt\Fs::touchWrite("bootstrap.php", '<?php
 
 use Strukt\Env;
@@ -846,6 +950,7 @@ $loader->add(sprintf("%s\\\", config("app.name")), __DIR__."/app/src/");
 return $loader;
 ');
 
+if($has("app", "create file .env"))
 Strukt\Fs::touchWrite(".env", 'authmod_name = AuthModule
 rel_appsrc = app'.DS.'src
 rel_tplsgf_dir = .tpl'.DS.'sgf
@@ -856,6 +961,8 @@ rel_apptpl_ini = .tpl'.DS.'sgf'.DS.'cfg'.DS.'app.sgf
 tpt_appcfg = app.sgf
 
 rel_loader_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
+rel_mdl_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Middleware'.DS.'Middleware.sgf
+rel_prv_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Provider'.DS.'Provider.sgf
 rel_app_lib = lib'.DS.'App
 rel_static_dir = public'.DS.'static
 
@@ -883,3 +990,5 @@ serve_file = index.php
 ');
 
 chmod('./xcli', 0755);
+
+printf("\nStrukt Config Booted.\n");

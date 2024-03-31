@@ -9,6 +9,8 @@ use Strukt\Console\DocBlockParser;
 use Strukt\Framework\Console\Command\AppMake;
 use Strukt\Framework\Console\Command\AppReload;
 use Strukt\Framework\Console\Command\AppExec;
+use Strukt\Framework\Console\Command\MiddlewareMake;
+use Strukt\Framework\Console\Command\ProviderMake;
 use Strukt\Framework\Console\Command\RouteMake;
 use Strukt\Framework\Console\Command\ModuleMake;
 use Strukt\Framework\Console\Command\RouteList;
@@ -39,6 +41,8 @@ class Shell extends \Strukt\Console\Application{
 			$this->add(new AppMake);
 			$this->add(new AppReload);
 			$this->add(new AppExec);
+			$this->add(new MiddlewareMake);
+			$this->add(new ProviderMake);
 			$this->add(new RouteMake);
 			$this->add(new RouteList);
 			$this->add(new ModuleMake);

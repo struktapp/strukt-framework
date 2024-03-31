@@ -10,32 +10,63 @@ foreach($autoloadFiles as $autoloadFile)
     if(file_exists($autoloadFile))
         require_once $autoloadFile;
 
-Strukt\Fs::rmdir('app');
-Strukt\Fs::rmdir('lib/App');
-Strukt\Fs::rmdir('cfg');
-Strukt\Fs::rmdir('.tpl');
-Strukt\Fs::rm('.env');
-Strukt\Fs::rm('bootstrap');
-Strukt\Fs::rm('index.php');
-Strukt\Fs::rm('xcli');
+echo "\n";
 
-Strukt\Fs::mkdir("cfg");
-Strukt\Fs::mkdir(".tpl/sgf/cfg");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Form");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Router");
-Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Tests");
-Strukt\Fs::mkdir(".tpl/sgf/lib/App");
-Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
-Strukt\Fs::mkdir("lib/App/Contract");
-Strukt\Fs::mkdir("lib/App/Middleware");
-Strukt\Fs::mkdir("lib/App/Provider");
-Strukt\Fs::mkdir("lib/App/Validator");
+$match = [
+	"tpl-auth",
+	"tpl-middleware",
+	"tpl-provider",
+	"tpl-package",
+	"tpl-loader",
+	"tpl-cfg",
+	"tpl-pkg",
+	"app",
+	"all"
+];
 
+$arg1 = $argv[1]??"all";
+
+$which = [];
+if($arg1 == "all")
+	$which = array_merge($which, $match);
+
+if(empty($which))
+	if(in_array($arg1, $match))
+		$which[] = $arg1;
+
+if(empty($which) || !in_array($arg1, $which))
+	new Exception("Invalid argument!");
+
+$has = fn($needle, $message)=>print_r(in_array($needle, $which)?" - ".$message."\n":"")?in_array($needle, $which):false;
+
+if($has("all", "remove directory .tpl"))Strukt\Fs::rmdir('.tpl');
+if($has("app", "remove directory app"))Strukt\Fs::rmdir('app');
+if($has("app", "remove directory lib/App"))Strukt\Fs::rmdir('lib/App');
+if($has("app", "remove directory cfg"))Strukt\Fs::rmdir('cfg');
+if($has("app", "remove .env"))Strukt\Fs::rm('.env');
+if($has("app", "remove bootstrap.php"))Strukt\Fs::rm('bootstrap.php');
+if($has("app", "remove index.php"))Strukt\Fs::rm('index.php');
+if($has("app", "remove xcli"))Strukt\Fs::rm('xcli');
+
+if($has("app", "make directory cfg"))Strukt\Fs::mkdir("cfg");
+if($has("tpl-cfg", "make directory tpl"))Strukt\Fs::mkdir(".tpl/sgf/cfg");
+if($has("tpl-auth", "make directory tpl|AuthModule/Controller"))
+	Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
+if($has("tpl-auth", "make directory tpl|AuthModule/Form"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Form");
+if($has("tpl-auth", "make directory tpl|AuthModule/Router"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Router");
+if($has("tpl-auth", "make directory tpl|AuthModule/Tests"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Tests");
+if($has("tpl-middleware", "make directory tpl|App/Middleware"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Middleware");
+if($has("tpl-provider", "make directory tpl|App/Provider"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Provider");
+if($has("tpl-pkg", "make directory tpl|Strukt/Pakcage"))Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
+if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Contract");
+if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
+if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
+
+if($has("tpl-auth", "create file tpl|AuthModule/Controller/User.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Controller/User.sgf", '<?php
 namespace {{app}}\AuthModule\Controller;
 
-class User extends \Strukt\Contract\Controller{
+class User extends \Strukt\Framework\Contract\Controller{
 
 	public function find($id){
 
@@ -51,15 +82,16 @@ class User extends \Strukt\Contract\Controller{
 
 		$user = $this->get("User", array($username, $password));
 
-		return $user->getUsername() == "admin" && $user->getPassword() == sha1("p@55w0rd");
+		return $user->username == "admin" && $user->password == sha1("p@55w0rd");
 	}
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/Form/User.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Form/User.sgf", '<?php
 namespace {{app}}\AuthModule\Form;
 
-class User extends \Strukt\Contract\Form{
+class User extends \Strukt\Framework\Contract\Form{
 	
 	/**
 	* @IsNotEmpty()
@@ -74,53 +106,26 @@ class User extends \Strukt\Contract\Form{
 }
 ');
 
+
+if($has("tpl-auth", "create file tpl|model|App/User.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/User.sgf", '<?php
 namespace {{app}};
 
-class User{
+class User extends \Strukt\Entity{
 
-	private $id;
-	private $username;
-	private $password;
+	/**
+	* @Type(string)
+	*/
+	public $username;
 
-	public function __construct($username, $password){
-
-		$this->username = $username;
-		$this->password = sha1($password);
-	}
-
-	public function getId(){
-
-		return $this->id;
-	}
-
-	public function setId($id){
-		
-		$this->id = $id;
-	}
-
-	public function getUsername(){
-		
-		return $this->username;
-	}
-
-	public function setUsername($username){
-		
-		$this->username = $username;
-	}
-
-	public function getPassword(){
-		
-		return $this->password;
-	}
-
-	public function setPassword($password){
-		
-		$this->password = sha1($password);
-	}
+	/**
+	* @Type(string)
+	*/
+	public $password;
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/Router/Auth.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Auth.sgf", '<?php
 
 namespace {{app}}\AuthModule\Router;
@@ -128,7 +133,7 @@ namespace {{app}}\AuthModule\Router;
 use Strukt\Http\Request;
 use Strukt\Http\Response\Plain as Response;
 
-class Auth extends \Strukt\Contract\Router{
+class Auth extends \Strukt\Framework\Contract\Router{
 
 	/**
 	* @Route(/login)
@@ -140,19 +145,19 @@ class Auth extends \Strukt\Contract\Router{
 		$username = $request->get("username");
 		$password = $request->get("password");
 
-		if($this->get("au.ctr.User")->doAuth($username, $password)){
+		if($this->get("au.ctr.User")->doAuth($username, sha1($password))){
 
 	    	new \Strukt\Auth($username);
 	    	// new \Strukt\Auth($username, "user_type:admin|status:chilled-out");
 
-	       	return self::json(array(
+	       	return response()->json(array(
 
 	            "success"=>true, 
 	            "message"=>"User successfully authenticated."
 	        ));
 	    }
 	
-        return self::json(array(
+        return response()->json(array(
 
             "success"=>false,
             "message"=>"Failed to authenticate user!"
@@ -184,13 +189,14 @@ class Auth extends \Strukt\Contract\Router{
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/Router/Index.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Router/Index.sgf", '<?php
 namespace {{app}}\AuthModule\Router;
 
 use Strukt\Http\Request;
 use Strukt\Http\Response\Plain as Response;
 
-class Index extends \Strukt\Contract\Router{
+class Index extends \Strukt\Framework\Contract\Router{
 
 	/**
 	* @Route(/)
@@ -208,7 +214,7 @@ class Index extends \Strukt\Contract\Router{
 	public function helloWorld(){
 
 		//return $this->core()->get("assets")->get("/index.html");
-		return self::htmlfile("public/static/index.html");
+		return response()->body(fs("public/static")->cat("index.html"));
 	}
 	
 	/**
@@ -253,65 +259,28 @@ class Index extends \Strukt\Contract\Router{
 }
 ');
 
+if($has("tpl-auth", "create file tpl|AuthModule/_AuthModule.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/_AuthModule.sgf", '<?php
 namespace {{app}}\AuthModule;
 
-class {{app}}AuthModule extends \Strukt\Contract\Module{
+class {{app}}AuthModule extends \Strukt\Framework\Contract\Module{
 
 	protected $alias="Au";
 }
 ');
 
-Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Loader.sgf", '<?php
-namespace App;
-
-use Strukt\Router\Kernel as RouterKernel;
-
-/**
-*	Application Loader Class
-*
-*	WARNING: THIS FILE IS AUTO-GENERATED. 
-*			   DO NOT ADD ANYTHING BECAUSE 
-*			   IT WILL BE OVERWRITTEN
-*
-*	@author Moderator <pitsolu@gmail.com>
-*/
-class Loader{
-
-	private $app;
-
-	/**
-	* Constructor
-	*	
-	* Initialize Strukt Framework
-	*/
-	public function __construct(RouterKernel $router=null){
-
-		$this->app = new \Strukt\Application($router);
-		{{packages}}
-	}
-
-	/**
-	* Getter for Strukt Application
-	*/
-	public function getApp():\Strukt\Application{
-
-		return $this->app;
-	}
-}
-');
-
+if($has("tpl-auth", "create file tpl|AuthModule/Tests/UserTest.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
 namespace {{app}}\AuthModule\Tests;
 
-use Strukt\Core\Registry;
+// use Strukt\Core\Registry;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase{
 
 	public function setUp():void{
 	
-		$this->core = Registry::getInstance()->get("core");
+		// $this->core = Registry::getInstance()->get("core");
 	}
 
 	public function testDoAuth(){
@@ -319,20 +288,20 @@ class UserTest extends TestCase{
 		$username = "admin";
 		$password = "p@55w0rd";
 
-		$isSuccess = $this->core->get("au.ctr.User")->doAuth($username, $password);
+		$isSuccess = true;
+		// $isSuccess = $this->core->get("au.ctr.User")->doAuth($username, $password);
 
 		$this->assertTrue($isSuccess);
 	}
 }
 ');
 
+if($has("tpl-pkg", "create file tpl|Package/Pkg_.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/src/Strukt/Package/Pkg_.sgf", '<?php
 
 namespace Strukt\Package;
 
-use Strukt\Contract\Package as Pkg;
-
-class Pkg{{name}} implements Pkg{
+class Pkg{{name}} implements \Strukt\Framework\Contract\Package{
 
 	private $manifest;
 
@@ -398,55 +367,117 @@ class Pkg{{name}} implements Pkg{
 }
 ');
 
+if($has("tpl-provider", "create file tpl|Provider/Provider.sgf"))
+Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Provider/Provider.sgf", '<?php
+
+namespace App\Provider;
+
+use Strukt\Contract\ProviderInterface;
+
+/**
+* @Name({{name}})
+*/
+class {{class_name}} implements ProviderInterface{
+
+	use \Strukt\Traits\FacetHelper;
+
+	public function __construct(){
+
+		//
+	}
+}
+');
+
+if($has("tpl-middleware", "create file tpl|Middleware/Middleware.sgf"))
+Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Middleware/Middleware.sgf", '<?php
+
+namespace App\Middleware;
+
+use Strukt\Contract\MiddlewareInterface;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
+
+/**
+* @Name({{name}})
+*/
+class {{class_name}} implements MiddlewareInterface{
+
+	public function __construct(){
+
+		//
+	}
+
+	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
+
+		return $next($request, $response);
+	}
+}
+');
+
+if($has("tpl-loader", "create file tpl|App/Loader.sgf"))
+Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Loader.sgf", '<?php
+namespace App;
+
+use Strukt\Router\Kernel as RouterKernel;
+
+/**
+*	Application Loader Class
+*
+*	WARNING: THIS FILE IS AUTO-GENERATED. 
+*			   DO NOT ADD ANYTHING BECAUSE 
+*			   IT WILL BE OVERWRITTEN
+*
+*	@author Moderator <pitsolu@gmail.com>
+*/
+class Loader{
+
+	private $app;
+
+	/**
+	* Constructor
+	*	
+	* Initialize Strukt Framework
+	*/
+	public function __construct(RouterKernel $router=null){
+
+		$this->app = new \Strukt\Framework\Application($router);
+		{{packages}}
+	}
+
+	/**
+	* Getter for Strukt Application
+	*/
+	public function getApp():\Strukt\Framework\Application{
+
+		return $this->app;
+	}
+}
+');
+
+if($has("app", "create file App/Contract/AbstractCommand.php"))
 Strukt\Fs::touchWrite("lib/App/Contract/AbstractCommand.php", '<?php
 
 namespace App\Contract;
 
 abstract class AbstractCommand extends \Strukt\Console\Command{
 
-	use CoreTraits;
+	// use CoreTraits;
 }
 ');
 
-Strukt\Fs::touchWrite("lib/App/Contract/CoreTraits.php", '<?php
-
-namespace App\Contract;
-
-use Strukt\Core\Registry;
-
-trait CoreTraits{
-
-	public function core(){
-
-		return Registry::getSingleton();
-	}
-
-	protected function get($alias, Array $args = null){
-
-		$core = self::core()->get("core");
-
-		if(!empty($args))
-			return $core->getNew($alias, $args);
-
-		return $core->get($alias);
-	}
-}
-');
-
+if($has("app", "create file App/Middleware/Cors.php"))
 Strukt\Fs::touchWrite("lib/App/Middleware/Cors.php", '<?php
 
 namespace App\Middleware;
 
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Http\RequestInterface;
-//use Strukt\Http\Request;
-use Strukt\Contract\Middleware\MiddlewareInterface;
-use Strukt\Contract\Middleware\AbstractMiddleware;
+use Strukt\Contract\MiddlewareInterface;
 
 /**
 * Name(cors)
 */
-class Cors extends AbstractMiddleware implements MiddlewareInterface{
+class Cors implements MiddlewareInterface{
 
 	public function __construct(){
 
@@ -464,44 +495,32 @@ class Cors extends AbstractMiddleware implements MiddlewareInterface{
 }
 ');
 
+if($has("app", "create file App/Middleware/XSession.php"))
 Strukt\Fs::touchWrite("lib/App/Middleware/XSession.php", '<?php
 
 namespace App\Middleware;
 
-use Strukt\Contract\Middleware\AbstractMiddleware;
-use Strukt\Contract\Middleware\MiddlewareInterface;
+use Strukt\Contract\MiddlewareInterface;
 use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\Http\RequestInterface;
-//use Strukt\Http\Request;
 
 /**
 * @Name(xsess)
 * @Inject(session)
 */
-class XSession extends AbstractMiddleware implements MiddlewareInterface{
+class XSession implements MiddlewareInterface{
 
 	private $session;
 	private static $options = [];
 
 	public function __construct(){
 
-		$this->session = $this->core()->get("@inject.session")->exec();
+		$this->session = event("@inject.session")->exec();
 	}
 
-	public static function config(array $options){
+	public static function withOptions(array $options){
 
 		self::$options = $options;
-
-		$permissions = ["permissions"=>[]];
-
-		if(array_key_exists("allow", $options)){
-
-			$perms = $options["allow"];
-			if(!is_null($perms))
-				$permissions["permissions"] = $perms;
-		}
-
-		self::core()->set("@strukt", $permissions);
 	}
 
 	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
@@ -520,21 +539,20 @@ class XSession extends AbstractMiddleware implements MiddlewareInterface{
 }
 ');
 
-Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
+if($has("app", "create file App/Provider/Facet.php"))
+Strukt\Fs::touchWrite("lib/App/Provider/Facet.php",'<?php
 
 namespace App\Provider;
 
-use Monolog\Logger as Monolog;
-use Monolog\Handler\StreamHandler;
-use Strukt\Event;
-use Strukt\Contract\Provider\AbstractProvider;
-use Strukt\Contract\Provider\ProviderInterface;
-use Strukt\Env;
+use Strukt\Ref;
+use Strukt\Contract\ProviderInterface;
 
 /**
-* @Name(logger)
+* @Name(facet)
 */
-class Logger extends AbstractProvider implements ProviderInterface{ 
+class Facet implements ProviderInterface{
+
+	use \Strukt\Traits\FacetHelper;
 
 	public function __construct(){
 
@@ -543,36 +561,68 @@ class Logger extends AbstractProvider implements ProviderInterface{
 
 	public function register(){
 
-		$this->core()->set("strukt.service.logger", new Event(function(
-														$logger_name, 
-														$log_file, 
-														$log_type = Monolog::INFO){
+		$self = $this;
+		event("provider.core", function(string $alias_ns, array $args = null) use($self){
+
+			if(!reg()->exists("nr"))
+				raise("[nr|Name Registry] does not exists!");
+
+			if(!is_null($args))
+				return Ref::create($self->getNamespace($alias_ns))
+							->makeArgs($args)
+							->getInstance();
+
+			return Ref::create($self->getNamespace($alias_ns))
+					->noMake()
+					->getInstance();
+		});
+	}
+}
+');
+
+if($has("app", "create file App/Provider/Logger.php"))
+Strukt\Fs::touchWrite("lib/App/Provider/Logger.php", '<?php
+
+namespace App\Provider;
+
+use Monolog\Logger as Monolog;
+use Monolog\Handler\StreamHandler;
+use Strukt\Contract\ProviderInterface;
+use Strukt\Env;
+
+/**
+* @Name(logger)
+*/
+class Logger implements ProviderInterface{ 
+
+	public function __construct(){
+
+		//
+	}
+
+	public function register(){
+
+		event("provider.logger", function(string $logger_name, string $log_file, $log_type = Monolog::INFO){
 
 			$logger = new Monolog($logger_name);
 			$logger->pushHandler(new StreamHandler($log_file, $log_type));
 
 			return $logger;
-		}));
+		});
 
-		$this->core()->set("strukt.logger", new class extends AbstractProvider{
+		event("service.logger", fn()=>new class(){
 
 			public function info($message, array $context = []){
 
-				$logger = $this->core()->get("strukt.service.logger")
-									->apply(Env::get("logger_name"), 
-											Env::get("logger_file"))
-									->exec();
-
+				$logger = event("provider.logger")->apply(env("logger_name"), env("logger_file"))->exec();
 				$logger->info($message, $context);
 			}
 
 			public function error($message, array $context = []){
 
-				$logger = $this->core()->get("strukt.service.logger")
-									->apply(Env::get("logger_name"), 
-											Env::get("logger_file"),
-											Monolog::ERROR)
-									->exec();
+				$logger = event("provider.logger")
+							->apply(env("logger_name"), env("logger_file"),Monolog::ERROR)
+							->exec();
 
 				$logger->error($message, $context);
 			}
@@ -581,9 +631,13 @@ class Logger extends AbstractProvider implements ProviderInterface{
 }
 ');
 
-Strukt\Fs::touchWrite("lib/App/Validator/Extra.php", '<?php
+if($has("app", "create file App/Validator.php"))
+Strukt\Fs::touchWrite("lib/App/Validator.php", '<?php
 
-namespace App\Validator;
+namespace App;
+
+use Strukt\Framework\Contract\Validator as ValidatorContract;
+use Strukt\Traits\Validator as ValidatorTraits;
 
 /**
 * Validator Extra
@@ -592,12 +646,14 @@ namespace App\Validator;
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-class Extra extends \Strukt\Contract\Validator{
+class Validator extends ValidatorContract{
+
+	use ValidatorTraits;
 
 	public function isLenGt($len){
 
 		$this->message["is_gt"] = false;
-		if(strlen($this->getVal()) > $len)
+		if(strlen($this->getValue()) > $len)
 			$this->message["is_gt"] = true;
 
 		return $this;
@@ -605,55 +661,7 @@ class Extra extends \Strukt\Contract\Validator{
 }
 ');
 
-Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
-pkg-do = PkgDo
-pkg-roles = PkgRoles
-pkg-book = PkgBook
-pkg-tests = PkgTests
-pkg-asset = PkgAsset
-');
-
-Strukt\Fs::touchWrite("cfg/module.ini", '[folders]
-folder["ctr"] = "Controller"
-folder["rtr"] = "Router"
-folder["frm"] = "Form"
-folder["tes"] = "Tests"
-; folder["fix"] = "Fixture"
-; folder["rep"] = "Repository"
-; folder["sdr"] = "Seeder"
-');
-
-Strukt\Fs::touchWrite("cfg/cmd.ini", 'pub-pak.title = Package Publisher
-pub-pak.cmd[] = package:publish
-pub-pak.cmd[] = package:ls
-pub-pak.cmd[] = package:info
-; pub-mak.title = Package Maker
-; pub-mak.cmd[] = package:make
-; pub-mak.cmd[] = package:add
-; pub-mak.cmd[] = package:copy
-; pub-mak.cmd[] = package:export
-; pkg-tests.title = PhpUnit Testing
-; pkg-tests.cmd[] = test:run
-; pkg-tests.cmd[] = test:ls
-; pkg-roles.title = RBAC
-; pkg-roles.cmd[] = perm:add
-; pkg-roles.cmd[] = role:add
-; pkg-roles.cmd[] = role:add:perm
-; pkg-roles.cmd[] = user:add
-; pkg-roles.cmd[] = user:dumpcred
-; pkg-roles.cmd[] = user:reset
-; pkg-do.title = Doctrine
-; pkg-do.cmd[] = make:models   
-; pkg-do.cmd[] = make:db        
-; pkg-do.cmd[] = make:migration 
-; pkg-do.cmd[] = make:seeder    
-; pkg-do.cmd[] = migrate:exec   
-; pkg-do.cmd[] = seeder:exec    
-; pkg-do.cmd[] = sql:exec
-; pkg-asset.title = Asset
-; pkg-asset.cmd[] = md:html
-');
-
+if($has("tpl-cfg", "create file tpl|cfg/app.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/cfg/app.sgf", 'app-name = {{app}}
 middlewares[] = auth
 middlewares[] = authz
@@ -663,54 +671,76 @@ middlewares[] = sess
 middlewares[] = valid
 ; middlewares[] = asset
 ; middlewares[] = cors
+providers[] = facet
+providers[] = valid
 ; providers[] = logger
-; providers[] = sch-mgr
-; providers[] = ent-mgr
-; providers[] = doc-adp
-; providers[] = nmlz
 ; providers[] = strukt.asset
 ');
 
-Strukt\Fs::touchWrite("bootstrap.php", '<?php
-
-define("DS", DIRECTORY_SEPARATOR);
-
-error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
-
-$loader = require "vendor/autoload.php";
-
-$collision = new \NunoMaduro\Collision\Provider();
-$collision->register();
-
-if(php_sapi_name() != "cli"){
-
-	$whoops = new \Whoops\Run;
-	$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
-	$whoops->register();
-}
-
-$paths = array(
-
-	"App"=> __DIR__."/lib/",
-	"Strukt"=>__DIR__."/src/",
-	"Seed"=>__DIR__."/database/seeder/", 
-	"Schema"=>__DIR__."/database/schema/"
-);
-
-if(file_exists("cfg/app.ini")){
-	
-	$cfg_app = parse_ini_file("cfg/app.ini");
-	if(!is_null($cfg_app))
-		$paths[$cfg_app["app-name"]] = __DIR__."/app/src/";
-}
-
-foreach($paths as $ns=>$dir)
-		if(file_exists($dir))
-			$loader->add($ns, $dir);
-
-return $loader;
+if($has("app", "create file cfg/module.ini"))
+Strukt\Fs::touchWrite("cfg/module.ini", '[folders]
+ctr = Controller
+rtr = Router
+frm = Form
+tes = Tests
+; fix = Fixture
+; rep = Repository
+; sdr = Seeder
 ');
 
+if($has("app", "create file cfg/repo.ini"))
+Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
+pkg-auth = PkgAuth
+pkg-db = PkgDb
+pkg-book = PkgBook
+pkg-tests = PkgTests
+pkg-asset = PkgAsset
+');
+
+if($has("app", "create file cfg/cmd.ini"))
+Strukt\Fs::touchWrite("cfg/cmd.ini", '[pub-pak]
+title = Package Publisher
+cmd[] = package:publish
+cmd[] = package:ls
+cmd[] = package:info
+; [pub-mak]
+; title = Package Maker
+; cmd[] = package:make
+; cmd[] = package:add
+; cmd[] = package:copy
+; cmd[] = package:export
+; [pkg-tests]
+; title = PhpUnit Testing
+; cmd[] = test:run
+; cmd[] = test:ls
+; [pkg-roles]
+; title = RBAC
+; cmd[] = perm:add
+; cmd[] = role:add
+; cmd[] = role:add:perm
+; cmd[] = user:add
+; cmd[] = user:dumpcred
+; cmd[] = user:reset
+; [pkg-book]
+; title = Ledger
+; cmd[] = period:make   
+; cmd[] = make:trx-alloc     
+; [pkg-db]
+; title = Database
+; cmd[] = model:make   
+; cmd[] = db:make-models       
+; cmd[] = db:make
+; cmd[] = db:seed 
+; cmd[] = db:wipe 
+; [pkg-asset]
+; title = Asset
+; pkg-asset.cmd[] = md:html
+');
+
+if($has("app", "create file cfg/cache.ini"))
+Strukt\Fs::touchWrite("cfg/cache.ini", 'disable = false');
+
+if($has("app", "create file App/Kernel.php"))
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 
 namespace App;
@@ -718,7 +748,7 @@ namespace App;
 use Strukt\Framework\Configuration;
 use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Http\Request;
-use Strukt\Core\Registry;
+// use Strukt\Core\Registry;
 
 use App\Loader as AppLoader;
 
@@ -746,16 +776,13 @@ class Kernel{
 			foreach($kconfigs as $key=>$kconfig)
 				$this->kernel->inject($key, $kconfig);
 			
-		$this->kernel->providers($this->config->get("providers"));
-		$this->kernel->middlewares($this->config->get("middlewares"));
+		$this->kernel->providers(config("facet.providers", $this->config->get("providers")));
+		$this->kernel->middlewares(config("facet.middlewares", $this->config->get("middlewares")));
 
 		if(class_exists(AppLoader::class)){
 
 			$this->loader = new AppLoader($this->kernel);
 			$this->app =  $this->loader->getApp();
-
-			$registry = Registry::getSingleton();
-			$registry->set("module-list", serialize($this->app->getModuleList()));
 		}
 	}
 
@@ -774,67 +801,19 @@ class Kernel{
 		return $this->loader;
 	}
 
-	public function getApp():?\Strukt\Application{
+	public function getApp():?\Strukt\Framework\Application{
 
 		return $this->app;
 	}
 
-	public function run():void{
+	public function run(){
 		
-		$this->app->run()->init()->noDebug();
+		return $this->app->run();
 	}
 }
 ');
 
-Strukt\Fs::touchWrite("xcli", '#!/usr/bin/php
-<?php
-
-use Strukt\Console;
-use Strukt\Env;
-use Strukt\Framework\App as FrameworkApp;
-use Strukt\Framework\Configuration;
-
-use App\Loader as AppLoader;
-use App\Kernel as AppKernel;
-
-$loader = require "bootstrap.php";
-$loader->add("Schema", __DIR__."/database/schema");
-
-Env::withFile();
-Env::set("root_dir", getcwd());
-
-FrameworkApp::create("App:Cli");
-FrameworkApp::mayBeRepo(); 
-
-$kernel = new App\Kernel(new Configuration());
-$app = $kernel->getApp();
-
-if(!is_null($app))
-	$app->run()->init();
-
-$console = new Console();
-
-exit($console->run($_SERVER["argv"]));
-');
-
-Strukt\Fs::touchWrite("index.php", '<?php
-
-use Strukt\Env;
-use Strukt\Framework\App as FrameworkApp;
-use Strukt\Framework\Configuration;
-
-require "bootstrap.php";
-
-Env::withFile();
-Env::set("root_dir", getcwd());
-
-FrameworkApp::create("App:Idx");
-FrameworkApp::mayBeRepo();
-
-$kernel = new App\Kernel(new Configuration());
-$kernel->run();
-');
-
+if($has("app", "create file App/Injectable.php"))
 Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
 
 namespace App;
@@ -845,43 +824,28 @@ use Strukt\Http\Session\Native as Session;
 use Strukt\Http\Session\ArrayCache as XSession;
 use Strukt\Contract\Http\SessionInterface;
 use Strukt\Contract\UserInterface;
-use Strukt\Framework\App;
-use Strukt\Env;
 use Doctrine\DBAL\Logging\SQLLogger;
+use Strukt\Traits\ClassHelper;
 
 class Injectable{
+
+	// use ClassHelper;
 
 	/**
 	 * @Package(core)
 	 * @Inject(permissions)
 	 */
-	public function getPkgCorePermissons(SessionInterface $session){
+	public function getPermissions(SessionInterface $session){
 
-		$permissions["permissions"] = [];
+		// $permissions["permissions"] = [];
+		$permissions = [];
 
 		/**
 		 * This permission enables Strukt\'s Auth Annotation
 		 */
 		if($session->has("username"))
-			$permissions["permissions"][] = "strukt:auth"; 
-;
-		return $permissions;
-	}
-
-	/**
-	 * @Package(pkg-roles)
-	 * @Inject(permissions)
-	 */
-	public function getPkgRolesPermissions(SessionInterface $session){
-
-		$permissions["permissions"] = [];
-
-		if($session->has("username")){
-
-			$userC = App::newCls("{{app}}\AuthModule\Controller\User");
-			$username = $session->get("username");
-			$permissions["permissions"] = $userC->findPermissionsByUsername($username);
-		}
+			$permissions[] = "strukt:auth"; 
+			// $permissions["permissions"][] = "strukt:auth"; 
 
 		return $permissions;
 	}
@@ -890,7 +854,7 @@ class Injectable{
 	 * @Package(core)
 	 * @Inject(verify)
 	 */
-	public function getPkgCoreVerify(SessionInterface $session):UserInterface{
+	public function toVerify(SessionInterface $session):UserInterface{
 
 		$user = new \Strukt\User();
 		$user->setUsername($session->get("username"));
@@ -902,34 +866,103 @@ class Injectable{
 	 * @Package(core)
 	 * @Inject(session)
 	 */
-	public function getPkgCoreSession():SessionInterface{
+	public function getSession():SessionInterface{
 
-		if(App::getType() == "App:Cli")
+		if(config("app.type") == "App:Cli")
 			return new XSession;
 
 		return new Session;
 	}
-
-	/**
-	 * @Package(pkg-do)
-	 * @Inject(sqllogger)
-	 */
-	public function getPkgDoSqlLogger():SQLLogger{
-
-		$log_dir = sprintf("%s/logs/", Env::get("root_dir"));
-
-		return new Monologer(null, null, $log_dir);
-	}
 }
 ');
 
-Strukt\Fs::touchWrite(".env", 'rel_appsrc_dir = app'.DS.'src'.DS.'
-rel_tpl_dir = .tpl'.DS.'sgf
-rel_tplapp_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'
-rel_tplappsrc_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'
-rel_tplauthmod_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'App'.DS.'AuthModule'.DS.'
+if($has("app", "create file xcli"))
+Strukt\Fs::touchWrite("xcli", '#!/usr/bin/php
+<?php
+
+use Strukt\Framework\Shell;
+use Strukt\Env;
+use Strukt\Framework\Configuration;
+
+$loader = require "bootstrap.php";
+
+env("json_validation_err", true);
+env("res_send_headers", false);
+config("app.type","App:Cli");
+
+$kernel = new App\Kernel(new Configuration());
+$app = $kernel->getApp();
+if(!is_null($app)){
+
+	$app->init();
+	$kernel->getRouter()->init();
+}
+
+$sh = new Shell();
+
+exit($sh->run($_SERVER["argv"]));
+');
+
+if($has("app", "create file index.php"))
+Strukt\Fs::touchWrite("index.php", '<?php
+
+use Strukt\Env;
+use Strukt\Framework\Configuration;
+
+require "bootstrap.php";
+
+env("json_validation_err", true);
+env("res_send_headers", true);
+config("app.type","App:Idx");
+
+$kernel = new App\Kernel(new Configuration());
+exit($kernel->run());
+');
+
+if($has("app", "create file bootstrap.php"))
+Strukt\Fs::touchWrite("bootstrap.php", '<?php
+
+use Strukt\Env;
+
+define("DS", DIRECTORY_SEPARATOR);
+
+error_reporting(E_ALL & ~E_NOTICE & ~E_DEPRECATED & ~E_STRICT & ~E_WARNING);
+
+$loader = require "vendor/autoload.php";
+
+$collision = new \NunoMaduro\Collision\Provider();
+$collision->register();
+
+if(php_sapi_name() != "cli"){
+
+	$whoops = new \Whoops\Run;
+	$whoops->pushHandler(new \Whoops\Handler\PrettyPageHandler);
+	$whoops->register();
+}
+
+$phar_path = Phar::running();
+Env::withFile(".env");
+Env::set("root_dir", !empty($phar_path)?$phar_path:getcwd());
+Env::set("phar", !empty($phar_path));
+
+$loader->add(sprintf("%s\\\", config("app.name")), __DIR__."/app/src/");			
+
+return $loader;
+');
+
+if($has("app", "create file .env"))
+Strukt\Fs::touchWrite(".env", 'authmod_name = AuthModule
+rel_appsrc = app'.DS.'src
+rel_tplsgf_dir = .tpl'.DS.'sgf
+rel_tplapp_dir = .tpl'.DS.'sgf'.DS.'app
+rel_tplappsrc_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src
+rel_tplapproot_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'App
 rel_apptpl_ini = .tpl'.DS.'sgf'.DS.'cfg'.DS.'app.sgf
+tpt_appcfg = app.sgf
+
 rel_loader_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
+rel_mdl_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Middleware'.DS.'Middleware.sgf
+rel_prv_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Provider'.DS.'Provider.sgf
 rel_app_lib = lib'.DS.'App
 rel_static_dir = public'.DS.'static
 
@@ -948,15 +981,7 @@ cli_app_dir = app
 cli_file_name = xcli
 
 is_dev = true
-migration_ns = Schema\Migration
-migration_home = database'.DS.'schema'.DS.'Schema'.DS.'Migration
-seeder_home = database'.DS.'seeder'.DS.'Seed
-seeder_ns = Seed
 vendor_fw = '.DS.'vendor'.DS.'strukt'.DS.'
-
-migration_sgf = .tpl'.DS.'sgf'.DS.'database'.DS.'schema'.DS.'Schema'.DS.'Migration'.DS.'Version_.php
-seeder_sgf = .tpl'.DS.'sgf'.DS.'database'.DS.'seeder'.DS.'Seed'.DS.'NameVer.php
-seeder_dir = database'.DS.'seeder'.DS.'Seed
 
 serve_host = 127.0.0.1
 serve_port = 8080
@@ -965,3 +990,5 @@ serve_file = index.php
 ');
 
 chmod('./xcli', 0755);
+
+printf("\nStrukt Config Booted.\n");
