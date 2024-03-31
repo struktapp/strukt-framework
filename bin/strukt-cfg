@@ -427,9 +427,9 @@ class XSession implements MiddlewareInterface{
 		$this->session = event("@inject.session")->exec();
 	}
 
-	public static function config(array $options){
+	public static function withOptions(array $options){
 
-		//
+		self::$options = $options;
 	}
 
 	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){

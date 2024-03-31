@@ -1,10 +1,9 @@
 #!/usr/bin/php
 <?php
 
-use Strukt\Env;
-use Strukt\Package\Repos;
 use Strukt\Framework\Configuration;
-use Strukt\Console\Color;
+use App\Middleware\XSession;
+use App\Kernel;
 
 require "bootstrap.php";
 
@@ -13,37 +12,36 @@ $argv = $_SERVER["argv"];
 array_shift($argv);//xhttp
 $arg1 = array_shift($argv);//arg1
 
-if(empty($arg1) || in_array(strtolower(trim($arg1)), [
-	"usage", 
-	"help",
-	"--help", 
-	"-h","?"])){
+if(empty($arg1) || in_array(strtolower(trim($arg1)), ["usage","help","--help","-h","?"])){
 
-$tpl = "
- {{xhttp}} {{descr}}
+	$tpl = "
+	 {{xhttp}} {{descr}}
 
- {{usage}}: xhttp <method> <route> [params...]
+	 {{usage}}: xhttp <method> <route> [params...]
 
- {{argm}}:
+	 {{argm}}:
 
-    {{method}}:       GET, POST ...etc
-    {{route}}:        Example: /login Default: / root
-    {{param}}:   Example: username=pitsolu password=p@55w0rd
+	    {{method}}:       GET, POST ...etc
+	    {{route}}:        Example: /login Default: / root
+	    {{param}}:   Example: username=pitsolu password=p@55w0rd
 
- {{example}}:  ./xhttp POST /login username=pitsolu password=p@55word
-";
+	 {{example}}:  ./xhttp POST /login username=pitsolu password=p@55word";
 
-	$output = template($tpl, array(
+	$tpl = str(arr(str($tpl)->split("\n"))->each(fn($k, $ln)=>ltrim($ln, "\t"))->concat("\n"))->yield();
+	
+	$usage = array(
+		
+		"xhttp" => ["white:bold","xhttp"],
+		"usage" => ["yellow","Usage"],
+		"descr" => ["blue", "XHTTP is a CLI utility that mimicks a HTTP client."],
+		"argm" => ["yellow","Arguments"],
+		"method" => ["cyan","method"],
+		"route" => ["cyan","route"],
+		"param" => ["cyan","parameters"],
+		"example" => ["yellow", "Example"]
+	);
 
-		"xhttp" => color("white:bold","xhttp"),
-		"usage" => color("yellow","Usage"),
-		"descr" => color("blue", "XHTTP is a CLI utility that mimicks a HTTP client."),
-		"argm" => color("yellow","Arguments"),
-		"method" => color("cyan","method"),
-		"route" => color("cyan","route"),
-		"param" => color("cyan","parameters"),
-		"example" => color("yellow", "Example")
-	));
+	$output = template($tpl, arr($usage)->each(fn($name, $match)=>color(...$match))->yield());
 
 	exit(sprintf("\n %s\n\n", $output));
 }
@@ -68,43 +66,26 @@ $methods = [
 	"PATCH",
 	"OPTIONS"
 ];
-// $methods = HttpMethod::getAll();
-// if(!in_array($method, $methods) && !empty($method))
-	// exit(Color::writeln("red"," Invalid HTTP method!\n"));
 
-if(!in_array($method, $methods)){
-
-	$uri = $method;
-	$method = "GET";
-}
+if(negate(arr($methods)->has($method)))
+	list($uri, $method) = [$method, "GET"];
 
 if(empty($uri))//uri
 	$uri = array_shift($argv);
 
-$params = [];
-if(!empty($argv))
-	array_map(function($param) use(&$params){
-
-		if(preg_match("/\w\=\w/", $param)){
-
-			list($key, $val) = explode("=", $param);
-			$params[$key] = $val;
-		}
-
-	}, $argv);
+//split params
+$params = array_map(fn($param)=>preg_match("/\w\=\w/", $param)?(fn($k,$v)=>[$k=>$v])(...explode("=", $param)):null, $argv);
+$params = arr($params)->level();
 
 $_SERVER["REQUEST_URI"] = $uri;
 $_SERVER["REQUEST_METHOD"] = strtoupper(trim($method));
 $_REQUEST = $_POST = $params;
 
-// Env::withFile();
-// Env::set("root_dir", getcwd());
-Env::set("json_validation_err", true);
-
+env("json_validation_err", true);
+env("res_send_headers", false);
 config("app.type","App:Cli");
-// Repos::available();
 
-App\Middleware\XSession::config(array(
+XSession::withOptions(array(
 
 	"username"=>"admin",
 	"allow"=>[
@@ -114,19 +95,5 @@ App\Middleware\XSession::config(array(
 	]
 ));
 
-$config = new Configuration([
-
-	"ignore"=>["@require"]
-]);
-
-
-$kernel = new App\Kernel($config);
+$kernel = new Kernel(new Configuration);
 exit($kernel->run());
-// $app = $kernel->getApp();
-
-// if(!is_null($app))
-	// $app->run();//->init();
-// $kernel->getApp()->run();
-// $runner = $runner->init();
-// $response = $kernel->getRouter()->make()->run();
-// exit(sprintf("%s\n", $response->getContent()));
