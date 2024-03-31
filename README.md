@@ -19,8 +19,17 @@ echo {"minimum-stability":"dev"} > composer.json
 composer require "strukt/framework:1.1.7-alpha" --prefer-dist
 ```
 
-# Setup, Configuration & Environment
+# Setup, Cache, Configuration & Environment
 
+## Cache
+
+Always remember to clear and reload the cache when necessary
+
+```sh
+./xcli cache:clear 
+./xcli cache:make cli
+./xcli cache:make idx
+```
 ## Shell
 
 Drop into shell
