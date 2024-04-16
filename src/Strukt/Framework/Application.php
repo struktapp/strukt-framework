@@ -74,7 +74,7 @@ class Application{
 		reg("nr.modules", $this->modules);
 
 		$configs = [];
-		if(cache("router")->empty()){
+		if(cache("rtr")->empty()){
 
 			arr($this->aliases)->each(function($key, $alias) use(&$configs){
 
@@ -98,11 +98,11 @@ class Application{
 				});
 			});
 
-			cache("router")->put("configs", $configs)->save();
+			cache("rtr")->put("configs", $configs)->save();
 		}
 
 		if(empty($configs))
-			$configs = cache("router")->get("configs");
+			$configs = cache("rtr")->get("configs");
 
 		foreach($configs as $config){
 
