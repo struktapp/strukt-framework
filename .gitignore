@@ -31,4 +31,5 @@ xcli
 package.json
 pkg-roles/
 src/Strukt/Package/PkgRoles.php
+lib/Strukt
 
