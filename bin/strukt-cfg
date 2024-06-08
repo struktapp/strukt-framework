@@ -815,24 +815,27 @@ class Kernel{
 }
 ');
 
-if($has("ext", "create file .tpl/sgf/lib/Strukt/Package/Extender.php"))
-Strukt\Fs::touchWrite(".tpl/sgf/lib/Strukt/Package/Extender.php", '<?php
+if($has("ext", "create file .tpl/sgf/lib/Strukt/Package/Extender.sgf"))
+Strukt\Fs::touchWrite(".tpl/sgf/lib/Strukt/Package/Extender.sgf", '<?php
 
 namespace Strutk\Package;
 
 class Extender extends \Strukt\Package\Core{
 
-	public function getSettings(\$type){
+	public function getSettings($type){
 
-		\$configCli = parent::getSettings("App:Cli");
-		\$configIdx = parent::getSettings("App:Idx");
+		$configCli = parent::getSettings("App:Cli");
+		$configIdx = parent::getSettings("App:Idx");
 
-		// \$configIdx["middlewares"] = [
-
-			//
+		// $configIdx["middlewares"] = [
+		//
 		// ];
 
-		return ["App:Idx"=>\$configIdx, "App:Cli"=>\$configCli][\$type];
+		return [
+
+			"App:Idx"=>$configIdx, 
+			"App:Cli"=>$configCli
+		];
 	}
 }
 ');
@@ -987,7 +990,7 @@ tpt_appcfg = app.sgf
 rel_loader_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
 rel_mdl_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Middleware'.DS.'Middleware.sgf
 rel_prv_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Provider'.DS.'Provider.sgf
-rel_pkg_ext = .tpl'.DS.'sgf'.DS.'lib'.DS.'Strukt'.DS.'Package'.DS.'Extender'.DS.'Package.php
+rel_pkg_ext = .tpl'.DS.'sgf'.DS.'lib'.DS.'Strukt'.DS.'Package'.DS.'Extender.sgf
 rel_app_lib = lib'.DS.'App
 rel_static_dir = public'.DS.'static
 
