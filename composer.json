@@ -29,7 +29,7 @@
     },
     "autoload": {
 
-        "psr-0": { "Strukt\\": ["src/","lib/"], "App\\": "lib/"},
+        "psr-0": { "Strukt\\": ["src/"], "App\\": "lib/"},
         "files": ["src/helpers.php"]
     },
     "bin":["bin/strukt-cfg"],
