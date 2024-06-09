@@ -6,6 +6,7 @@ use Strukt\Framework\Injectable\Configuration as InjectableCfg;
 use Strukt\Framework\Injectable\Facet as InjectableFacet;
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 use Strukt\Traits\ClassHelper;
+use Strukt\Traits\InjectablesHelper;
 use Strukt\Package\Repos;
 
 class Configuration{
@@ -24,7 +25,7 @@ class Configuration{
 		*/
 		// $ignore = [];
 		// if(array_key_exists("ignore", $options))
-			// $this->ignore = $ignore = $options["ignore"];
+		//		$this->ignore = $ignore = $options["ignore"];
 
 		$settings = [];
 		$app_type = config("app.type");
@@ -69,44 +70,48 @@ class Configuration{
 
 			if(class_exists($class) && in_array($name, $published)){
 
-				$helper = new class(){use ClassHelper;};
+				$helper = new class(){use ClassHelper, InjectablesHelper;};
 
-				$config = $helper->newClass($class)->getSettings($app_type);
+				$package = $helper->newClass($class);
+				$config	= $package->getSettings($app_type);
 
 				if(array_key_exists("commands", $config))
 					$commands = array_merge($commands, $config["commands"]);
 
-				$facet = arr(["middlewares"=>[], 
-								"providers"=>[]])->each(function($facet, $value) use($config, 
-																						$helper, 
-																						&$aliases){
+				$facet = arr(["middlewares"=>[], "providers"=>[]]);
+				$facet = $facet->each(function($facet, $value) use($config, $helper, &$aliases){
 
-					if(arr(array_keys($config))->has($facet))
-						return array_values(array_filter(arr($config[$facet])
-									->each(function($key, $facet_class) use($helper, $facet, &$aliases){
+					if(arr(array_keys($config))->has($facet)){
+						
+						$facet_settings = arr($config[$facet]);
+						$facet_settings->each(function($key, $facet_class) use($helper, $facet, &$aliases){
 
 							$facet_class = $helper->getClass($facet_class);
 							if(class_exists($facet_class)){
 
-								$inj_facet = new InjectableFacet(new \ReflectionClass($facet_class));
-								$facet_configs = $inj_facet->getConfigs();
+								$facet_configs = $helper->resolveInjectables($facet_class);
 
 								if(is_null(@$aliases[$facet]))
 									$aliases[$facet] = [];
 								
 								$alias = null;
 								if(!is_null($facet_configs))
-									if(!in_array($facet_configs["config"]["name"], $aliases[$facet]))
-										$aliases[$facet][] = $alias = $facet_configs["config"]["name"];
+									if(!in_array($facet_configs["alias"], $aliases[$facet]))
+										$aliases[$facet][] = $alias = $facet_configs["alias"];
 
 								if(!is_null($alias))
 									return $facet_class;
 
 								return null;
 							}
-						})->yield()));
-				})->yield();
 
+						})->yield();
+
+						return array_values(array_filter($facet_settings->yield()));
+					}
+				});
+
+				$facet = $facet->yield();
 				$settings = array_merge_recursive($settings, array_filter($facet));
 			}
 		});

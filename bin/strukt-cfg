@@ -59,7 +59,7 @@ if($has("tpl-auth", "make directory tpl|AuthModule/Tests"))Strukt\Fs::mkdir(".tp
 if($has("tpl-middleware", "make directory tpl|App/Middleware"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Middleware");
 if($has("tpl-provider", "make directory tpl|App/Provider"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Provider");
 if($has("tpl-pkg", "make directory tpl|Strukt/Pakcage"))Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
-if($has("ext", "make directory tpl|sgf/src/Strukt/Package"))Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
+if($has("ext", "make directory src/Strukt/Package"))Strukt\Fs::mkdir("src/Strukt/Package");
 if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Contract");
 if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
 if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
@@ -815,8 +815,8 @@ class Kernel{
 }
 ');
 
-if($has("ext", "create file .tpl/sgf/src/Strukt/Package/Extender.sgf"))
-Strukt\Fs::touchWrite(".tpl/sgf/src/Strukt/Package/Extender.sgf", '<?php
+if($has("ext", "create file src/Strukt/Package/Extender.php"))
+Strukt\Fs::touchWrite("src/Strukt/Package/Extender.php", '<?php
 
 namespace Strutk\Package;
 
@@ -835,7 +835,8 @@ class Extender extends \Strukt\Package\Core{
 
 			"App:Idx"=>$configIdx, 
 			"App:Cli"=>$configCli
-		];
+
+		][$type];
 	}
 }
 ');
@@ -990,7 +991,6 @@ tpt_appcfg = app.sgf
 rel_loader_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
 rel_mdl_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Middleware'.DS.'Middleware.sgf
 rel_prv_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Provider'.DS.'Provider.sgf
-rel_pkg_ext = .tpl'.DS.'sgf'.DS.'src'.DS.'Strukt'.DS.'Package'.DS.'Extender.sgf
 rel_app_lib = lib'.DS.'App
 rel_static_dir = public'.DS.'static
 
