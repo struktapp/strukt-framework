@@ -12,7 +12,7 @@ class Repos{
 
 		$packages = [];
 		foreach($repos as $name => $repo)
-			$packages[$name] = sprintf("Strukt\Package\%s", $repo);
+			$packages[$name] = sprintf(str($repo)->equals("Extender")?"App\%s":"Strukt\Package\%s", $repo);
 
 		return $packages;
 	}

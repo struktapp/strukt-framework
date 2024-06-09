@@ -59,7 +59,7 @@ if($has("tpl-auth", "make directory tpl|AuthModule/Tests"))Strukt\Fs::mkdir(".tp
 if($has("tpl-middleware", "make directory tpl|App/Middleware"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Middleware");
 if($has("tpl-provider", "make directory tpl|App/Provider"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Provider");
 if($has("tpl-pkg", "make directory tpl|Strukt/Pakcage"))Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
-if($has("ext", "make directory src/Strukt/Package"))Strukt\Fs::mkdir("src/Strukt/Package");
+if($has("ext", "make directory lib/App"))Strukt\Fs::mkdir("lib/App");
 if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Contract");
 if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
 if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
@@ -691,7 +691,8 @@ tes = Tests
 ');
 
 if($has("app", "create file cfg/repo.ini"))
-Strukt\Fs::touchWrite("cfg/repo.ini", 'core = Core
+Strukt\Fs::touchWrite("cfg/repo.ini", '; core = Extender
+core = Core
 pkg-auth = PkgAuth
 pkg-db = PkgDb
 pkg-book = PkgBook
@@ -815,10 +816,10 @@ class Kernel{
 }
 ');
 
-if($has("ext", "create file src/Strukt/Package/Extender.php"))
-Strukt\Fs::touchWrite("src/Strukt/Package/Extender.php", '<?php
+if($has("ext", "create file lib/App/Extender.php"))
+Strukt\Fs::touchWrite("lib/App/Extender.php", '<?php
 
-namespace Strutk\Package;
+namespace App;
 
 class Extender extends \Strukt\Package\Core{
 
@@ -827,8 +828,45 @@ class Extender extends \Strukt\Package\Core{
 		$configCli = parent::getSettings("App:Cli");
 		$configIdx = parent::getSettings("App:Idx");
 
+		// $configIdx["providers"] = [
+
+		// 	\Strukt\Framework\Provider\Validator::class,
+		// 	\App\Provider\Logger::class,
+		// 	\App\Provider\Facet::class
+		// ];
+
 		// $configIdx["middlewares"] = [
-		//
+
+		// 	\App\Middleware\Cors::class,
+		// 	\Strukt\Router\Middleware\Session::class,
+		// 	\Strukt\Router\Middleware\Authorization::class,
+		// 	\Strukt\Router\Middleware\Authentication::class,
+		// 	\Strukt\Framework\Middleware\Validator::class,
+		// ];
+
+		// $configCli["providers"] = [
+
+		// 	\Strukt\Framework\Provider\Validator::class,
+		// 	\App\Provider\Logger::class,
+		// 	\App\Provider\Facet::class
+		// ];
+
+		// $configCli["middlewares"] = [
+
+		// 	\App\Middleware\XSession::class,
+		// 	\Strukt\Router\Middleware\Authentication::class,
+		// 	\Strukt\Framework\Middleware\Validator::class,
+		// ];
+
+		// $configCli["commands"] = [
+
+		// 	\Strukt\Framework\Console\Command\PackagePublisher::class,
+		// 	\Strukt\Framework\Console\Command\PackageList::class,
+		// 	\Strukt\Framework\Console\Command\PackageInfo::class,
+		// 	\Strukt\Framework\Console\Command\PackageMake::class,
+		// 	\Strukt\Framework\Console\Command\PackageAdd::class,
+		// 	\Strukt\Framework\Console\Command\PackageCopy::class,
+		// 	\Strukt\Framework\Console\Command\PackageExport::class
 		// ];
 
 		return [
