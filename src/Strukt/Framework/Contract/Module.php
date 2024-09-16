@@ -40,7 +40,7 @@ abstract class Module{
 	*/
 	public function getBaseDir(){
 
-		return phar(dirname($this->reflect->getFileName()))->adapt();
+		return dirname($this->reflect->getFileName());
 	}
 
 	/**
