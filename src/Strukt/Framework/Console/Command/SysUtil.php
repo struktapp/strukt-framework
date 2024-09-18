@@ -19,8 +19,8 @@ use Strukt\Env;
 *      type     options: (enable|disable)
 *      facet    options: (middleware|provider|command)
 *      name     options: middlewares: (auth|authz|except|sess|valid|cors)
-*                         providers: (logger|nmlz|sch-mgr|ent-mgr|doc-adp)
-*                         commands: (pub-pak|pub-mak|pkg-tests|pkg-do|pkg-roles)
+*                         providers: (facet|valid|logger|strukt.asset)
+*                         commands: (pkg-tests|pkg-roles|pkg-book|pkg-db|pkg-asset|pub-pak|pub-mak)
 */
 class SysUtil extends \Strukt\Console\Command{
 
