@@ -38,17 +38,21 @@ class Shell extends \Strukt\Console\Application{
 
 		if($load_native_cmds){
 
-			$this->add(new AppMake);
-			$this->add(new AppReload);
-			$this->add(new AppExec);
-			$this->add(new MiddlewareMake);
-			$this->add(new ProviderMake);
-			$this->add(new RouteMake);
-			$this->add(new RouteList);
-			$this->add(new ModuleMake);
-			$this->add(new ShellExec);
-			$this->add(new SysUtil);
-			$this->add(new SysList);
+			$cmds = config("cmd.main.cmd");
+			$cmds = arr($cmds);
+			
+			if($cmds->has("app:make"))$this->add(new AppMake);
+			if($cmds->has("app:reload"))$this->add(new AppReload);
+			if($cmds->has("app:exec"))$this->add(new AppExec);
+			if($cmds->has("middleware:make"))$this->add(new MiddlewareMake);
+			if($cmds->has("provider:make"))$this->add(new ProviderMake);
+			if($cmds->has("route:make"))$this->add(new RouteMake);
+			if($cmds->has("route:ls"))$this->add(new RouteList);
+			if($cmds->has("module:make"))$this->add(new ModuleMake);
+			if($cmds->has("shell:exec"))$this->add(new ShellExec);
+			if($cmds->has("sys:util"))$this->add(new SysUtil);
+			if($cmds->has("sys:ls"))$this->add(new SysList);
+
 			$this->addCmdSect("\nCache");
 			$this->add(new CacheMake);
 			$this->add(new CacheClear);
@@ -65,14 +69,10 @@ class Shell extends \Strukt\Console\Application{
 				$cls[$alias] = $cmd;
 			}
 
-			// dd(config("cmd"));
-
 			$cmds = arr(array_flip(config("cmd")->keys()))->each(function($k,$v){
 
 				return config(sprintf("cmd.%s*", $k));
 			});
-
-			// dd($cmds, $cls);
 
 			foreach($cmds->yield() as $key => $val){
 
