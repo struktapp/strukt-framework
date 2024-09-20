@@ -53,9 +53,9 @@ class Shell extends \Strukt\Console\Application{
 			if($cmds->has("sys:util"))$this->add(new SysUtil);
 			if($cmds->has("sys:ls"))$this->add(new SysList);
 
-			$this->addCmdSect("\nCache");
-			$this->add(new CacheMake);
-			$this->add(new CacheClear);
+			if($cmds->has("cache:make") || $cmds->has("cache:clear"))$this->addCmdSect("\nCache");
+			if($cmds->has("cache:make"))$this->add(new CacheMake);
+			if($cmds->has("cache:clear"))$this->add(new CacheClear);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");

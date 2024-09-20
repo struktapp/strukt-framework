@@ -150,8 +150,6 @@ class Auth extends \Strukt\Framework\Contract\Router{
 		if($this->get("au.ctr.User")->doAuth($username, sha1($password))){
 
 	    	new \Strukt\Auth($username);
-	    	// new \Strukt\Auth($username, "user_type:admin|status:chilled-out");
-
 	       	return response()->json(array(
 
 	            "success"=>true, 
@@ -977,7 +975,6 @@ if(!is_null($app)){
 }
 
 $sh = new Shell();
-
 exit($sh->run($_SERVER["argv"]));
 ');
 
@@ -1018,10 +1015,8 @@ if(php_sapi_name() != "cli"){
 	$whoops->register();
 }
 
-$phar_path = Phar::running();
 Env::withFile(".env");
-Env::set("root_dir", !empty($phar_path)?$phar_path:getcwd());
-Env::set("phar", !empty($phar_path));
+Env::set("root_dir", getcwd());
 
 $loader->add(sprintf("%s\\\", config("app.name")), __DIR__."/app/src/");			
 
