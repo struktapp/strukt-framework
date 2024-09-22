@@ -745,7 +745,7 @@ cmd[] = package:info
 ; cmd[] = model:make   
 ; cmd[] = db:make-models       
 ; cmd[] = db:make
-; cmd[] = db:seed 
+; cmd[] = db:seeds 
 ; cmd[] = db:wipe 
 ; [pkg-asset]
 ; title = Asset
