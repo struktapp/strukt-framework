@@ -711,6 +711,8 @@ cmd[] = module:make
 cmd[] = shell:exec
 cmd[] = sys:util
 cmd[] = sys:ls
+cmd[] = cache:clear
+cmd[] = cache:make
 [pub-pak]
 title = Package Publisher
 cmd[] = package:publish
