@@ -1060,6 +1060,8 @@ serve_host = 127.0.0.1
 serve_port = 8080
 serve_ctx = .
 serve_file = index.php
+
+phar = false
 ');
 
 chmod('./xcli', 0755);
