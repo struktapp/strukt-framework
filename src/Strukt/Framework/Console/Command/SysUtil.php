@@ -30,53 +30,48 @@ class SysUtil extends \Strukt\Console\Command{
 		$facet = $in->get("facet");
 		$name = $in->get("name");
 
+		$facet = str($facet);
+		if($facet->equals("command"))
+			$path = env("rel_cmd_ini");
+
+		if($facet->equals("provider") || $facet->equals("middleware") )
+			$path = env("rel_app_ini");
+
 		if(in_array($facet, ["command"])){
 
-			$filename = Env::get("rel_cmd_ini");
+			if(str($type)->equals("enable"))
+				$output = ini($path)->enable($name)->yield();
 
-			if($type == "enable"){
-
-				$pattern = sprintf('/;(\s)%s/', $name);
-				$replace = $name;
-			}
-
-			if($type == "disable"){
-
-				$pattern = sprintf('/%s/', $name);
-				$replace = sprintf('; %s', $name);
-			}
+			if(str($type)->equals("disable"))
+				$output = ini($path)->disable($name)->yield();
 		}
 
 		if(in_array($facet, ["middleware", "provider"])){
 
-			$filename = Env::get("rel_app_ini");
+			$facet = str($facet)->concat("s")->yield();//pluralize
 
-			if($type == "enable"){
+			if(str($type)->equals("enable"))
+				$output = ini($path)->enable($facet, $name)->yield();
 
-				$pattern = sprintf('/;(\s)%ss(.*)%s/', $facet, $name);
-				$replace = sprintf("%ss[] = %s", $facet, $name);
-			}
+			if(str($type)->equals("disable"))
+				$output = ini($path)->disable($facet, $name)->yield();
+	
+			// $cfg = new \Strukt\Framework\Configuration();
+			// $cfg->get("middlewares");
+			// $cfg->get("providers");
 
-			if($type == "disable"){
-
-				$pattern = sprintf('/%ss(.*)%s/', $facet, $name);
-				$replace = sprintf("; %ss[] = %s", $facet, $name);
-			}
-
-			$cfg = new \Strukt\Framework\Configuration();
-			$cfg->get("middlewares");
-			$cfg->get("providers");
-
-			$aliases = $cfg->getAliases();
-			if(!in_array($name, $aliases[sprintf("%ss", $facet)]))
-				new \Strukt\Raise(sprintf("%s:%s does not exists!", $facet, $name));
+			// $aliases = $cfg->getAliases();
+			// if(!in_array($name, $aliases->get($facet)))
+				// new \Strukt\Raise(sprintf("%s:%s does not exists!", $facet, $name));
 		}
 
-		$ini = \Strukt\Fs::cat($filename);
+		//validate ini file
+		$ok = false;
+		if(@parse_ini_string($output) !== false)
+			$ok = \Strukt\Fs::overwrite($path, $output);
 
-		$output = preg_replace($pattern, $replace, $ini);
-
-		\Strukt\Fs::overwrite($filename, $output);
+		if(!$ok)
+			raise("Something went wrong!");
 
 		$out->add("Done.");
 	}
