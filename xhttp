@@ -46,7 +46,7 @@ if(empty($arg1) || in_array(strtolower(trim($arg1)), ["usage","help","--help","-
 	exit(sprintf("\n %s\n\n", $output));
 }
 
-if(!file_exists("cfg/app.ini")){
+if(negate(fs(phar("cfg")->adapt())->isFile("app.ini"))){
 
 	echo color("red", "\n Application is not ready!");
 	echo " Run:\n";
