@@ -97,3 +97,60 @@ if(helper_add("core")){
 		return event("provider.core")->apply($alias, $args)->exec();
 	}
 }
+
+if(helper_add("routes")){
+
+	function route(string $path){
+
+		return new class($path){
+
+			private $matcher;
+			private $url;
+			private $path;
+
+			public function __construct(string $path){
+
+				$this->path = $path;
+				$this->matcher = matcher();
+				$this->url = $this->matcher->which($path);
+			}
+
+			public function post(...$args){
+
+				return $this->path("POST", ...$args);
+			}
+
+			public function get(...$args){
+
+				return $this->path("GET", ...$args);
+			}
+
+			public function path(string $method, ...$args){
+
+				$method = str($method)->toUpper()->yield();
+				$pattern = sprintf("type:route|path:%s|action:%s", $this->url, $method);
+
+				if(preg_match("/\{\w+:\w+\}/", $this->url)){
+
+					$multitr = new MultipleIterator();
+					$multitr->attachIterator(new ArrayIterator(str($this->path)->split("/")));
+					$multitr->attachIterator(new ArrayIterator(str($this->url)->split("/")));
+
+					foreach($multitr as $couple){
+
+					    list($ppath, $purl) = $couple;
+					    if(preg_match("/\{\w+:\w+\}/", $purl)){
+
+					    	list($param, $type) = str($purl)->replace(["{","}"], "")->split(":");
+					    	$params[$param] = $ppath;
+					    }
+					}
+
+					$args = array_merge(array_values($params), $args);
+				}
+
+				return \Strukt\Cmd::exec($pattern, $args);
+			}
+		};
+	}
+}
