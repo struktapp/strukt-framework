@@ -15,8 +15,6 @@ if(helper_add("repos")){
 
 if(helper_add("ddd")){
 
-	// ini_set("xdebug.var_display_max_depth", 10);
-
 	function ddd(mixed $message){
 
 		if(php_sapi_name() == "cli"){

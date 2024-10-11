@@ -58,8 +58,8 @@ This class is defaultly found in [strukt-commons](https://github.com/samweru/str
 ```php
 Strukt\Env::withFile();//default .env file in your root folder
 Strukt\Env::withFile(".env-dev");
-Strukt\Env::set("root_dir", getcwd());//custom environment variable
-Strukt\Env::get("root_dir");
+env("root_dir", getcwd());//setter custom environment variable
+env("root_dir");//getter
 ```
 
 ## Setup Packages Registry 
@@ -77,17 +77,14 @@ repos("installed");//list all installed strukt packages
 ## Default Package
 
 ```php
-$core = new Strukt\Package\Core();//implements Strukt\Package\Pkg
-
-//returns array of middlewares, commands and providers
-$core->getSettings($type);//type is "App:Idx" or "App:Cli"
-
-$core->getName();//core
-$core->getCmdName();//null
-$core->getFiles();//null
-$core->getModules();//null
-$core->isPublished();//true by default
-$core->getRequirements();//null or array
+package("core", "App:Idx")->get("settings"); //returns array of middlewares, commands and providers
+//below mode:App:Cli is default
+package("core")->get("name");//core
+package("core")->get("cmd:name");//null
+package("core")->get("files");//null
+package("core")->get("modules");//null
+package("core")->get("is:published");//true by default
+package("core")->get("requirements");//null or array
 ```
 
 The above methods are in abstract class `Strukt\Package\Pkg` you can use them to create your package.
