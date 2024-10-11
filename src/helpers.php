@@ -155,9 +155,9 @@ if(helper_add("routes")){
 	}
 }
 
-if(helper_add("packages")){
+if(helper_add("package")){
 
-	function packages(string $name, string $mode="App:Cli"){
+	function package(string $name, string $mode="App:Cli"){
 
 		$repos = repos();
 		if(negate(arr($repos)->contains($name)))
