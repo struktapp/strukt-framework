@@ -154,3 +154,60 @@ if(helper_add("routes")){
 		};
 	}
 }
+
+if(helper_add("packages")){
+
+	function packages(string $name, string $mode="App:Cli"){
+
+		$repos = repos();
+		if(negate(arr($repos)->contains($name)))
+			raise(sprintf("Package %s does not exist!", $name));
+
+		if(negate(in_array($mode, ["App:Cli", "App:Idx"])))
+			raise("Invalid package mode!");
+
+		return new class($repos[$name], $mode){
+
+			private $meta;
+			private $mode;
+
+			public function __construct(string $class, string $mode){
+
+				$this->meta = new $class;
+				$this->mode = $mode;
+			}
+
+			public function get(string $which){
+
+				switch ($which) {
+					case 'settings':
+					case 'config':
+					case 'cfg': return $this->meta->getSettings($this->mode); 
+						break;
+					case 'name': return $this->meta->getName(); 
+						break;
+					case 'cmd:name':
+					case 'cmd': return $this->meta->getCmdName(); 
+						break;
+					case 'files': return $this->meta->getFiles(); 
+						break;
+					case 'modules':
+					case 'mods':
+					case 'mod': return $this->meta->getModules(); 
+						break;
+					case 'is:published':
+					case 'is:pub':
+					case 'pub': return $this->meta->isPublished(); 
+						break;
+					case 'requirements':
+					case 'reqs':
+					case 'req': return $this->meta->getRequirements(); 
+						break;	
+					default: 
+						return null; 
+						break;
+				}
+			}
+		};
+	}
+}
