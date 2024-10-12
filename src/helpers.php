@@ -177,15 +177,25 @@ if(helper_add("package")){
 
 			public function get(string $which){
 
+				$settings = $this->meta->getSettings($this->mode);
+
 				switch ($which) {
+					case 'providers':
+					case 'provider':
+					case 'prv': return $settings["providers"];
+					case 'middlewares': 
+					case 'middleware': 
+					case 'mdl': return $settings["middlewares"];
+					case 'commands': 
+					case 'command': 
+					case 'cmd': return $settings["middlewares"];
 					case 'settings':
 					case 'config':
-					case 'cfg': return $this->meta->getSettings($this->mode); 
+					case 'cfg': return $settings;
 						break;
 					case 'name': return $this->meta->getName(); 
 						break;
-					case 'cmd:name':
-					case 'cmd': return $this->meta->getCmdName(); 
+					case 'cmd:name': return $this->meta->getCmdName(); 
 						break;
 					case 'files': return $this->meta->getFiles(); 
 						break;
