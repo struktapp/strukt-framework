@@ -22,7 +22,7 @@ class Facet implements InjectableInterface{
 	public function __construct(\ReflectionClass $rclass){
 
 		$parser = new BasicNotesParser($rclass);
-		$notes = $parser->getAnnotations();
+		$notes = $parser->getNotes();
 
 		$injectables = new InjectableCfg(new \ReflectionClass(InjectableApp::class));
 

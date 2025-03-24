@@ -13,12 +13,12 @@
     "require": {
     
         "php": "^8.1",
-        "strukt/generator": "v1.1.1-alpha",
+        "strukt/generator": "v1.1.2-alpha",
         "strukt/console": "1.0.0",
         "strukt/router":"v1.1.5-alpha",
         "phplucidframe/console-table": "^1.2",
         "psy/psysh": "^v0.11.21",
-        "strukt/process": "v1.1.0",
+        "strukt/process": "v1.1.1-alpha",
         "filp/whoops": "^2.14",
         "nunomaduro/collision": "v7.x-dev"
     },

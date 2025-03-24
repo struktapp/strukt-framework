@@ -18,7 +18,7 @@ class Validator implements InjectableInterface{
 	public function __construct(\ReflectionClass $rclass){
 
 		$parser = new BasicNotesParser($rclass);
-		$this->notes = $parser->getAnnotations();
+		$this->notes = $parser->getNotes();
 	}
 
 	/**

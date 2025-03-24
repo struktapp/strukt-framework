@@ -19,7 +19,7 @@ class Configuration implements InjectableInterface{
 		$this->published = Repos::packages("published");
 
 		$parser = new BasicNotesParser($rclass);
-		$notes = $parser->getAnnotations();
+		$notes = $parser->getNotes();
 
 		$refClass = \Strukt\Ref::create($notes["class_name"]);
 

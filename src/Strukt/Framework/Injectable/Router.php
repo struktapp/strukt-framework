@@ -18,7 +18,7 @@ class Router implements InjectableInterface{
 	public function __construct(\ReflectionClass $rclass){
 
 		$parser = new BasicNotesParser($rclass);
-		$notes = $parser->getAnnotations();
+		$notes = $parser->getNotes();
 
 		// if($rclass->getName() ==  "Payroll\AuthModule\Router\Auth")
 			// dd($notes);
