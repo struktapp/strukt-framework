@@ -3,27 +3,48 @@
 namespace Strukt\Framework;
 
 use Strukt\Router\Kernel as RouterKernel;
-use Strukt\Framework\Contract\Module;
-use Strukt\Fs;
+use Strukt\Framework\Contract\Module as ModuleInterface;
 use Strukt\Framework\Injectable\Router as InjectableRouter;
+use Strukt\Fs;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 class Application{
 
 	private $router;
 	private $aliases;
 	private $modules;
 
+	/**
+	 * @param \Strukt\Router\Kernel $router
+	 */
 	public function __construct(RouterKernel $router){
 
 		$this->router = $router;
 		$this->aliases = [];
+		$this->modules = [];
+
+		// Name Registry
+		reg("nr", collect([]));
 	}
 
-	public function register(Module $module){
+	/**
+	 * Register app facets(router, form, controller, tests, etc)  in name registry (nr)
+	 * 
+	 * @param \Strukt\Framework\Contract\Module $module
+	 * 
+	 * @return void
+	 */
+	public function register(ModuleInterface $module):void{
 
 		$ns = $module->getNamespace();
 		$alias = $module->getAlias();
 		$dir = $module->getBaseDir();
+
+		if(notnull($this->modules))
+			if(in_array(get_class($module), $this->modules))
+				return;
 
 		$this->modules[str($alias)->toLower()->yield()] = $ns;
 
@@ -51,9 +72,10 @@ class Application{
 								->prepend(str($base_ns)
 											->concat("\\")
 											->yield())->yield();
-
-				if(!is_null($base_alias))
-					reg(sprintf("nr.%s", $base_alias), $facet_ns);
+				
+				if(negate(reg("nr")->exists($base_alias)))
+					if(notnull($base_alias))
+						reg(sprintf("nr.%s", $base_alias), $facet_ns);
 
 				if(str($facet)->equals("Router"))
 					return $facet_ns;
@@ -69,7 +91,12 @@ class Application{
 		}));
 	}
 
-	public function init(){
+	/**
+	 * Create configs, cache and router
+	 * 
+	 * @return static
+	 */
+	public function init():static{
 
 		reg("nr.modules", $this->modules);
 

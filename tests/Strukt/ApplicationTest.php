@@ -10,6 +10,13 @@ use Strukt\Framework\Core;
 
 class ApplicationTest extends TestCase{
 
+	private $core;
+	private $auth_mod_name;
+	private $auth_mod_ns;
+	private $auth_mod_path;
+	private $auth_mod_base_ns;
+	private $auth_mod;
+
 	public function setUp():void{
 
 		$app_name = config("app.name");
@@ -30,7 +37,7 @@ class ApplicationTest extends TestCase{
 
 		$this->core = new class() extends Core{
 
-			public function get(string $alias_ns, array $args = null){
+			public function get(string $alias_ns, array $args = null):object{
 
 				return parent::get($alias_ns, $args);
 			}

@@ -3,11 +3,18 @@
 namespace Strukt\Framework\Injectable;
 
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
+use \Strukt\Framework\Contract\Injectable as InjectableInterface;
 
-class Router implements \Strukt\Framework\Contract\Injectable{
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
+class Router implements InjectableInterface{
 
 	private $notes = [];
 
+	/**
+	 * @param \ReflectionClass $rclass
+	 */
 	public function __construct(\ReflectionClass $rclass){
 
 		$parser = new BasicNotesParser($rclass);
@@ -72,7 +79,10 @@ class Router implements \Strukt\Framework\Contract\Injectable{
 		}
 	}
 
-	public function getConfigs(){
+	/**
+	 * @return array|null
+	 */
+	public function getConfigs():array|null{
 	
 		return $this->notes;
 	}

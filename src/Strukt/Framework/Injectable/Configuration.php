@@ -4,12 +4,16 @@ namespace Strukt\Framework\Injectable;
 
 use Strukt\Package\Repos;
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
+use \Strukt\Framework\Contract\Injectable as InjectableInterface;
 
-class Configuration implements \Strukt\Framework\Contract\Injectable{
+class Configuration implements InjectableInterface{
 
 	private $packages;
 	private $injectables;
 
+	/**
+	 * @param \ReflectionClass $rclass
+	 */
 	public function __construct(\ReflectionClass $rclass){
 
 		$this->published = Repos::packages("published");
@@ -30,7 +34,10 @@ class Configuration implements \Strukt\Framework\Contract\Injectable{
 		$this->injectables = $inj;
 	}
 
-	public function getConfigs(){
+	/**
+	 * @return array
+	 */
+	public function getConfigs():array|null{
 
 		$cfg = [];
 		foreach($this->published as $package)

@@ -4,9 +4,15 @@ namespace Strukt\Package;
 
 use Strukt\Ref;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 class Repos{
 
-	public static function available(){
+	/**
+	 * @return array 
+	 */
+	public static function available():array{
 
 		$repos = config("repo*");
 
@@ -17,7 +23,12 @@ class Repos{
 		return $packages;
 	}
 
-	public static function packages($type){
+	/**
+	 * @param string $type
+	 * 
+	 * @return array
+	 */
+	public static function packages(string $type):array{
 
 		$packages = [];
 

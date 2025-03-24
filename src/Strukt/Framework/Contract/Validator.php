@@ -37,9 +37,9 @@ abstract class Validator{
 	*
 	* @param string $val
 	*
-	* @return Strukt\Validator
+	* @return static
 	*/
-	public function setValue($value){
+	public function setValue($value):static{
 
 		$this->value = $value;
 
@@ -61,7 +61,7 @@ abstract class Validator{
 	*
 	* @return array
 	*/
-	public function getMessage(){
+	public function getMessage():array{
 
 		return $this->message;
 	}

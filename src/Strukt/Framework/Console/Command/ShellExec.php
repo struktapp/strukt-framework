@@ -15,7 +15,7 @@ class ShellExec extends \Strukt\Console\Command{
 
 		$core = new class() extends Core{
 
-			public function get(string $alias_ns, array $args = null){
+			public function get(string $alias_ns, array $args = null):object{
 
 				return parent::get($alias_ns, $args);
 			}

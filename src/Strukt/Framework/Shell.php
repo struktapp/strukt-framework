@@ -29,8 +29,10 @@ class Shell extends \Strukt\Console\Application{
 
 	/**
 	* Constructor loads Strukt Framework in-build applications
+	* 
+	* @param bool $load_native_cmds
 	*/
-	public function __construct($load_native_cmds = true){
+	public function __construct(bool $load_native_cmds = true){
 
 		parent::__construct(env("cli_app_name"), env("cli_file_name"));
 

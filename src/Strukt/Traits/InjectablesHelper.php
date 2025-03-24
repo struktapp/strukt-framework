@@ -4,9 +4,17 @@ namespace Strukt\Traits;
 
 use Strukt\Framework\Injectable\Facet as InjectableFacet;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 trait InjectablesHelper{
 
-	public static function resolveInjectables(string $class){
+	/**
+	 * @param string $class
+	 * 
+	 * @return array|null
+	 */
+	public static function resolveInjectables(string $class):array|null{
 
 		$injectable = new InjectableFacet(new \ReflectionClass($class));
 		$configs = $injectable->getConfigs();	

@@ -38,7 +38,7 @@ abstract class Module{
 	*
 	* @return string
 	*/
-	public function getBaseDir(){
+	public function getBaseDir():string{
 
 		return dirname($this->reflect->getFileName());
 	}
@@ -48,7 +48,7 @@ abstract class Module{
 	*
 	* @return string
 	*/
-	public function getNamespace(){
+	public function getNamespace():string{
 
 		return $this->reflect->getName();
 	}
@@ -58,7 +58,7 @@ abstract class Module{
 	*
 	* @return string
 	*/
-	public function getAlias(){
+	public function getAlias():string{
 
 		return $this->alias;
 	}

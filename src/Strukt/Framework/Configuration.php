@@ -9,6 +9,9 @@ use Strukt\Traits\ClassHelper;
 use Strukt\Traits\InjectablesHelper;
 use Strukt\Package\Repos;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 class Configuration{
 
 	use ClassHelper;
@@ -16,6 +19,9 @@ class Configuration{
 	private $settings = null;
 	private $aliases = null;
 
+	/**
+	 * @param array $options
+	 */
 	public function __construct(array $options = []){
 
 		/**
@@ -53,6 +59,11 @@ class Configuration{
 		$this->settings = $settings;
 	}
 
+	/**
+	 * @param string $app_type
+	 * 
+	 * @return array
+	 */
 	public static function create(string $app_type){
 
 		$published = Repos::packages("published");
@@ -135,7 +146,10 @@ class Configuration{
 		return $settings;
 	}
 
-	public function getInjectables(){
+	/**
+	 * @return \Strukt\Framework\Injectable\Configuration
+	 */
+	public function getInjectables():InjectableCfg{
 
 		return new InjectableCfg(new \ReflectionClass(\App\Injectable::class));
 	}
@@ -144,14 +158,16 @@ class Configuration{
 	 * Configuration.get($key) Will filter non-compulsory middlewares 
 	 * and providers using ./cfg/app.ini
 	 * 
-	 * @param string $key
-	 *
 	 * Options:
 	 * - commands
 	 * - providers
 	 * - middlewares
+	 * 
+	 * @param string $key
+	 *
+	 * @return array|null
 	 */
-	public function get(string $key){
+	public function get(string $key):array|null{
 
 		if(in_array($key, ["providers", "middlewares", "commands"]))
 			return is_array($this->settings)?$this->settings[$key]:$this->settings?->get($key);
@@ -159,7 +175,10 @@ class Configuration{
 		return null;
 	}
 
-	public function getAliases(){
+	/**
+	 * @return array
+	 */
+	public function getAliases():array{
 
 		return $this->settings->get("aliases");
 	}

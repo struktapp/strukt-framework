@@ -2,7 +2,12 @@
 
 namespace Strukt\Package;
 
-class Core implements \Strukt\Framework\Contract\Package{
+use Strukt\Framework\Contract\Package as PackageInterface;
+
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
+class Core implements PackageInterface{
 
 	private $manifest;
 
@@ -16,7 +21,12 @@ class Core implements \Strukt\Framework\Contract\Package{
 		);
 	}
 
-	public function getSettings($type){
+	/**
+	 * @param string $type
+	 * 
+	 * @return array
+	 */
+	public function getSettings(string $type):array{
 
 		$settings = array(
 
@@ -67,32 +77,50 @@ class Core implements \Strukt\Framework\Contract\Package{
 		return $settings[$type];
 	}
 
-	public function getName(){
+	/**
+	 * @return string
+	 */
+	public function getName():string{
 
 		return $this->manifest["package"];
 	}
 
-	public function getCmdName(){
+	/**
+	 * @return string
+	 */
+	public function getCmdName():string{
 
 		return $this->manifest["cmd_name"];
 	}
 
-	public function getFiles(){
+	/**
+	 * @return array
+	 */
+	public function getFiles():array{
 
 		return $this->manifest["files"];
 	}
 
-	public function getModules(){
+	/**
+	 * @return array|null
+	 */
+	public function getModules():array|null{
 
 		return null;
 	}
 
-	public function isPublished(){
+	/**
+	 * @return bool
+	 */
+	public function isPublished():bool{
 
 		return true;
 	}
 
-	public function getRequirements(){
+	/**
+	 * @return array|null
+	 */
+	public function getRequirements():array|null{
 
 		return null;
 	}

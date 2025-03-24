@@ -22,7 +22,7 @@ class Core{
 	*
 	* @return object
 	*/
-	protected function get(string $alias_ns, array $args = null){
+	protected function get(string $alias_ns, ?array $args = null):object{
 
 		return event("provider.core")->apply($alias_ns, $args)->exec();
 	}

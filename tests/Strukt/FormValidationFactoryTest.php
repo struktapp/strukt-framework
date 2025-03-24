@@ -18,13 +18,11 @@ class FormValidationFactoryTest extends TestCase{
      */
 	public function testValidForm(){
 
-		$request = $this->createMock(Request::class);
-        $request->method('get')->will($this->returnValueMap(array(
-
-        	array("email", null, "pitsolu@gmail.com"),
-        	array("password", null, "p@55w0rd"),
-        	array("confirm_password", null, "p@55w0rd")
-        )));
+		$request = new Request([
+			"email"=>"pitsolu@gmail.com",
+			"password"=>"p@55w0rd",
+			"confirm_password"=>"p@55w0rd"
+		]);
 
 		$loginFrm = new class($request) extends Form{
 
@@ -63,13 +61,11 @@ class FormValidationFactoryTest extends TestCase{
      */
 	public function testEmptyForm(){
 
-		$request = $this->createMock(Request::class);
-        $request->method('get')->will($this->returnValueMap(array(
-
-        	array("email", null, ""),
-        	array("password", null, ""),
-        	array("confirm_password", null, "")
-        )));
+		$request = new Request([
+			"email"=>"",
+			"password"=>"",
+			"confirm_password"=>""
+		]);
 
 		$loginFrm = new class($request) extends Form{
 
@@ -104,13 +100,12 @@ class FormValidationFactoryTest extends TestCase{
      */
 	public function testInvalidForm(){
 
-		$request = $this->createMock(Request::class);
-        $request->method('get')->will($this->returnValueMap(array(
-
-        	array("username", null, "pitsolu"),
-        	array("password", null, "p@55w0rd"),
-        	array("confirm_password", null, "PaSsW0rd")
-        )));
+		$request = Request([
+			
+        	"username" => "pitsolu",
+        	"password" => "p@55w0rd",
+        	"confirm_password" => "PaSsW0rd"
+        ]);
 
 		$loginFrm = new class($request) extends Form{
 

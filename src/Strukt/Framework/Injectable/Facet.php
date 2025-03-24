@@ -4,14 +4,21 @@ namespace Strukt\Framework\Injectable;
 
 use Strukt\Annotation\Parser\Basic as BasicNotesParser;
 use Strukt\Framework\Injectable\Configuration as InjectableCfg;
+use Strukt\Framework\Contract\Injectable as InjectableInterface;
 use App\Injectable as InjectableApp;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Contract\ProviderInterface;
 
-class Facet implements \Strukt\Framework\Contract\Injectable{
+/**
+ * @author Moderator <pitsolu@gmail.com>
+ */
+class Facet implements InjectableInterface{
 
 	private $notes = null;
 
+	/**
+	 * @param \ReflectionClass $rclass
+	 */
 	public function __construct(\ReflectionClass $rclass){
 
 		$parser = new BasicNotesParser($rclass);
@@ -68,7 +75,10 @@ class Facet implements \Strukt\Framework\Contract\Injectable{
 		}
 	}
 
-	public function getConfigs(){
+	/**
+	 * @return array|null
+	 */
+	public function getConfigs():array|null{
 
 		return $this->notes;
 	}

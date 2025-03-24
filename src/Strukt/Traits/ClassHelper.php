@@ -6,9 +6,17 @@ use Strukt\Ref;
 use Strukt\Raise;
 use Strukt\Type\Str;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 trait ClassHelper{
 
-	public function getClass(string $class){
+	/**
+	 * @param string $class
+	 * 
+	 * @return string
+	 */
+	public function getClass(string $class):string{
 
 		$class_name = Str::create($class);
 
@@ -18,7 +26,12 @@ trait ClassHelper{
 		return $class_name->yield();
 	}
 
-	public function newClass(string $class){
+	/**
+	 * @param string $class
+	 * 
+	 * @return object
+	 */
+	public function newClass(string $class):object{
 
 		$class = $this->getClass($class); 
 

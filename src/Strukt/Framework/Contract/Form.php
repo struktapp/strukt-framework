@@ -22,7 +22,7 @@ abstract class Form{
 	/**
 	* Constructor
 	*
-	* @param $request Strukt\Http\Request
+	* @param \Strukt\Http\Request $request 
 	*/
 	public function __construct(Request $request){
 
@@ -33,10 +33,8 @@ abstract class Form{
 	* Getter raw validator values
 	*
 	* @param string $key
-	*
-	* @return string
 	*/
-	public function get($key){
+	public function get(string $key){
 
 		return $this->request->get($key);
 	}
@@ -46,7 +44,7 @@ abstract class Form{
 	*
 	* @return array
 	*/
-	public function validate(){
+	public function validate():array{
 
 		$helper = new class(){use \Strukt\Traits\Collection{
 

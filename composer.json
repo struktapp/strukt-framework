@@ -16,7 +16,6 @@
         "strukt/generator": "v1.1.1-alpha",
         "strukt/console": "1.0.0",
         "strukt/router":"v1.1.5-alpha",
-        "symfony/http-foundation": "^4.3",
         "phplucidframe/console-table": "^1.2",
         "psy/psysh": "^v0.11.21",
         "strukt/process": "v1.1.0",

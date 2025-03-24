@@ -12,9 +12,9 @@ trait Validator{
 	/**
 	* Check is value is alpha
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isAlpha(){
+	public function isAlpha():static{
 
 		$this->message["is_alpha"] = false;
 		if(preg_match("/^[A-Za-z_]+$/", trim($this->getValue())))
@@ -26,9 +26,9 @@ trait Validator{
 	/**
 	* Check is value is alphanumeric
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isAlphaNum(){
+	public function isAlphaNum():static{
 
 		$this->message["is_alphanum"] = false;
 		if(ctype_alnum(str_replace(" ", "", $this->getValue())))
@@ -40,9 +40,9 @@ trait Validator{
 	/**
 	* Check is value is numeric
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isNumeric(){
+	public function isNumeric():static{
 
 		$this->message["is_num"] = false;
 		if(is_numeric($this->getValue()))
@@ -54,9 +54,9 @@ trait Validator{
 	/**
 	* Check is value is email
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isEmail(){
+	public function isEmail():static{
 
 		$this->message["is_email"] = false;
 		if(filter_var($this->getValue(), FILTER_VALIDATE_EMAIL))
@@ -68,16 +68,20 @@ trait Validator{
 	/**
 	* Check is value is date
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isDate($format="Y-m-d"){
+	public function isDate($format="Y-m-d"):static{
 
 		$date = \DateTime::createFromFormat($format, $this->getValue());
 		$err = \DateTime::getLastErrors();
 
 		$this->message["is_date"] = false;
-		if($err['warning_count'] == 0 && $err['error_count'] == 0)
+		if($err == false)
 			$this->message["is_date"] = true;
+
+		if($err != false)
+			if($err['warning_count'] == 0 && $err['error_count'] == 0)
+				$this->message["is_date"] = true;
 
 		return $this;
 	}
@@ -85,9 +89,9 @@ trait Validator{
 	/**
 	* Check is value is not empty
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isNotEmpty(){
+	public function isNotEmpty():static{
 
 		$this->message["is_not_empty"] = true;
 		if(empty($this->getValue()))
@@ -99,9 +103,9 @@ trait Validator{
 	/**
 	* Check is value is in enumerator
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isIn($enum){
+	public function isIn($enum):static{
 
 		if(!is_array($enum))
 			throw new \Exception(sprintf("%s::isIn only takes an array!", Validator::class));
@@ -116,9 +120,9 @@ trait Validator{
 	/**
 	* Check values are equal
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function equalTo($val){
+	public function equalTo($val):static{
 
 		$this->message["equal_to"] = true;
 		if($val !== $this->getValue())
@@ -129,10 +133,12 @@ trait Validator{
 
 	/**
 	* Check length
+	* 
+	* @param float|int $len
 	*
-	* @return Strukt\Framework\Validator
+	* @return static
 	*/
-	public function isLen($len){
+	public function isLen(float|int $len):static{
 
 		$this->message["is_valid_length"] = false;
 		if(strlen($this->getValue()) == $len)

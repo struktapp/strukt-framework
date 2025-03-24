@@ -6,6 +6,8 @@ use Strukt\Http\Request;
 use Strukt\Http\Session\Native as Session;
 
 class RouterKernelTest extends TestCase{
+
+	private $kernel;
  
  	/**
     * @runInSeparateProcess

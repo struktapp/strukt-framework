@@ -7,6 +7,7 @@ use Strukt\Contract\Http\ResponseInterface;
 use Strukt\Contract\MiddlewareInterface;
 use Strukt\Http\Error\BadRequest;
 use Strukt\Cmd;
+use Strukt\Http\Response\Plain as PlainResponse;
 
 /**
 * @Name(valid)
@@ -18,8 +19,16 @@ class Validator implements MiddlewareInterface{
 		//
 	}
 
+		/**
+	* @param \Strukt\Contract\Http\ResponseInterface $request
+	* @param \Strukt\Contract\Http\ResponseInterface $response
+	* @param callable $next
+	*
+	* @return \Strukt\Http\Response\Plain
+	*/
 	public function __invoke(RequestInterface $request, 
-								ResponseInterface $response, callable $next){
+								ResponseInterface $response, 
+								callable $next):PlainResponse{
 
 		$action = $request->getMethod(); 
 

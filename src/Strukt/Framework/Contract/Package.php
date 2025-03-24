@@ -2,11 +2,14 @@
 
 namespace Strukt\Framework\Contract;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 interface Package{
 
-	public function getName();
-	public function getModules();
-	public function getFiles();
-	public function isPublished();
-	public function getRequirements();
+	public function getName():string;
+	public function getModules():array|null;
+	public function getFiles():array;
+	public function isPublished():bool;
+	public function getRequirements():array|null;
 }

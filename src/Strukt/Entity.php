@@ -2,6 +2,9 @@
 
 namespace Strukt;
 
+/**
+* @author Moderator <pitsolu@gmail.com>
+*/
 class Entity{
 
 	public function __construct(...$args){
