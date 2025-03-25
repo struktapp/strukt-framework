@@ -96,7 +96,7 @@ class Core implements PackageInterface{
 	/**
 	 * @return array
 	 */
-	public function getFiles():array{
+	public function getFiles():array|null{
 
 		return $this->manifest["files"];
 	}

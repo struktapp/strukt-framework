@@ -16,7 +16,6 @@ $match = [
 	"tpl-auth",
 	"tpl-middleware",
 	"tpl-provider",
-	"tpl-package",
 	"tpl-loader",
 	"tpl-cfg",
 	"tpl-pkg",
@@ -26,6 +25,19 @@ $match = [
 ];
 
 $arg1 = $argv[1]??"all";
+
+if(in_array($arg1, ["help","--help","-h"]))
+	exit(" Strukt Configuration
+ ====================
+ Generate configurations and templates.
+
+ tpl-auth       - Templates for AuthModule
+ tpl-middleware - Templates for Middleware
+ tpl-provider   - Templates for Provider
+ tpl-loader     - Templates for Loader
+ tpl-cfg        - Templates for Configuration
+ tpl-pkg        - Templates for Package
+ ext            - Extender\n\n");
 
 $which = [];
 if($arg1 == "all")
