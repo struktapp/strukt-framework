@@ -13,11 +13,15 @@ use Strukt\Package\Repos;
 *
 * Usage:
 *
-*       package:publish <pkg>
+*       package:publish <pkg> [--dev]
 *
 * Arguments:
 *
 *       pkg   package name
+*
+* Options:
+*
+*      --dev -d   For when you are developing a packge in your root/home folder
 */
 class PackagePublisher extends \Strukt\Console\Command{
 
@@ -34,12 +38,13 @@ class PackagePublisher extends \Strukt\Console\Command{
 		if($pkgname == "package"){
 
 			$devpkgname = ds(sprintf("/%s/", $pkgname));
-
 			$vendor_pkg = $vendorPkg->concat($devpkgname)->yield();
 		}
 		else{
 
-			$vendor_pkg = $vendorPkg
+			$vendor_pkg = "./";
+			if(negate(array_key_exists("dev", $in->getInputs())))
+				$vendor_pkg = $vendorPkg
 							->concat(env("vendor_fw"))
 							->concat($pkgname)->yield();
 		}
