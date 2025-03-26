@@ -24,6 +24,10 @@ $match = [
 	"all"
 ];
 
+$optional = [
+	"jwt"
+];
+
 $arg1 = $argv[1]??"all";
 
 if(in_array($arg1, ["help","--help","-h"]))
@@ -42,6 +46,9 @@ if(in_array($arg1, ["help","--help","-h"]))
 $which = [];
 if($arg1 == "all")
 	$which = array_merge($which, $match);
+
+if($arg1 == "jwt")
+	$which[] = "jwt";
 
 if(empty($which))
 	if(in_array($arg1, $match))
@@ -63,8 +70,7 @@ if($has("app", "remove xcli"))Strukt\Fs::rm('xcli');
 
 if($has("app", "make directory cfg"))Strukt\Fs::mkdir("cfg");
 if($has("tpl-cfg", "make directory tpl"))Strukt\Fs::mkdir(".tpl/sgf/cfg");
-if($has("tpl-auth", "make directory tpl|AuthModule/Controller"))
-	Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
+if($has("tpl-auth", "make directory tpl|AuthModule/Controller"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
 if($has("tpl-auth", "make directory tpl|AuthModule/Form"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Form");
 if($has("tpl-auth", "make directory tpl|AuthModule/Router"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Router");
 if($has("tpl-auth", "make directory tpl|AuthModule/Tests"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Tests");
@@ -74,6 +80,7 @@ if($has("tpl-pkg", "make directory tpl|Strukt/Pakcage"))Strukt\Fs::mkdir(".tpl/s
 if($has("ext", "make directory lib/App"))Strukt\Fs::mkdir("lib/App");
 if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Contract");
 if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
+if($has("jwt", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
 if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
 
 if($has("tpl-auth", "create file tpl|AuthModule/Controller/User.sgf"))
@@ -638,6 +645,62 @@ class XSession implements MiddlewareInterface{
 }
 ');
 
+if($has("jwt", "create file App/Middleware/Jwt.php"))
+Strukt\Fs::touchWrite("lib/App/Middleware/Jwt.php", '<?php
+
+namespace App\Middleware;
+
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\Http\RequestInterface;
+use Strukt\Contract\MiddlewareInterface;
+use Strukt\Http\Error\Unauthorized;
+use Strukt\Http\Session\Native as Session;
+
+use App\Core;
+
+/**
+* @Name(jwt)
+*/
+class Jwt implements MiddlewareInterface{
+
+	public function __construct(){
+
+		if(negate(class_exists(\Strukt\Jwt::class)))
+			raise("package strukt/key is required for jwt!");
+	}
+
+	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
+
+		if($request->headers->has("Authorization")){
+			
+	  		$token = $request->headers->get("Authorization");
+	  		$token = trim(str($token)->replace("Bearer", "")->yield());
+	  		$jwt = jwt($token);
+
+	  		if(!$jwt->valid()){
+
+	  			return new Unauthorized([
+
+	  				"success"=>false,
+	  				"message"=>"Unauthorized: Token expired!",
+	  				"jwt"=>"expired",
+	  				"data"=>[]
+
+	  			]);
+	  		}
+
+	  		$user = $jwt->yield()->data;
+	  		$session = new Session;
+	  		$session->set("username", $user->email);
+	  		$session->set("role", $user->role);
+	  		$session->set("contact_id", $user->contact_id);
+	  	}
+
+    	return $next($request, $response);
+	}
+}
+');
+
 if($has("app", "create file App/Provider/Facet.php"))
 Strukt\Fs::touchWrite("lib/App/Provider/Facet.php",'<?php
 
@@ -730,6 +793,15 @@ class Logger implements ProviderInterface{
 							->exec();
 
 				$logger->error($message, $context);
+			}
+
+			public function alert($message, array $context = []){
+
+				$logger = event("provider.logger")
+							->apply(env("logger_name"), env("logger_file"),Monolog::ALERT)
+							->exec();
+
+				$logger->alert($message, $context);
 			}
 		});	
 	}

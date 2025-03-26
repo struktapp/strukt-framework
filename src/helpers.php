@@ -219,3 +219,46 @@ if(helper_add("package")){
 		};
 	}
 }
+
+if(helper_add("uuid")){
+
+	function uuid(int $version=4, array $options = []){
+
+		if(negate(class_exists(\Ramsey\Uuid\Uuid::class)))
+			raise("fn[uuid] requires ramsey/uuid:^4.7!");
+
+		return new class($version, $options){
+
+			/**
+			 * @param int $version
+			 * @param array $options
+			 */
+			public function __construct(int $version, array $options){
+
+				$this->uuid = Strukt\Ref::create(Ramsey\Uuid\Uuid::class)
+								->noMake()
+								->method(str("uuid")->concat($version))
+								->invoke(...$options);
+			}
+
+			public function yield(){
+
+				return $this->uuid->toString();
+			}
+		};
+	}
+}
+
+if(helper_add("singular")){
+
+	/**
+	 * @param string $actor
+	 */
+	function singular(string $actor){
+
+		$inflector = new Symfony\Component\String\Inflector\EnglishInflector();
+		$actor = str(arr($inflector->singularize($actor))->pop());
+
+		return $actor->yield();
+	}
+}
