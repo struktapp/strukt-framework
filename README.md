@@ -16,21 +16,20 @@ Rarely should anyone use this on its own.
 
 ```sh
 echo {"minimum-stability":"dev"} > composer.json
-composer require "strukt/framework:1.1.7-alpha" --prefer-dist
+composer require "strukt/framework:1.1.8-alpha" --prefer-dist
 ```
 
-# Setup, Cache, Configuration & Environment
+## Setup, Cache, Configuration & Environment
 
-## Cache
+### Cache
 
 Always remember to clear and reload the cache when necessary
 
 ```sh
 ./xcli cache:clear 
-./xcli cache:make cli
-./xcli cache:make idx
+./xcli cache:make
 ```
-## Shell
+### Shell
 
 Drop into shell
 
@@ -38,20 +37,20 @@ Drop into shell
 ./xcli shell:exec
 ```
 
-## Setting Application Type
+### Setting Application Type
 
 ```php
 config("app.type", "App:Idx")// for index.php, alternative App:Cli for console
 ```
 
-## Configuration
+### Configuration
 
 ```php
 config("facet.middlewares")
 config("facet.providers")
 ```
 
-## Environment Setup
+### Environment Setup
 
 This class is defaultly found in [strukt-commons](https://github.com/samweru/strukt-commons)
 
@@ -62,9 +61,9 @@ env("root_dir", getcwd());//setter custom environment variable
 env("root_dir");//getter
 ```
 
-## Setup Packages Registry 
+### Setup Packages Registry 
 
-File location `./cfg/repo.ini`
+Packages reference file location `./cfg/repo.ini`
 
 ```php
 repos(); //list all repositories
@@ -72,9 +71,9 @@ repos("published");//list all published strukt packages
 repos("installed");//list all installed strukt packages
 ```
 
-# Packages
+## Packages
 
-## Default Package
+### Default Package
 
 ```php
 package("core", "App:Idx")->get("settings"); //returns array of middlewares, commands and providers
@@ -87,14 +86,14 @@ package("core")->get("is:published");//true by default
 package("core")->get("requirements");//null or array
 ```
 
-The above methods are in abstract class `Strukt\Package\Pkg` you can use them to create your package.
+The above methods are interfaced in class `Strukt\Framework\Contract\Package` you must use them in your package.
 
-## Building Packages
+### Building Packages
 
-Your first step in developing your package will require you to install `strukt-framework`
+The first step in developing your package will require you to install `strukt-framework`
 and execute `composer exec strukt-cfg` command that will create your folder structure. You'll need to create `src` and `package` folders. 
 
-See structure of package below.
+See structure of package below:
 
 ```sh
 ├── bootstrap.php
@@ -112,12 +111,10 @@ See structure of package below.
     └── Strukt
         └── Package
             └── Pkg{{Package Name}}.php #Identify your package resources here
-
 ```
 
-Your package class in `src/Strukt/Package/Pkg<Package Name>.php` will have methods
-listed in the [Default Package](#default-package) section that is it should implement the 
-interface `Strukt\Contract\Package`
+Again, your package class in `src/Strukt/Package/Pkg<Package Name>.php` will have methods
+listed in `Strukt\Fraamework\Contract\Package`
 
 ### Package Autoloading
 
@@ -140,17 +137,24 @@ return $loader;
 
 For packages that require installation into your `app/src/{{AppName}}` folder, there
 are a few tricks you could use while building your package. The `publish:package` command
-takes argument `package` for publishing packages that are currently in development,
+takes argument `<package>` for publishing packages that are currently in development,
 since your source will be in the root folder in a subfolder called `package`. 
 
-This will require you to enter into your `cfg/repo.php` (See [Setup Packages Registry](#setup-packages-registry)) and indicate your currently in-development package with the key/keyword `package` which will allow the publisher to install files in the your app source folder `app/src`.
+This will require you to enter into your `cfg/repo.php` and indicate your currently in-development package with the key/keyword `package` which will allow the publisher to install files in the your app source folder `app/src`.
 
-# Validator
+The `publish:package` command installs from `vendor` but in development-mode you can use `--dev` switch
+to install your package that will be located in your project root.
 
-## Example
+## Validator
+
+### Example
 
 ```php
-class User extends \Strukt\Contract\Form{
+namespace Payroll\AuthModule\Form;
+
+use Strukt\Framework\Contract\Form as AbstractForm;
+
+class User extends AbstractForm{
 
 	/**
 	* @IsNotEmpty()
@@ -165,7 +169,7 @@ class User extends \Strukt\Contract\Form{
 }
 ```
 
-## Validator Annotations
+### Validator Annotations
 
 ```php
 /**
@@ -181,7 +185,7 @@ class User extends \Strukt\Contract\Form{
 */
 ```
 
-## Adding Validators
+### Adding Validators
 
 New validators can be added is in your `lib/App/Validator.php`
 There you can find an example `App\Validator::isLenGt`

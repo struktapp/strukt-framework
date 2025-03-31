@@ -1,15 +1,26 @@
 <?php
 
+use Strukt\Http\Request;
+use Strukt\Package\Repos;
+use Strukt\Framework\Contract\Form as AbstractForm;
+use Symfony\Component\String\Inflector\EnglishInflector;
+use Ramsey\Uuid\Uuid as RamseyUuid;
+
 helper("framework");
 
 if(helper_add("repos")){
 
-	function repos(string $type = null){
+	/**
+	 * @param string $type
+	 * 
+	 * @return array
+	 */
+	function repos(string $type = null):array{
 
 		if(is_null($type))
-			return \Strukt\Package\Repos::available();
+			return Repos::available();
 
-		return \Strukt\Package\Repos::packages($type);		
+		return Repos::packages($type);		
 	}
 }
 
@@ -38,38 +49,83 @@ if(helper_add("ddd")){
 
 if(helper_add("form")){
 
-	function form(string $which, \Strukt\Http\Request $request){
+	/**
+	 * @param string $which
+	 * @param \Strukt\Http\Request $request
+	 * 
+	 * @return AbstractForm
+	 */
+	function form(string $which, Request $request):AbstractForm{
 
-		$nr = reg()->get("nr");
-		$aliases = $nr->get("modules")->keys();
+		$alias = new class($which){
 
-		$forms = arr(array_flip($aliases))->each(function($a, $v) use($nr){
+			use Strukt\Traits\FacetHelper;
 
-			$ls = arr($nr->get(str($a)->concat(".frm"))->keys())->each(function($k, $v) use($a){
+			private $which;
 
-				return str($a)->concat(".frm.")->concat($v)->yield();
-			});
+			/**
+			 * @param string $which
+			 */
+			public function __construct(string $which){
 
-			$ls = arr(array_flip($ls->yield()))->each(function($k, $v){
+				$this->which = $which;
+			}
 
-				return str(arr(str($k)->split("."))->last()->yield())->toSnake()->yield();
-			});
+			/**
+			 * @return string
+			 */
+			public function valid():string{
 
-			return array_flip($ls->yield());
-		});
+				$module_alias = null;
+				$class_name = null;
+				$facet_alias = null;
+				$which = null;
 
-		$forms = $forms->level();
+				$qualified = $this->isQualifiedAlias($this->which);
 
-		return core($forms[$which], [$request]);
+				if($qualified){
+
+					list($_, $facet_alias, $_) = str($this->which)->split(".");
+					if(str($facet_alias)->equals("frm"))
+						return $this->which;
+
+					raise(sprintf("Invalid form[%s]!", $this->which));
+				}
+
+				if(negate($qualified))
+					if(preg_match("/^[a-z]{2}\.\w+$/", $this->which))
+						list($module_alias, $class_name) = str($this->which)->split(".");
+
+				if(notnull($module_alias) && notnull($class_name))
+					$which = str($module_alias)
+						->concat(str("frm")->prepend("."))
+						->concat(str($class_name)->prepend("."))
+						->yield();
+
+				if(is_null($which))
+					raise(sprintf("Invalid form[%s]!", $this->which));
+
+				return $which;
+			}
+		};
+
+		return core($alias->valid(), [$request]);
 	}
 }
 
 if(helper_add("validator")){
 
-	function validator(string $type, mixed $value){
+	/**
+	 * @param string $type
+	 * @param mixed $value
+	 * @param ...$args
+	 * 
+	 * @return bool
+	 */
+	function validator(string $type, mixed $value, ...$args):bool{
 
 		$validator = new App\Validator($value);
-		$validator = ref($validator)->method(lcfirst(str($type)->toCamel()->yield()))->invoke();
+		$validator = ref($validator)->method(lcfirst(str($type)->toCamel()->yield()))->invoke(...$args);
 		$messages = $validator->getMessage();
 
 		return reset($messages);
@@ -78,9 +134,15 @@ if(helper_add("validator")){
 
 if(helper_add("request")){
 
-	function request(array $args = [], array $headers = null){
+	/**
+	 * @param array $args
+	 * @param array $headers
+	 * 
+	 * @return \Strukt\Http\Request
+	 */
+	function request(array $args = [], ?array $headers = null):Request{
 
-		$request = new \Strukt\Http\Request($args);
+		$request = new Request($args);
 		if(notnull($headers))
 			$request->headers->add($headers);
 
@@ -90,6 +152,10 @@ if(helper_add("request")){
 
 if(helper_add("core")){
 
+	/**
+	 * @param string $alias
+	 * @param string $args
+	 */
 	function core(string $alias, ?array $args = null){
 
 		return event("provider.core")->apply($alias, $args)->exec();
@@ -98,7 +164,12 @@ if(helper_add("core")){
 
 if(helper_add("routes")){
 
-	function route(string $path){
+	/**
+	 * @param string $path
+	 * 
+	 * @return object
+	 */
+	function route(string $path):object{
 
 		return new class($path){
 
@@ -106,6 +177,9 @@ if(helper_add("routes")){
 			private $url;
 			private $path;
 
+			/**
+			 * @param string $path
+			 */
 			public function __construct(string $path){
 
 				$this->path = $path;
@@ -113,16 +187,26 @@ if(helper_add("routes")){
 				$this->url = $this->matcher->which($path);
 			}
 
+			/**
+			 * @param ...$args
+			 */
 			public function post(...$args){
 
 				return $this->path("POST", ...$args);
 			}
 
+			/**
+			 * @param ...$args
+			 */
 			public function get(...$args){
 
 				return $this->path("GET", ...$args);
 			}
 
+			/**
+			 * @param string $method
+			 * @param ...$args
+			 */
 			public function path(string $method, ...$args){
 
 				$method = str($method)->toUpper()->yield();
@@ -155,6 +239,12 @@ if(helper_add("routes")){
 
 if(helper_add("package")){
 
+	/**
+	 * @param string $class
+	 * @param string $mode
+	 * 
+	 * @return object
+	 */
 	function package(string $name, string $mode="App:Cli"){
 
 		$repos = repos();
@@ -169,13 +259,22 @@ if(helper_add("package")){
 			private $meta;
 			private $mode;
 
+			/**
+			 * @param string $class
+			 * @param string $mode
+			 */
 			public function __construct(string $class, string $mode){
 
 				$this->meta = new $class;
 				$this->mode = $mode;
 			}
 
-			public function get(string $which){
+			/**
+			 * @param string $switch
+			 * 
+			 * @return array|string|null
+			 */
+			public function get(string $which):array|string|null{
 
 				$settings = $this->meta->getSettings($this->mode);
 
@@ -222,9 +321,13 @@ if(helper_add("package")){
 
 if(helper_add("uuid")){
 
+	/**
+	 * @param int $version
+	 * @param array $options
+	 */
 	function uuid(int $version=4, array $options = []){
 
-		if(negate(class_exists(\Ramsey\Uuid\Uuid::class)))
+		if(negate(class_exists(RamseyUuid::class)))
 			raise("fn[uuid] requires ramsey/uuid:^4.7!");
 
 		return new class($version, $options){
@@ -235,7 +338,7 @@ if(helper_add("uuid")){
 			 */
 			public function __construct(int $version, array $options){
 
-				$this->uuid = Strukt\Ref::create(Ramsey\Uuid\Uuid::class)
+				$this->uuid = Strukt\Ref::create(RamseyUuid::class)
 								->noMake()
 								->method(str("uuid")->concat($version))
 								->invoke(...$options);
@@ -256,7 +359,7 @@ if(helper_add("singular")){
 	 */
 	function singular(string $actor){
 
-		$inflector = new Symfony\Component\String\Inflector\EnglishInflector();
+		$inflector = new EnglishInflector();
 		$actor = str(arr($inflector->singularize($actor))->pop());
 
 		return $actor->yield();
