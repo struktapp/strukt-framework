@@ -128,7 +128,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 					));
 
 			/**
-			 * Back-up files
+			 * Overwrite and back-up files
 			 */
 			$dir = dirname($actual_path);
 			$filename = basename($actual_path);
@@ -138,13 +138,15 @@ class PackagePublisher extends \Strukt\Console\Command{
 				fs(".bak")->mkdir($dir);
 				$fsIn = fs(ds(str(".bak/")->concat($dir)->yield()));
 				$fsIn->touchWrite($filename, $fsOut->cat($filename));
+				$fsOut->overwrite($filename, $file_content);
 				// fs()->rename($actual_path, sprintf("%s~", $actual_path));
 			}
 
 			/**
 			 * Write new files
 			 */
-			$fsOut->touchWrite($filename, $file_content);
+			if(negate($fsOut->isFile($actual_path)))
+				$fsOut->touchWrite($filename, $file_content);
 		});
 
 		/**
