@@ -41,7 +41,8 @@ if(in_array($arg1, ["help","--help","-h"]))
  tpl-loader     - Templates for Loader
  tpl-cfg        - Templates for Configuration
  tpl-pkg        - Templates for Package
- ext            - Extender\n\n");
+ ext            - Extender
+ jwt 			- JWT middleware\n\n");
 
 $which = [];
 if($arg1 == "all")
@@ -857,6 +858,13 @@ providers[] = facet
 providers[] = valid
 ; providers[] = logger
 ; providers[] = strukt.asset
+');
+
+if($has("app", "create file cfg/package.ini"))
+Strukt\Fs::touchWrite("cfg/package.ini",'[auth]
+default = pop-db
+home[] = pop-db
+home[] = red-db
 ');
 
 if($has("app", "create file cfg/module.ini"))

@@ -8,3 +8,5 @@ rm xcli
 rm index.php
 rm .env
 rm -rf app
+rm php_errors.log
+rm .cache
