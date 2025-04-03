@@ -123,8 +123,17 @@ class PackagePublisher extends \Strukt\Console\Command{
 						"app"=>$appname
 					));
 
-			if(fs()->isFile($actual_path))
-				fs()->rename($actual_path, sprintf("%s~", $actual_path));
+			\Strukt\Fs::mkdir(".bak");
+			if(fs()->isFile($actual_path)){
+
+				$dir = dirname($actual_path);
+				$filename = basename($actual_path);
+				$fsOut = fs($dir);
+				$fsIn = fs(".bak");
+				$fsIn->mkdir($dir);
+				$fsIn->touchWrite($dir, $fsOut->cat($filename));
+				// fs()->rename($actual_path, sprintf("%s~", $actual_path));
+			}
 
 			fs()->touchWrite($actual_path, $file_content);
 		});
