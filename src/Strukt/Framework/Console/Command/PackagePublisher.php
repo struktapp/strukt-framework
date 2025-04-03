@@ -82,6 +82,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 					raise(sprintf("Please install and publish package [%s]!", $requirement));
 		}
 
+		\Strukt\Fs::mkdir(".bak");
 		arr($pkg->getFiles())->each(function($key, $relpath) use ($pkgname, 
 																	$vendor_pkg, 
 																	$appname,
@@ -115,6 +116,9 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			fs()->mkdir($path["dirname"]);
 
+			/**
+			 * Get new file contents
+			 */
 			$file_content = fs()->cat($vendor_file_path);
 			if(str($vendor_file_path)->endsWith(".sgf") &&
 				!str($vendor_file_path)->contains(".tpl/sgf"))
@@ -123,25 +127,24 @@ class PackagePublisher extends \Strukt\Console\Command{
 						"app"=>$appname
 					));
 
-			\Strukt\Fs::mkdir(".bak");
-			
+			/**
+			 * Back-up files
+			 */
+			$dir = dirname($actual_path);
+			$filename = basename($actual_path);
+			$fsOut = fs($dir);
+			if($fsOut->isFile($actual_path)){
 
-			if(fs()->isFile($actual_path)){
-
-
-				$dir = dirname($actual_path);
-				$filename = basename($actual_path);
-
-				$fsOut = fs($dir);
-				
 				fs(".bak")->mkdir($dir);
 				$fsIn = fs(ds(str(".bak/")->concat($dir)->yield()));
-				// $fsIn->mkdir($dir);
 				$fsIn->touchWrite($filename, $fsOut->cat($filename));
 				// fs()->rename($actual_path, sprintf("%s~", $actual_path));
 			}
 
-			fs()->touchWrite($actual_path, $file_content);
+			/**
+			 * Write new files
+			 */
+			$fsOut->touchWrite($filename, $file_content);
 		});
 
 		/**
