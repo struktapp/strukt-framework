@@ -65,6 +65,11 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 		$pkg = Ref::create($pkgclass)->make()->getInstance();
 
+		/**
+		 * Preinstall
+		 */
+		$pkg->preInstall();
+
 		$appname = config("app.name");
 
 		$requirements = $pkg->getRequirements();
@@ -124,6 +129,10 @@ class PackagePublisher extends \Strukt\Console\Command{
 			fs()->touchWrite($actual_path, $file_content);
 		});
 
+		/**
+		 * Postinstall
+		 */ 
+		$pkg->postInstall();
 		$out->add("Package successfully published\n");
 	}
 }
