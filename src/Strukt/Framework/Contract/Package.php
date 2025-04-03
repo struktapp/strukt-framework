@@ -12,4 +12,6 @@ interface Package{
 	public function getFiles():array|null;
 	public function isPublished():bool;
 	public function getRequirements():array|null;
+	public function postInstall():void;
+	public function preInstall():void;
 }

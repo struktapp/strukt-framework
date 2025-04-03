@@ -22,6 +22,14 @@ class Core implements PackageInterface{
 	}
 
 	/**
+	 * @return void
+	 */
+	public function preInstall():void{
+
+		//
+	}
+
+	/**
 	 * @param string $type
 	 * 
 	 * @return array
@@ -123,5 +131,13 @@ class Core implements PackageInterface{
 	public function getRequirements():array|null{
 
 		return null;
+	}
+
+	/**
+	 * @return void
+	 */
+	public function postInstall():void{
+
+		//
 	}
 }
