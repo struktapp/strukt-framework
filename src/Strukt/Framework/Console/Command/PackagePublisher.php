@@ -87,7 +87,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			if($qpath->contains($vendor_appbase))
 				$qpath = $qpath->replace($vendor_appbase, sprintf("app/src/%s", $appname));
 
-			$actual_path = $qpath;
+			$actual_path = $qpath->clone();
 
 			$vendorFilePath = str($vendor_pkg);
 			if(negate($isDevMode))
