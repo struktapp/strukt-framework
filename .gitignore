@@ -24,7 +24,7 @@ cfg/
 logs/
 .phpunit.result.cache
 .env
-.bak
+./.bak
 ./xcli
 xcli
 .cache
