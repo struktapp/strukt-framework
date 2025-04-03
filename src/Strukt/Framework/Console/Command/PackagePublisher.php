@@ -133,19 +133,18 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$dir = dirname($actual_path);
 			$filename = basename($actual_path);
 			$fsOut = fs($dir);
-			if($fsOut->isFile($actual_path)){
+			if($fsOut->isFile($filename)){
 
 				fs(".bak")->mkdir($dir);
 				$fsIn = fs(ds(str(".bak/")->concat($dir)->yield()));
 				$fsIn->touchWrite($filename, $fsOut->cat($filename));
 				$fsOut->overwrite($filename, $file_content);
-				// fs()->rename($actual_path, sprintf("%s~", $actual_path));
 			}
 
 			/**
 			 * Write new files
 			 */
-			if(negate($fsOut->isFile($actual_path)))
+			if(negate($fsOut->isFile($filename)))
 				$fsOut->touchWrite($filename, $file_content);
 		});
 

@@ -24,8 +24,8 @@ cfg/
 logs/
 .phpunit.result.cache
 .env
-./.bak
-./xcli
+/.bak
+/xcli
 xcli
 .cache
 package.json
@@ -33,4 +33,7 @@ pkg-roles/
 src/Strukt/Package/PkgRoles.php
 src/Strukt/Package/Extender.php
 lib/Strukt
+/db/
+/xcli.dbx
+/xhttp.dbx
 
