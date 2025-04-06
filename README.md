@@ -91,7 +91,7 @@ The above methods are interfaced in class `Strukt\Framework\Contract\Package` yo
 ### Building Packages
 
 The first step in developing your package will require you to install `strukt-framework`
-and execute `composer exec strukt-cfg` command that will create your folder structure. You'll need to create `src` and `package` folders. 
+and execute `composer exec strukt` command that will create your folder structure. You'll need to create `src` and `package` folders. 
 
 See structure of package below:
 

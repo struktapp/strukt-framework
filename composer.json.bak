@@ -33,6 +33,6 @@
         "psr-0": { "Strukt\\": "src/", "App\\": "lib/"},
         "files": ["src/helpers.php"]
     },
-    "bin":["bin/strukt-cfg"],
+    "bin":["bin/strukt"],
     "minimum-stability":"dev"
 }
