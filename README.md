@@ -97,15 +97,15 @@ See structure of package below:
 
 ```sh
 ├── bootstrap.php
-├── cfg
+├── cfg/
 ├── console
 ├── index.php
-├── lib
-├── tpl
-├── vendor
+├── lib/
+├── tpl/
+├── vendor/
 ├── composer.json
 ├── LICENSE
-├── package #Place all your packages files here
+├── package/ #Place all your packages files here
 ├── README.md
 └── src
     └── Strukt
@@ -140,7 +140,7 @@ are a few tricks you could use while building your package. The `publish:package
 takes argument `<package>` for publishing packages that are currently in development,
 since your source will be in the root folder in a subfolder called `package`. 
 
-This will require you to enter into your `cfg/repo.php` and indicate your currently in-development package with the key/keyword `package` which will allow the publisher to install files in the your app source folder `app/src`.
+This will require you to enter into your `cfg/repo.php` and indicate you are currently in-development with the key/keyword `package` which will allow the publisher to install files in the your app source folder `app/src`.
 
 The `publish:package` command installs from `vendor` but in development-mode you can use `--dev` switch
 to install your package that will be located in your project root.

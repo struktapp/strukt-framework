@@ -1,85 +1,12 @@
 #!/usr/bin/php
 <?php
 
+use Strukt\Http\Request;
 use Strukt\Framework\Configuration;
 use App\Middleware\XSession;
-use App\Kernel;
+use App\XHttp;
 
 require "bootstrap.php";
-
-$argv = $_SERVER["argv"];
-
-array_shift($argv);//xhttp
-$arg1 = array_shift($argv);//arg1
-
-if(empty($arg1) || in_array(strtolower(trim($arg1)), ["usage","help","--help","-h","?"])){
-
-	$tpl = "
-	 {{xhttp}} {{descr}}
-
-	 {{usage}}: xhttp <method> <route> [params...]
-
-	 {{argm}}:
-
-	    {{method}}:       GET, POST ...etc
-	    {{route}}:        Example: /login Default: / root
-	    {{param}}:   Example: username=pitsolu password=p@55w0rd
-
-	 {{example}}:  ./xhttp POST /login username=pitsolu password=p@55word";
-
-	$tpl = str(arr(str($tpl)->split("\n"))->each(fn($k, $ln)=>ltrim($ln, "\t"))->concat("\n"))->yield();
-	
-	$usage = array(
-		
-		"xhttp" => ["white:bold","xhttp"],
-		"usage" => ["yellow","Usage"],
-		"descr" => ["blue", "XHTTP is a CLI utility that mimicks a HTTP client."],
-		"argm" => ["yellow","Arguments"],
-		"method" => ["cyan","method"],
-		"route" => ["cyan","route"],
-		"param" => ["cyan","parameters"],
-		"example" => ["yellow", "Example"]
-	);
-
-	$output = template($tpl, arr($usage)->each(fn($name, $match)=>color(...$match))->yield());
-
-	exit(sprintf("\n %s\n\n", $output));
-}
-
-if(negate(fs(phar("cfg")->adapt())->isFile("app.ini"))){
-
-	echo color("red", "\n Application is not ready!");
-	echo " Run:\n";
-	echo colorln("yellow","  ./console app:make {{app_name}}");
-	echo colorln("yellow","  ./console app:reload\n");
-	exit;
-}
-
-$method = strtoupper(trim($arg1));//method
-$methods = [
-	"ANY",
-	"PUT", 
-	"GET", 
-	"PATH", 
-	"POST", 
-	"DELETE",
-	"PATCH",
-	"OPTIONS"
-];
-
-if(negate(arr($methods)->has($method)))
-	list($uri, $method) = [$method, "GET"];
-
-if(empty($uri))//uri
-	$uri = array_shift($argv);
-
-//split params
-$params = array_map(fn($param)=>preg_match("/\w\=\w/", $param)?(fn($k,$v)=>[$k=>$v])(...explode("=", $param)):null, $argv);
-$params = arr($params)->level();
-
-$_SERVER["REQUEST_URI"] = $uri;
-$_SERVER["REQUEST_METHOD"] = strtoupper(trim($method));
-$_REQUEST = $_POST = $params;
 
 env("json_validation_err", true);
 env("res_send_headers", false);
@@ -95,5 +22,5 @@ XSession::withOptions(array(
 	]
 ));
 
-$kernel = new Kernel(new Configuration);
-exit($kernel->run());
+$xhttp = new XHttp(new Configuration, Request::createFromGlobals());
+exit($xhttp->run($_SERVER["argv"]));

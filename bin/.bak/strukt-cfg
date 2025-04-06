@@ -946,17 +946,168 @@ cmd[] = package:info
 if($has("app", "create file cfg/cache.ini"))
 Strukt\Fs::touchWrite("cfg/cache.ini", 'disable = false');
 
+if($has("app", "create file App/XHttp.php"))
+Strukt\Fs::touchWrite("lib/App/XHttp.php", '<?php
+
+namespace App;
+
+use Strukt\Framework\Configuration;
+use Strukt\Contract\Http\RequestInterface;
+
+/**
+ * xhttp - XHTTP is a CLI utility that mimicks a HTTP client.
+ *
+ *	 Usage: xhttp <method> <route> [params...]
+ *
+ *	 Arguments:
+ *
+ *	    Method:       GET, POST ...etc
+ *	    Route:        Example: /login Default: / root
+ *	    Patameters:   Example: username=pitsolu password=p@55w0rd
+ *
+ *	 Example:  ./xhttp POST /login username=pitsolu password=p@55word
+ */
+final class XHttp{
+
+	private $config;
+	private $request;
+
+	/**
+	 * @param \Strukt\Framework\Configuration $config
+	 * @param \Strukt\Contract\Http\RequestInterface $request
+	 */
+	public function __construct(Configuration $config, ?RequestInterface $request = null){
+
+		$this->config = $config;
+		$this->request = $request;
+	}
+
+	/**
+	 * class docBlock to usage message
+	 * 
+	 * @return string
+	 */
+	private function getDoc():string{
+
+		$message = ref(static::class)->getRef()->getDocComment();
+		$message = str($message)->replace(["/**"," */"," *"],"");
+		$message = str(arr($message->split("\n"))->each(fn($k, $ln)=>ltrim($ln, "\t"))->concat("\n"));
+
+		return $message->yield();
+	}
+
+	/**
+	 * Is ready only if app is ready (app.ini)
+	 * 
+	 * @return void
+	 */
+	private function isReady():void{
+
+		if(negate(fs(phar("cfg")->adapt())->isFile("app.ini"))){
+
+			$message = "\n Application is not ready!\n".
+			"  Run:\n".
+			"  ./console app:make <app_name>\n".
+			"  ./console app:reload\n\n";
+
+			exit($message);
+		}
+	}
+
+	/**
+	 * @param mixed $arg1
+	 * @param array &argv
+	 * 
+	 * @return array
+	 */
+	private function getUriAndMethod(mixed $arg1, array &$argv):array{
+
+		$method = strtoupper(trim($arg1));//method
+		$methods = [
+			"ANY",
+			"PUT", 
+			"GET", 
+			"PATH", 
+			"POST", 
+			"DELETE",
+			"PATCH",
+			"OPTIONS"
+		];
+
+		if(negate(arr($methods)->has($method)))
+			list($uri, $method) = [$method, "GET"];
+
+		if(empty($uri))//uri
+			$uri = array_shift($argv);
+
+		return array($uri, $method);
+	}
+
+	/**
+	 * Split CLI input params to array
+	 * 
+	 * @param array $argv
+	 * 
+	 * @return array
+	 */
+	private function splitInput(array $argv):array{
+
+		$params = array_map(function($param){
+
+			if(preg_match("/\w\=\w/", $param))
+				return (fn($k,$v)=>[$k=>$v])(...explode("=", $param));
+
+		}, $argv);
+
+		return arr($params)->level();
+	}
+
+	/**
+	 * @param array $argv
+	 * 
+	 * @return void
+	 */
+	private function setUp(array $argv):void{
+
+		array_shift($argv);// xhttp
+		$arg1 = array_shift($argv);// arg1
+		if(empty($arg1) || in_array(strtolower(trim($arg1)), ["usage","help","--help","-h","?"]))
+			exit(sprintf(" %s\n", $this->getDoc()));
+
+		$this->isReady();
+		list($uri, $method) = $this->getUriAndMethod($arg1, $argv);
+		$params = $this->splitInput($argv);
+
+		$this->request = $this->request->duplicate(query:$params, request:$params, server:[
+
+			"REQUEST_URI" => $uri,
+			"REQUEST_METHOD" => $method
+		]);
+	}
+
+	/**
+	 * @return string
+	 */
+	public function run(array $argv):string{
+
+		$this->setUp($argv);
+
+		$kernel = new \App\Kernel($this->config, $this->request);
+		return $kernel->run();
+	}
+}');
+
 if($has("app", "create file App/Kernel.php"))
 Strukt\Fs::touchWrite("lib/App/Kernel.php", '<?php
 
 namespace App;
 
-use Strukt\Framework\Configuration;
-use Strukt\Router\Kernel as RouterKernel;
 use Strukt\Http\Request;
-use App\Loader as AppLoader;
-use Psr\Http\Message\ServerRequestInterface;
+use Strukt\Contract\Http\RequestInterface;
 use Strukt\Framework\Application;
+use Strukt\Framework\Configuration;
+use Strukt\Router\Kernel as Router;
+use App\Loader;
 
 /**
 * @author Moderator <pitsolu@gmail.com>
@@ -970,16 +1121,16 @@ class Kernel{
 
 	/**
 	* @param \Strukt\Framework\Configuration $config
-	* @param \Psr\Http\Message\ServerRequestInterface $request
+	* @param \Strukt\Contract\Http\RequestInterface $request
 	*/
-	public function __construct(Configuration $config, ?ServerRequestInterface $request = null){
+	public function __construct(Configuration $config, ?RequestInterface $request = null){
 
 		$this->config = $config;
 
 		if(is_null($request))
 			$request = Request::createFromGlobals();
 
-		$this->kernel = new RouterKernel($request);
+		$this->kernel = new Router($request);
 
 		$kconfigs = $config->getInjectables()->getConfigs();
 		if(!empty($kconfigs))
@@ -989,9 +1140,9 @@ class Kernel{
 		$this->kernel->providers(config("facet.providers", $this->config->get("providers")));
 		$this->kernel->middlewares(config("facet.middlewares", $this->config->get("middlewares")));
 
-		if(class_exists(AppLoader::class)){
+		if(class_exists(Loader::class)){
 
-			$this->loader = new AppLoader($this->kernel);
+			$this->loader = new Loader($this->kernel);
 			$this->app =  $this->loader->getApp();
 		}
 	}
@@ -1007,7 +1158,7 @@ class Kernel{
 	/**
 	* @return \Strukt\Router\Kernel
 	*/
-	public function getRouter():RouterKernel{
+	public function getRouter():Router{
 
 		return $this->kernel;
 	}
@@ -1015,7 +1166,7 @@ class Kernel{
 	/**
 	* @return \App\Loader
 	*/
-	public function getLoader():?AppLoader{
+	public function getLoader():?Loader{
 
 		return $this->loader;
 	}
