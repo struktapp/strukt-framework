@@ -10,11 +10,11 @@ use Strukt\Console\Output;
 *
 * Usage:
 *
-*       app:make <app_name>
+*       app:make <app>
 *
 * Arguments:
 *
-*       app_name   application name
+*       app 	   Application name
 *                  underscored names changed to camel case
 *                  example:app -> App, app_name -> AppName
 */

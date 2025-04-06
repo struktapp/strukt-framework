@@ -13,13 +13,13 @@ use Strukt\Framework\Contract\Module;
 *
 * Usage:
 *
-*       module:make <app_name> <module_name> <alias_name>
+*       module:make <app> <module> <alias>
 *
 * Arguments:
 *
-*       app_name          your application name
-*       module_name       your module name
-*       alias_name        your module alias name
+*       app          Application name
+*       module       Module name
+*       alias        Module alias
 */
 class ModuleMake extends \Strukt\Console\Command{
 
