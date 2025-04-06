@@ -31,7 +31,7 @@ $optional = [
 $arg1 = $argv[1]??"all";
 
 if(in_array($arg1, ["help","--help","-h"]))
-	exit(" Strukt Configuration
+	exit(" Strukt Boot
  ====================
  Generate configurations and templates.
 
@@ -1439,4 +1439,4 @@ phar = false
 
 chmod('./xcli', 0755);
 
-printf("\nStrukt Config Booted.\n");
+printf("\nStrukt Booted.\n");
