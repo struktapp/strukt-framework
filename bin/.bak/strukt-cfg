@@ -492,7 +492,7 @@ if($has("tpl-loader", "create file tpl|App/Loader.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/lib/App/Loader.sgf", '<?php
 namespace App;
 
-use Strukt\Router\Kernel as RouterKernel;
+use Strukt\Router\Kernel as Router;
 use Strukt\Framework\Application;
 
 /**
@@ -515,7 +515,7 @@ class Loader{
 	*
 	* @param \Strukt\Router\Kernel $router
 	*/
-	public function __construct(?RouterKernel $router=null){
+	public function __construct(?Router $router=null){
 
 		$this->app = new Application($router);
 		{{packages}}
@@ -955,17 +955,17 @@ use Strukt\Framework\Configuration;
 use Strukt\Contract\Http\RequestInterface;
 
 /**
- * xhttp - XHTTP is a CLI utility that mimicks a HTTP client.
- *
- *	 Usage: xhttp <method> <route> [params...]
- *
- *	 Arguments:
- *
- *	    Method:       GET, POST ...etc
- *	    Route:        Example: /login Default: / root
- *	    Patameters:   Example: username=pitsolu password=p@55w0rd
- *
- *	 Example:  ./xhttp POST /login username=pitsolu password=p@55word
+ * {color white:bold}xhttp{/color} - {color blue}XHTTP is a CLI utility that mimicks a HTTP client.{/color}
+ * 
+ * {color yellow}Usage{/color}: xhttp <method> <route> [params...]
+ * 
+ * {color yellow}Arguments{/color}:
+ * 
+ * 	{color cyan}Method{/color}:       GET, POST ...etc
+ * 	{color cyan}Route{/color}:        Example: /login Default: / root
+ * 	{color cyan}Patameters{/color}:   Example: username=pitsolu password=p@55w0rd
+ * 
+ * {color yellow}Example{/color}:  ./xhttp POST /login username=pitsolu password=p@55word
  */
 final class XHttp{
 
@@ -993,7 +993,7 @@ final class XHttp{
 		$message = str($message)->replace(["/**"," */"," *"],"");
 		$message = str(arr($message->split("\n"))->each(fn($k, $ln)=>ltrim($ln, "\t"))->concat("\n"));
 
-		return $message->yield();
+		return huecli($message->yield());
 	}
 
 	/**
@@ -1005,12 +1005,12 @@ final class XHttp{
 
 		if(negate(fs(phar("cfg")->adapt())->isFile("app.ini"))){
 
-			$message = "\n Application is not ready!\n".
+			$message = "\n  {color red}Application is not ready!{/color}\n\n".
 			"  Run:\n".
-			"  ./console app:make <app_name>\n".
-			"  ./console app:reload\n\n";
+			"  {color yellow}./xcli app:make <app_name>{/color}\n".
+			"  {color yellow}./xcli app:reload{/color}\n\n";
 
-			exit($message);
+			exit(huecli($message));
 		}
 	}
 
