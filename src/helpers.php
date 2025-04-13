@@ -2,6 +2,7 @@
 
 use Strukt\Http\Request;
 use Strukt\Package\Repos;
+use Strukt\Contract\FacetInterface;
 use Strukt\Framework\Contract\Form as AbstractForm;
 use Symfony\Component\String\Inflector\EnglishInflector;
 use Ramsey\Uuid\Uuid as RamseyUuid;
@@ -11,6 +12,13 @@ helper("framework");
 if(helper_add("repos")){
 
 	/**
+	 * Check for strukt modules
+	 * 
+	 * Example:
+	 * 	repos(); //all strukt modules
+	 *  repos("installed");
+	 *  repos("published");
+	 * 
 	 * @param string $type
 	 * 
 	 * @return array
@@ -24,36 +32,17 @@ if(helper_add("repos")){
 	}
 }
 
-if(helper_add("ddd")){
-
-	function ddd(mixed $message){
-
-		if(php_sapi_name() == "cli"){
-
-			if(is_array($message))
-				$message = json($message)->pp();
-
-			if(!is_array($message) && !is_string($message)){
-
-				ob_start();
-				var_export($message);
-				$message = ob_get_contents();
-				ob_end_clean();
-			}
-
-			if(is_string($message))
-				print_r(color("yellow", $message));
-		}
-	}
-}
-
 if(helper_add("form")){
 
 	/**
+	 * Example: 
+	 * 	$f = form("au.frm.User", request(["username"=>"pitsolu", "password"=>"p@55w0rd"]));
+	 * 	$messages = $f->validate();
+	 * 
 	 * @param string $which
 	 * @param \Strukt\Http\Request $request
 	 * 
-	 * @return AbstractForm
+	 * @return \Strukt\Framework\Contract\Form
 	 */
 	function form(string $which, Request $request):AbstractForm{
 
@@ -116,9 +105,11 @@ if(helper_add("form")){
 if(helper_add("validator")){
 
 	/**
-	 * @param string $type
-	 * @param mixed $value
-	 * @param ...$args
+	 * Example: validator("is_len", "strukt", 5)
+	 * 
+	 * @param string $type - name of validator in slug case e.g is_len 
+	 * @param mixed $value - your argument to validate
+	 * @param ...$args - validator arguments
 	 * 
 	 * @return bool
 	 */
@@ -135,6 +126,8 @@ if(helper_add("validator")){
 if(helper_add("request")){
 
 	/**
+	 * Example: $r = request(["username"=>"pitsolu", "password"=>"p@55w0rd"])
+	 * 
 	 * @param array $args
 	 * @param array $headers
 	 * 
@@ -155,16 +148,26 @@ if(helper_add("core")){
 	/**
 	 * @param string $alias
 	 * @param string $args
+	 * 
+	 * @return \Strukt\Contract\FacetInterface
 	 */
-	function core(string $alias, ?array $args = null){
+	function core(string $alias, ?array $args = null):FacetInterface{
 
 		return event("provider.core")->apply($alias, $args)->exec();
 	}
 }
 
-if(helper_add("routes")){
+if(helper_add("route")){
 
 	/**
+	 * Execute route
+	 * 
+	 * Example: 
+	 * 		$r1 = route("/")->get();
+	 * 		$r2 = route("/hello/pitsolu")->get(request());
+	 * 		$r3 = route("/login")->post(request(["username"=>"admin", "password"=>"p@55w0rd"]));
+	 * 		$r3->getContent();
+	 * 
 	 * @param string $path
 	 * 
 	 * @return object
@@ -240,8 +243,12 @@ if(helper_add("routes")){
 if(helper_add("package")){
 
 	/**
-	 * @param string $class
-	 * @param string $mode
+	 * Query any package metadata
+	 * 
+	 * Example: package("core")->get("requirements");
+	 * 
+	 * @param string $name - Package name e.g pkg-db
+	 * @param string $mode - App:Cli or App:Idx
 	 * 
 	 * @return object
 	 */
@@ -270,7 +277,21 @@ if(helper_add("package")){
 			}
 
 			/**
-			 * @param string $switch
+			 * Query package manifest
+			 * 
+			 * @param string $which
+			 * 
+			 * Arguments for $which:
+			 * 	Providers    - providers|provider|prv
+			 * 	Middlewares  - middlewares|middleware|mdl
+			 *  Commands     - commands|command|cmd
+			 *  Settings     - settings|config|cfg
+			 *  Package Name - name
+			 *  Command Name - cmd:name
+			 *  Files        - files
+			 *  Modules      - modules|mods|mod
+			 *  Published    - is:published|is:pub|pub
+			 *  Requirements - requirements|reqs|req
 			 * 
 			 * @return array|string|null
 			 */
@@ -322,7 +343,7 @@ if(helper_add("package")){
 if(helper_add("uuid")){
 
 	/**
-	 * @param int $version
+	 * @param int $version - UUID default version 4
 	 * @param array $options
 	 */
 	function uuid(int $version=4, array $options = []){
@@ -356,8 +377,10 @@ if(helper_add("singular")){
 
 	/**
 	 * @param string $actor
+	 * 
+	 * @return string
 	 */
-	function singular(string $actor){
+	function singular(string $actor):string{
 
 		$inflector = new EnglishInflector();
 		$actor = str(arr($inflector->singularize($actor))->pop());

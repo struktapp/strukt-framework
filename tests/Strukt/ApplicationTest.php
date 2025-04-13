@@ -6,7 +6,7 @@ use Strukt\Router\Kernel as Router;
 use Strukt\Http\Request;
 use Strukt\Fs;
 use Strukt\Ref;
-use Strukt\Framework\Core;
+use Strukt\Framework\Core as Framework;
 
 class ApplicationTest extends TestCase{
 
@@ -35,7 +35,7 @@ class ApplicationTest extends TestCase{
 		$app->register($this->auth_mod);
 		$app->init();
 
-		$this->core = new class() extends Core{
+		$this->core = new class() extends Framework{
 
 			public function get(string $alias_ns, array $args = null):object{
 

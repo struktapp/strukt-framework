@@ -4,13 +4,14 @@ namespace Strukt\Framework\Contract;
 
 use Strukt\Http\Request;
 use Strukt\Framework\Injectable\Validator as InjectableValidator;
+use Strukt\Contract\FacetInterface;
 
 /**
 * Form class to be inherited in Form
 *
 * @author Moderator <pitsolu@gmail.com>
 */
-abstract class Form{
+abstract class Form implements FacetInterface{
 
 	/**
 	* Http Request

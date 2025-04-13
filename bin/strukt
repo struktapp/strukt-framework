@@ -42,7 +42,7 @@ if(in_array($arg1, ["help","--help","-h"]))
  tpl-cfg        - Templates for Configuration
  tpl-pkg        - Templates for Package
  ext            - Extender
- jwt 			- JWT middleware\n\n");
+ jwt            - JWT middleware\n\n");
 
 $which = [];
 if($arg1 == "all")
@@ -763,7 +763,8 @@ class Logger implements ProviderInterface{
 
 	public function __construct(){
 
-		//
+		if(negate(class_exists(Monolog)))
+			raise("Monolog\Logger is not installed!");
 	}
 
 	/**
@@ -1264,13 +1265,11 @@ Strukt\Fs::touchWrite("lib/App/Injectable.php", '<?php
 
 namespace App;
 
-use Strukt\User; 
-use App\Util\Logger\Monologer;
+use Strukt\User;
 use Strukt\Http\Session\Native as Session;
 use Strukt\Http\Session\ArrayCache as XSession;
 use Strukt\Contract\Http\SessionInterface;
 use Strukt\Contract\UserInterface;
-use Doctrine\DBAL\Logging\SQLLogger;
 use Strukt\Traits\ClassHelper;
 
 /**
