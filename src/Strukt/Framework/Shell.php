@@ -4,8 +4,6 @@ namespace Strukt\Framework;
 
 use Strukt\Env;
 use Strukt\Console\DocBlockParser;
-
-// use Strukt\Framework\Console\Command\ApplicationGenerator;
 use Strukt\Framework\Console\Command\AppMake;
 use Strukt\Framework\Console\Command\AppReload;
 use Strukt\Framework\Console\Command\AppExec;

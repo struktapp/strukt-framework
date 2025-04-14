@@ -49,7 +49,7 @@ abstract class Form implements FacetInterface{
 
 		$helper = new class(){use \Strukt\Traits\Collection{
 
-			disassemble as public toArray;
+			detach as public toArray;
 		}};
 
 		$configs = [];
