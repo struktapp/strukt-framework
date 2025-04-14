@@ -3,9 +3,9 @@
 namespace Strukt\Framework;
 
 use Strukt\Fs;
-use Strukt\Generator\Parser;
-use Strukt\Generator\Compiler\Runner as Compiler;
-use Strukt\Generator\Compiler\Configuration;
+// use Strukt\Generator\Parser;
+// use Strukt\Generator\Compiler\Runner as Compiler;
+// use Strukt\Generator\Compiler\Configuration;
 use Strukt\Templator;
 
 /**
@@ -34,7 +34,6 @@ class Reloader{
 		$loader_sgf_file = env("rel_loader_sgf");
 
 		$appsrc_path = sprintf("%s/%s", $root_dir, $app_dir);
-
 		if(!Fs::isPath($appsrc_path))
 			throw new \Exception(sprintf("Application source path [%s] does not exist!", 
 											$appsrc_path));
@@ -43,13 +42,10 @@ class Reloader{
 			if(!preg_match("/(.\.php|\.)/", $srcItem))
 				$apps[] = $srcItem;
 
-		foreach($apps as $app){
-
-			$app_path = sprintf("/%s%s", ds($appsrc_path), $app);
-			foreach(scandir($app_path) as $appItem)
+		foreach($apps as $app)
+			foreach(scandir($app_path = sprintf("/%s%s", ds($appsrc_path), $app)) as $appItem)
 				if(!preg_match("/(.\.php|\.)/", $appItem))
 					$all[$app][] = $appItem;
-		}
 
 		foreach($all as $name=>$mods)
 			foreach($mods as $mod)
@@ -61,7 +57,6 @@ class Reloader{
 			raise(sprintf("File [%s] was not found!", $loader_sgf_file));
 			
 		$tpl_file = Fs::cat($loader_sgf_file);
-
 		$this->loader_output = Templator::create($tpl_file, array(
 
 			"packages"=>implode("\n\t\t\t", $register)
