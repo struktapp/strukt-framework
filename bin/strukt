@@ -763,8 +763,8 @@ class Logger implements ProviderInterface{
 
 	public function __construct(){
 
-		if(negate(class_exists(Monolog)))
-			raise("Monolog\Logger is not installed!");
+		// if(negate(class_exists(Monolog)))
+		//	raise("Monolog\Logger is not installed!");
 	}
 
 	/**
@@ -1346,8 +1346,22 @@ if(!is_null($app)){
 	$kernel->getRouter()->init();
 }
 
+alias("sh", "shell:exec");
+alias("routes", "route:ls");
+alias("packages", "package:ls");
+alias("system", "sys:ls");
+alias("run", "app:exec");
+$argv = arr($_SERVER["argv"])->each(function($_, $name){
+
+	$alias = alias($name);
+	if(notnull($alias))
+		return $alias;
+
+	return $name;
+});
+
 $sh = new Shell();
-exit($sh->run($_SERVER["argv"]));
+exit($sh->run($argv->yield()));
 ');
 
 if($has("app", "create file index.php"))
