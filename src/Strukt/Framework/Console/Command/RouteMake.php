@@ -65,16 +65,28 @@ class RouteMake extends \Strukt\Console\Command{
 			$routeList[$app_module] = reg(sprintf("nr.routes.%s", $alias));
 		});
 
+		$module_names = arr($moduleList)->column("app_module");
+		$modules_ls = arr($module_names)->each(function($k, $v){
+
+			return str(++$k)->concat(".")->concat($v)->yield();
+		});
+
+		echo(sprintf("%s\n", implode("\n", $modules_ls->yield())));
+
 		/**
 		* Module Name
 		*/
-		$prompt["module"] = "Module Name: ";
+		$prompt["module"] = "Select Module: ";
 		while(empty($router["id"]["namespace"])){
 
-			$module = trim($in->getInput($prompt["module"]));
-			if(in_array($module, array_keys($moduleList))){
+			$selected = trim($in->getInput($prompt["module"]));
+			$selected = (int)$selected;
+			--$selected;
 
-				$namespace = $moduleList[$module]["ns"];
+			$module = $module_names[$selected];
+			if($module){
+
+				$namespace = $moduleList[$module_names[$selected]]["ns"];
 				$router["id"]["namespace"] = sprintf("%s\Router", $namespace);
 			}
 			else{

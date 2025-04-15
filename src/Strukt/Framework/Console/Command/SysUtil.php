@@ -48,21 +48,12 @@ class SysUtil extends \Strukt\Console\Command{
 
 		if(in_array($facet, ["middleware", "provider"])){
 
-			$facet = str($facet)->concat("s")->yield();//pluralize
-
+			$facet = plural($facet);
 			if(str($type)->equals("enable"))
 				$output = ini($path)->enable($facet, $name)->yield();
 
 			if(str($type)->equals("disable"))
 				$output = ini($path)->disable($facet, $name)->yield();
-	
-			// $cfg = new \Strukt\Framework\Configuration();
-			// $cfg->get("middlewares");
-			// $cfg->get("providers");
-
-			// $aliases = $cfg->getAliases();
-			// if(!in_array($name, $aliases->get($facet)))
-				// new \Strukt\Raise(sprintf("%s:%s does not exists!", $facet, $name));
 		}
 
 		//validate ini file
@@ -70,7 +61,7 @@ class SysUtil extends \Strukt\Console\Command{
 		if(@parse_ini_string($output) !== false)
 			$ok = \Strukt\Fs::overwrite($path, $output);
 
-		if(!$ok)
+		if(negate($ok))
 			raise("Something went wrong!");
 
 		$out->add("Done.");

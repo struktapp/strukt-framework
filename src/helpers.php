@@ -388,3 +388,19 @@ if(helper_add("singular")){
 		return $actor->yield();
 	}
 }
+
+if(helper_add("plural")){
+
+	/**
+	 * @param string $actor
+	 * 
+	 * @return string
+	 */
+	function plural(string $actor):string{
+
+		$inflector = new EnglishInflector();
+		$actor = str(arr($inflector->pluralize($actor))->pop());
+
+		return $actor->yield();
+	}
+}
