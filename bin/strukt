@@ -936,6 +936,7 @@ cmd[] = package:info
 ; cmd[] = model:make   
 ; cmd[] = db:make-models       
 ; cmd[] = db:make
+; cmd[] = db:feed
 ; cmd[] = db:seeds 
 ; cmd[] = db:wipe
 ; cmd[] = db:sql
