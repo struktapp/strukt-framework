@@ -48,7 +48,7 @@ class Core implements PackageInterface{
 				),
 				"middlewares"=>array(
 
-					\App\Middleware\Cors::class,
+					// \App\Middleware\Cors::class,
 					\Strukt\Router\Middleware\Session::class,
 					\Strukt\Router\Middleware\Authorization::class,
 					\Strukt\Router\Middleware\Authentication::class,
