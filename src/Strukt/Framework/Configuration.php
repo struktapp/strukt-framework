@@ -25,7 +25,7 @@ class Configuration{
 	public function __construct(array $options = []){
 
 		/**
-		* Will allow ignoring @Required annotation in providers and middlewares
+		* @todo Will allow ignoring @Required annotation in providers and middlewares
 		* Use ONLY for in App:Cli - Currently only works for ./xhttp file
 		* currently only supports '@require'
 		*/

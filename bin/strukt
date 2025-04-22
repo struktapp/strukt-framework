@@ -25,7 +25,8 @@ $match = [
 ];
 
 $optional = [
-	"jwt"
+	"jwt",
+	"cors"
 ];
 
 $arg1 = $argv[1]??"all";
@@ -42,12 +43,18 @@ if(in_array($arg1, ["help","--help","-h"]))
  tpl-cfg        - Templates for Configuration
  tpl-pkg        - Templates for Package
  ext            - Extender
- jwt            - JWT middleware\n\n");
+ jwt            - JWT middleware
+ cors           - CORS middleware\n\n");
 
 $which = [];
 if($arg1 == "all")
 	$which = array_merge($which, $match);
 
+// optional
+if($arg1 == "cors")
+	$which[] = "cors";
+
+//optional
 if($arg1 == "jwt")
 	$which[] = "jwt";
 
@@ -82,6 +89,7 @@ if($has("ext", "make directory lib/App"))Strukt\Fs::mkdir("lib/App");
 if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Contract");
 if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
 if($has("jwt", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
+if($has("cors", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
 if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
 
 if($has("tpl-auth", "create file tpl|AuthModule/Controller/User.sgf"))
@@ -549,7 +557,7 @@ abstract class AbstractCommand extends ConsoleCommand{
 }
 ');
 
-if($has("app", "create file App/Middleware/Cors.php"))
+if($has("cors", "create file App/Middleware/Cors.php"))
 Strukt\Fs::touchWrite("lib/App/Middleware/Cors.php", '<?php
 
 namespace App\Middleware;
@@ -581,8 +589,10 @@ class Cors implements MiddlewareInterface{
 								callable $next):PlainResponse{
 
     	header("Access-Control-Allow-Origin: *");
+    	header("Access-Control-Allow-Methods: *");
 		header("Access-Control-Allow-Headers: *");
-		header("Access-Control-Allow-Methods: *");
+		header("Access-Control-Allow-Credentials: true");
+		header("Access-Control-Max-Age: 3600");
 
     	return $next($request, $response);
 	}
@@ -855,6 +865,7 @@ middlewares[] = sess
 middlewares[] = valid
 ; middlewares[] = asset
 ; middlewares[] = cors
+; middlewares[] = jwt
 providers[] = facet
 providers[] = valid
 ; providers[] = logger
@@ -1220,6 +1231,7 @@ class Extender extends CorePackage{
 		// $configIdx["middlewares"] = [
 
 		// 	\App\Middleware\Cors::class,
+		// 	\App\Middleware\Jwt::class,
 		// 	\Strukt\Router\Middleware\Session::class,
 		// 	\Strukt\Router\Middleware\Authorization::class,
 		// 	\Strukt\Router\Middleware\Authentication::class,
