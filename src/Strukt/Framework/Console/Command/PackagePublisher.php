@@ -82,8 +82,9 @@ class PackagePublisher extends \Strukt\Console\Command{
 					raise(sprintf("Please install and publish package [%s]!", $requirement));
 		}
 
-		\Strukt\Fs::mkdir(".bak");
-		arr($pkg->getFiles())->each(function($key, $relpath) use ($pkgname, 
+		$bakdir = ds(sprintf(".bak/%s", today()->format("YmdHis")));
+		\Strukt\Fs::mkdir($bakdir);
+		arr($pkg->getFiles())->each(function($key, $relpath) use ($bakdir, $pkgname, 
 																	$vendor_pkg, 
 																	$appname,
 																	$vendor_appbase,
@@ -133,10 +134,12 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$dir = dirname($actual_path);
 			$filename = basename($actual_path);
 			$fsOut = fs($dir);
+
 			if($fsOut->isFile($filename)){
 
-				fs(".bak")->mkdir($dir);
-				$fsIn = fs(ds(str(".bak/")->concat($dir)->yield()));
+				// fs(".bak")->mkdir($dir);
+				// $fsIn = fs(ds(str(".bak/")->concat($dir)->yield()));
+				$fsIn = fs(ds(str($bakdir)->concat($dir)->yield()));
 				$fsIn->touchWrite($filename, $fsOut->cat($filename));
 				$fsOut->overwrite($filename, $file_content);
 			}
