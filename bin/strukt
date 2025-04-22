@@ -1099,13 +1099,17 @@ final class XHttp{
 	}
 
 	/**
+	 * @param array $argv
+	 * @param ?callable $func
+	 *
 	 * @return string
 	 */
-	public function run(array $argv):string{
+	public function run(array $argv, ?callable $func = null):string{
 
 		$this->setUp($argv);
 
 		$kernel = new \App\Kernel($this->config, $this->request);
+		if(notnull($func)) $func();
 		return $kernel->run();
 	}
 }');
