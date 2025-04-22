@@ -137,8 +137,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			if($fsOut->isFile($filename)){
 
-				// fs(".bak")->mkdir($dir);
-				// $fsIn = fs(ds(str(".bak/")->concat($dir)->yield()));
+				fs($bakdir)->mkdir($dir);
 				$fsIn = fs(ds(str($bakdir)->concat($dir)->yield()));
 				$fsIn->touchWrite($filename, $fsOut->cat($filename));
 				$fsOut->overwrite($filename, $file_content);
