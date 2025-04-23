@@ -36,4 +36,8 @@ lib/Strukt
 /db/
 /xcli.dbx
 /xhttp.dbx
+/xhttp
+xhttp
+/bin/xcli.php
+/bin/xhttp.php
 

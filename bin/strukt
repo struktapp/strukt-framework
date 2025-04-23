@@ -74,7 +74,8 @@ if($has("app", "remove directory cfg"))Strukt\Fs::rmdir('cfg');
 if($has("app", "remove .env"))Strukt\Fs::rm('.env');
 if($has("app", "remove bootstrap.php"))Strukt\Fs::rm('bootstrap.php');
 if($has("app", "remove index.php"))Strukt\Fs::rm('index.php');
-if($has("app", "remove xcli"))Strukt\Fs::rm('xcli');
+if($has("app", "remove bin/xcli.php"))Strukt\Fs::rm('bin/xcli.php');
+if($has("app", "remove bin/xhttp.php"))Strukt\Fs::rm('bin/xhttp.php');
 
 if($has("app", "make directory cfg"))Strukt\Fs::mkdir("cfg");
 if($has("tpl-cfg", "make directory tpl"))Strukt\Fs::mkdir(".tpl/sgf/cfg");
@@ -1341,9 +1342,8 @@ class Injectable{
 }
 ');
 
-if($has("app", "create file xcli"))
-Strukt\Fs::touchWrite("xcli", '#!/usr/bin/php
-<?php
+if($has("app", "create file bin/xcli.php"))
+Strukt\Fs::touchWrite("bin/xcli.php", '<?php
 
 use Strukt\Framework\Shell;
 use Strukt\Env;
@@ -1379,6 +1379,46 @@ $argv = arr($_SERVER["argv"])->each(function($_, $name){
 
 $sh = new Shell();
 exit($sh->run($argv->yield()));
+');
+
+if($has("app", "create file bin/xhttp.php"))
+Strukt\Fs::touchWrite("bin/xhttp.php", '<?php
+
+use Strukt\Http\Request;
+use Strukt\Framework\Configuration;
+use App\Middleware\XSession;
+use App\XHttp;
+
+require "bootstrap.php";
+
+env("json_validation_err", true);
+env("res_send_headers", false);
+config("app.type","App:Cli");
+
+XSession::withOptions(array(
+
+	"username"=>"admin",
+	"allow"=>[
+
+		"strukt:auth",
+		// "user_all"
+	]
+));
+
+$xhttp = new XHttp(new Configuration, Request::createFromGlobals());
+exit($xhttp->run($_SERVER["argv"]));
+');
+
+if($has("app", "create file xcli"))
+Strukt\Fs::touchWrite("xcli", '#!/bin/bash
+
+php bin/xcli.php $@
+');
+
+if($has("app", "create file xhttp"))
+Strukt\Fs::touchWrite("xhttp", '#!/bin/bash
+
+php bin/xhttp.php $@
 ');
 
 if($has("app", "create file index.php"))
@@ -1468,5 +1508,6 @@ phar = false
 ');
 
 chmod('./xcli', 0755);
+chmod('./xhttp', 0755);
 
 printf("\nStrukt Booted.\n");

@@ -8,10 +8,13 @@ rm -rf .cache
 rm -rf db
 rm -rf .bak
 rm bootstrap.php
-rm xcli
 rm index.php
 rm .env
 rm php_errors.log
 rm xcli.dbx
 rm xhttp.dbx
 rm test.php
+rm xcli
+rm xhttp
+rm bin/xcli.php
+rm bin/xhttp.php
