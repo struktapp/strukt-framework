@@ -1412,13 +1412,13 @@ exit($xhttp->run($_SERVER["argv"]));
 if($has("app", "create file xcli"))
 Strukt\Fs::touchWrite("xcli", '#!/bin/bash
 
-php bin/xcli.php $@
+php bin/xcli.php "$@"
 ');
 
 if($has("app", "create file xhttp"))
 Strukt\Fs::touchWrite("xhttp", '#!/bin/bash
 
-php bin/xhttp.php $@
+php bin/xhttp.php "$@"
 ');
 
 if($has("app", "create file index.php"))
