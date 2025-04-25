@@ -44,9 +44,15 @@ class PackageDiff extends \Strukt\Console\Command{
 
 		$which = null;
 		$short_name = str($name)->replace("pkg-","")->yield();
-		$config = config(sprintf("package.%s*", $short_name));
-		if(notnull($config))//if config exists in package.ini
-			$which = $config["default"]; //which folder in dir[packages]
+		if(config("package")->exists($short_name)){
+
+			/**
+			 * if config exists in package.ini choose $which folder in dir[package] is default
+			 */
+			$config = config(sprintf("package.%s*", $short_name));
+			if(notnull($config))
+				$which = $config["default"];
+		}
 
 		if(str($name)->notEquals("core"))
 			if(negate(array_key_exists($name, $packages)))
