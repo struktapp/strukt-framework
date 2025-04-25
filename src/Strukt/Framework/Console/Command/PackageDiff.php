@@ -71,10 +71,11 @@ class PackageDiff extends \Strukt\Console\Command{
 			if(str($file)->contains("Module.sgf"))
 				$file = str($file)->replace("_", $app_name)->yield();
 
-			$nfile = str($file)
-					->replace(ds("/App/"), $slash_app_name)
-					->replace(".sgf", ".php")
-					->yield();
+			$nfile = str($file)->replace(".sgf", ".php");
+			if(negate(str($nfile)->startsWith(ds("lib/App"))))
+				$nfile = $nfile->replace(ds("/App/"), $slash_app_name);
+
+			$nfile = $nfile->yield();
 
 			$fs = fs();
 			$ncontents = $fs->cat($nfile);
