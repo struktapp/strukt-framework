@@ -61,7 +61,7 @@ class PackageDiff extends \Strukt\Console\Command{
 			raise("cmd[package:diff] requires package[sebastian/diff:^7.0@dev]!");
 
 		$differ = null;
-		$type = str($type)
+		$type = str($type);
 		if($type->equals("full"))
 			$differ = new Differ(new UnifiedDiffOutputBuilder);
 
