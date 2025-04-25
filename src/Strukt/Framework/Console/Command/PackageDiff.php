@@ -15,7 +15,11 @@ use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 * 
 * Usage:
 *	
-*      package:diff [--full]
+*      package:diff [<name>] [--full]
+*
+* Arguments:
+*
+*      name     optional: Package name
 *
 * Options:
 *
