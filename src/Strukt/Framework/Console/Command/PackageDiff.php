@@ -76,7 +76,7 @@ class PackageDiff extends \Strukt\Console\Command{
 			$nhash = md5($ncontents);
 			if(negate(str($ohash)->equals($nhash))){
 				
-				print_r(sprintf("[[[%s\n--%s]]]\n", $ofile, $nfile));
+				print_r(sprintf("---%s\n+++%s\n", $ofile, $nfile));
 				if(notnull($differ))
 					print_r($differ->diff($ocontents, $ncontents));
 			}
