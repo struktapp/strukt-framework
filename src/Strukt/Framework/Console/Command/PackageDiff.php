@@ -15,19 +15,22 @@ use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 * 
 * Usage:
 *	
-*      package:diff [<name>] [--full]
+*      package:diff [<type>]
 *
 * Arguments:
 *
-*      name     optional: Package name
-*
-* Options:
-*
-*      --full -f   Full diff
+*      type     optional: (full|short|min) default:min
 */
 class PackageDiff extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
+
+		$type = $in->get("type");
+		if(is_null($type))
+			$type = "min";
+
+		if(negate(in_array($type, ["full","short", "min"])))
+			raise("arg[type] must be either (full|short|min)!");
 
 		$packages = Repos::available();
 		$installed = Repos::packages("installed");
@@ -58,12 +61,11 @@ class PackageDiff extends \Strukt\Console\Command{
 			raise("cmd[package:diff] requires package[sebastian/diff:^7.0@dev]!");
 
 		$differ = null;
-		$inputs = $in->getInputs();
-		if(notnull($inputs))
-			if(array_key_exists("full", $inputs))
-				$differ = new Differ(new UnifiedDiffOutputBuilder);
+		$type = str($type)
+		if($type->equals("full"))
+			$differ = new Differ(new UnifiedDiffOutputBuilder);
 
-		$files = arr($pkg->getFiles())->each(function($_, $file) use($app_name, $differ){
+		$files = arr($pkg->getFiles())->each(function($_, $file) use($app_name, $differ, $type){
 
 			$ofile = str(ds("package"))->concat($file)->yield();
 
@@ -84,14 +86,17 @@ class PackageDiff extends \Strukt\Console\Command{
 			$ohash = md5($ocontents);
 			$nhash = md5($ncontents);
 			if(negate(str($ohash)->equals($nhash))){
-				
-				print_r(sprintf("---%s\n+++%s\n\n", $ofile, $nfile));
-				if(notnull($differ))
-					print_r($differ->diff($ocontents, $ncontents));
-			}
 
-			// return $nfile;
-			// return [$ohash, $nhash, $ofile, $nfile];
+				if($type->equals("min"))
+					print_r(sprintf("%s\n", $ofile));
+				
+				if(in_array($type->yield(), ["full", "short"])){
+
+					print_r(sprintf("---%s\n+++%s\n\n", $ofile, $nfile));
+					if(notnull($differ))
+						print_r($differ->diff($ocontents, $ncontents));
+				}
+			}
 		});
 	}
 }
