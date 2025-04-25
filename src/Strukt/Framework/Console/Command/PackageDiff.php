@@ -77,7 +77,8 @@ class PackageDiff extends \Strukt\Console\Command{
 		if($type->equals("full"))
 			$differ = new Differ(new UnifiedDiffOutputBuilder);
 
-		$files = arr($pkg->getFiles())->each(function($_, $file) use($app_name, $differ, $type, $which){
+		$files = arr($pkg->getFiles())->each(function($_, $file) use($app_name, $differ, 
+																		&$out, $type, $which){
 
 			$ofile = str(ds("package"))->concat($file)->yield();
 
@@ -102,16 +103,20 @@ class PackageDiff extends \Strukt\Console\Command{
 			$nhash = md5($ncontents);
 			if(negate(str($ohash)->equals($nhash))){
 
+				$changes = true;
 				if($type->equals("min"))
-					print_r(sprintf("%s\n", $nfile));
+					$out->add(sprintf("%s\n", $nfile));
 				
 				if(in_array($type->yield(), ["full", "short"])){
 
-					print_r(sprintf("---%s\n+++%s\n\n", $ofile, $nfile));
+					$out->add(sprintf("---%s\n+++%s\n\n", $ofile, $nfile));
 					if(notnull($differ))
-						print_r($differ->diff($ocontents, $ncontents));
+						$out->add($differ->diff($ocontents, $ncontents));
 				}
 			}
 		});
+
+		if(negate($changes))
+			$out->add("No changes.\n");
 	}
 }
