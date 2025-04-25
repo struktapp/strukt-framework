@@ -72,7 +72,7 @@ class PackageDiff extends \Strukt\Console\Command{
 				$file = str($file)->replace("_", $app_name)->yield();
 
 			$nfile = str($file)->replace(".sgf", ".php");
-			if(negate(str($nfile)->startsWith(ds("lib/App"))))
+			if(negate($nfile->startsWith(ds("lib/App"))))
 				$nfile = $nfile->replace(ds("/App/"), $slash_app_name);
 
 			$nfile = $nfile->yield();
