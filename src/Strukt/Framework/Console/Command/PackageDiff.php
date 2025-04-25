@@ -32,6 +32,7 @@ class PackageDiff extends \Strukt\Console\Command{
 		$name = str(basename($path))
 					->replace(".php","")
 					->toSnake()
+					->replace("_","-")
 					->yield();
 
 		if(str($name)->notEquals("core"))
