@@ -15,11 +15,7 @@ use SebastianBergmann\Diff\Output\UnifiedDiffOutputBuilder;
 * 
 * Usage:
 *	
-*      package:diff <name> [--full]
-*
-* Arguments:
-*
-*      name     Package name
+*      package:diff [--full]
 *
 * Options:
 *
@@ -32,7 +28,12 @@ class PackageDiff extends \Strukt\Console\Command{
 		$packages = Repos::available();
 		$installed = Repos::packages("installed");
 
-		$name = $in->get("name");
+		$path = @array_shift(\Strukt\Fs::lsr(ds("./src/Strukt/Package")));
+		$name = str(basename($path))
+					->replace(".php","")
+					->toSnake()
+					->yield();
+
 		if(str($name)->notEquals("core"))
 			if(negate(array_key_exists($name, $packages)))
 				raise(sprintf("package[%s] does not exist!", $name));
