@@ -42,6 +42,12 @@ class PackageDiff extends \Strukt\Console\Command{
 					->replace("_","-")
 					->yield();
 
+		$which = null;
+		$short_name = str($name)->replace("pkg-","")->yield();
+		$config = config(sprintf("package.%s*", $short_name));
+		if(notnull($config))//if config exists in package.ini
+			$which = $config["default"]; //which folder in dir[packages]
+
 		if(str($name)->notEquals("core"))
 			if(negate(array_key_exists($name, $packages)))
 				raise(sprintf("package[%s] does not exist!", $name));
@@ -65,7 +71,7 @@ class PackageDiff extends \Strukt\Console\Command{
 		if($type->equals("full"))
 			$differ = new Differ(new UnifiedDiffOutputBuilder);
 
-		$files = arr($pkg->getFiles())->each(function($_, $file) use($app_name, $differ, $type){
+		$files = arr($pkg->getFiles())->each(function($_, $file) use($app_name, $differ, $type, $which){
 
 			$ofile = str(ds("package"))->concat($file)->yield();
 
@@ -76,6 +82,9 @@ class PackageDiff extends \Strukt\Console\Command{
 			$nfile = str($file)->replace(".sgf", ".php");
 			if(negate($nfile->startsWith(ds("lib/App"))))
 				$nfile = $nfile->replace(ds("/App/"), $slash_app_name);
+
+			if(notnull($which))
+				$nfile = $nfile->replace(ds($which), "");
 
 			$nfile = $nfile->yield();
 
