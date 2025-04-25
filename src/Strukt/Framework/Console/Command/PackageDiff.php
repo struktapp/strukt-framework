@@ -103,7 +103,6 @@ class PackageDiff extends \Strukt\Console\Command{
 			$nhash = md5($ncontents);
 			if(negate(str($ohash)->equals($nhash))){
 
-				$changes = true;
 				if($type->equals("min"))
 					$out->add(sprintf("%s\n", $nfile));
 				
@@ -116,7 +115,7 @@ class PackageDiff extends \Strukt\Console\Command{
 			}
 		});
 
-		if(negate($changes))
+		if($out->isEmpty())
 			$out->add("No changes.\n");
 	}
 }
