@@ -54,8 +54,10 @@ class PackageDiff extends \Strukt\Console\Command{
 			raise("cmd[package:diff] requires package[sebastian/diff:^7.0@dev]!");
 
 		$differ = null;
-		if(array_key_exists("full", $in->getInputs()))
-			$differ = new Differ(new UnifiedDiffOutputBuilder);
+		$inputs = $in->getInputs();
+		if(notnull($inputs))
+			if(array_key_exists("full", $inputs))
+				$differ = new Differ(new UnifiedDiffOutputBuilder);
 
 		$files = arr($pkg->getFiles())->each(function($_, $file) use($app_name, $differ){
 
