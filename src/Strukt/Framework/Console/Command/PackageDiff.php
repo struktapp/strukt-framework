@@ -88,7 +88,7 @@ class PackageDiff extends \Strukt\Console\Command{
 			if(negate(str($ohash)->equals($nhash))){
 
 				if($type->equals("min"))
-					print_r(sprintf("%s\n", $ofile));
+					print_r(sprintf("%s\n", $nfile));
 				
 				if(in_array($type->yield(), ["full", "short"])){
 
