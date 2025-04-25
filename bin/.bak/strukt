@@ -927,6 +927,7 @@ cmd[] = package:info
 ; cmd[] = package:add
 ; cmd[] = package:copy
 ; cmd[] = package:export
+; cmd[] = package:diff
 ; [pkg-tests]
 ; title = PhpUnit Testing
 ; cmd[] = test:run

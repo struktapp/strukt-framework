@@ -78,6 +78,7 @@ class Core implements PackageInterface{
 					\Strukt\Framework\Console\Command\PackageAdd::class,
 					\Strukt\Framework\Console\Command\PackageCopy::class,
 					\Strukt\Framework\Console\Command\PackageExport::class
+					\Strukt\Framework\Console\Command\PackageDiff::class
 				)
 			)
 		);
