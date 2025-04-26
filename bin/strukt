@@ -26,7 +26,8 @@ $match = [
 
 $optional = [
 	"jwt",
-	"cors"
+	"cors",
+	"faker"
 ];
 
 $arg1 = $argv[1]??"all";
@@ -44,7 +45,8 @@ if(in_array($arg1, ["help","--help","-h"]))
  tpl-pkg        - Templates for Package
  ext            - Extender
  jwt            - JWT middleware
- cors           - CORS middleware\n\n");
+ cors           - CORS middleware
+ faker          - Faker middleware\n\n");
 
 $which = [];
 if($arg1 == "all")
@@ -57,6 +59,10 @@ if($arg1 == "cors")
 //optional
 if($arg1 == "jwt")
 	$which[] = "jwt";
+
+//optional
+if($arg1 == "faker")
+	$which[] = "faker";
 
 if(empty($which))
 	if(in_array($arg1, $match))
@@ -93,6 +99,7 @@ if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Cont
 if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
 if($has("jwt", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
 if($has("cors", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
+if($has("faker", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
 if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
 
 if($has("tpl-auth", "create file tpl|AuthModule/Controller/User.sgf"))
@@ -659,6 +666,49 @@ class XSession implements MiddlewareInterface{
 }
 ');
 
+if($has("faker", "create file App/Provider/Faker.php"))
+Strukt\Fs::touchWrite("lib/App/Provider/Faker.php", '<?php
+
+namespace App\Provider;
+
+use Strukt\Ref;
+use Strukt\Contract\ProviderInterface;
+
+/**
+* @Name(faker)
+*/
+class Faker implements ProviderInterface{
+
+	private $faker;
+
+	public function __construct(){
+
+		if(negate(class_exists(\Faker\Generator::class)))
+			raise("package[fakerphp/faker] is required!");
+		
+		$this->faker = new \Faker\Generator();
+		$this->faker->addProvider(new \Faker\Provider\en_US\Person($this->faker));
+		$this->faker->addProvider(new \Faker\Provider\en_US\Address($this->faker));
+		$this->faker->addProvider(new \Faker\Provider\en_US\PhoneNumber($this->faker));
+		$this->faker->addProvider(new \Faker\Provider\en_US\Company($this->faker));
+		$this->faker->addProvider(new \Faker\Provider\Lorem($this->faker));
+		$this->faker->addProvider(new \Faker\Provider\Internet($this->faker));
+	}
+
+	/**
+	 * @return void
+	 */
+	public function register():void{
+
+		$self = $this;
+		event("provider.fake", function() use($self){
+
+			return $self->faker;
+		});
+	}
+}
+');
+
 if($has("jwt", "create file App/Middleware/Jwt.php"))
 Strukt\Fs::touchWrite("lib/App/Middleware/Jwt.php", '<?php
 
@@ -680,7 +730,7 @@ class Jwt implements MiddlewareInterface{
 	public function __construct(){
 
 		if(negate(class_exists(\Strukt\Jwt::class)))
-			raise("package strukt/key is required for jwt!");
+			raise("package[strukt/key] is required for jwt!");
 	}
 
 	public function __invoke(RequestInterface $request, ResponseInterface $response, callable $next){
