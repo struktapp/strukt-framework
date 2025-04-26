@@ -76,7 +76,9 @@ if($has("app", "remove bootstrap.php"))Strukt\Fs::rm('bootstrap.php');
 if($has("app", "remove index.php"))Strukt\Fs::rm('index.php');
 if($has("app", "remove bin/xcli.php"))Strukt\Fs::rm('bin/xcli.php');
 if($has("app", "remove bin/xhttp.php"))Strukt\Fs::rm('bin/xhttp.php');
+if($has("app", "remove bin/install"))Strukt\Fs::rm('bin/install');
 
+if($has("app", "make directory bin"))Strukt\Fs::mkdir("bin");
 if($has("app", "make directory cfg"))Strukt\Fs::mkdir("cfg");
 if($has("tpl-cfg", "make directory tpl"))Strukt\Fs::mkdir(".tpl/sgf/cfg");
 if($has("tpl-auth", "make directory tpl|AuthModule/Controller"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
@@ -1422,6 +1424,36 @@ Strukt\Fs::touchWrite("xhttp", '#!/bin/bash
 php bin/xhttp.php "$@"
 ');
 
+if($has("app", "create file bin/install"))
+Strukt\Fs::touchWrite("bin/install", '#!/bin/bash
+
+declare -A repos
+
+repos["key"]=strukt/key:v1.1.0-alpha
+repos["monolog"]=monolog/monolog
+repos["uuid"]=ramsey/uuid:^4.7
+repos["diff"]="sebastian/diff:^7.0@dev"
+repos["faker"]="fakerphp/faker"
+repos["phpunit"]="phpunit/phpunit:^9.4"
+
+if [[ ${repos[@]} =~ $1 ]]
+then
+	if  [ "$1" = "phpunit" ] || \
+		[ "$1" = "faker"   ] || \
+		[ "$1" = "diff"    ]; then
+		composer require "${repos[$1]}" --dev
+	else
+		composer require "${repos[$1]}"
+	fi
+else
+	printf "\n Only allows:\n\n"
+	for x in "${!repos[@]}" ; 
+		do printf "  %s - %s\n" "$x" "${repos[$x]}" ; 
+	done
+	printf "\n"
+fi
+');
+
 if($has("app", "create file index.php"))
 Strukt\Fs::touchWrite("index.php", '<?php
 
@@ -1510,5 +1542,6 @@ phar = false
 
 chmod('./xcli', 0755);
 chmod('./xhttp', 0755);
+chmod('./bin/install', 0755);
 
 printf("\nStrukt Booted.\n");

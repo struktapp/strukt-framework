@@ -8,6 +8,8 @@ use Symfony\Component\String\Inflector\EnglishInflector;
 use Ramsey\Uuid\Uuid as RamseyUuid;
 use RedBeanPHP\SimpleModelInterface;
 use Pop\Db\Record as PopDbRecord;
+use Strukt\Hash\Bcrypt;
+use Strukt\Hash\Sha;
 
 helper("framework");
 
@@ -406,5 +408,26 @@ if(helper_add("plural")){
 		$actor = str(arr($inflector->pluralize($actor))->pop());
 
 		return $actor->yield();
+	}
+}
+
+if(helper_add("hashfn")){
+
+	function hashfn(string $type = null){
+
+		$type = str($type??"sha1");
+		if(arr(hash_algos())->has($type->yield()))
+			return fn($password)=>hash($type->yield(), $password);
+
+		if(class_exists(Bcrypt::class))
+			if($type->equals("bcry"))
+				return fn($password)=>bcry($password)->encode();
+
+		if(class_exists(Sha::class))
+			if($type->equals("sha256dbl"))
+				return fn($password)=>sha256dbl($password);
+
+		if($type->equals("sha1"))
+			return fn($password)=>sha1($password);
 	}
 }
