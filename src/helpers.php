@@ -6,6 +6,8 @@ use Strukt\Contract\FacetInterface;
 use Strukt\Framework\Contract\Form as AbstractForm;
 use Symfony\Component\String\Inflector\EnglishInflector;
 use Ramsey\Uuid\Uuid as RamseyUuid;
+use RedBeanPHP\SimpleModelInterface;
+use Pop\Db\Record as PopDbRecord;
 
 helper("framework");
 
@@ -149,9 +151,11 @@ if(helper_add("core")){
 	 * @param string $alias
 	 * @param string $args
 	 * 
-	 * @return \Strukt\Contract\FacetInterface
+	 * @return \Strukt\Contract\FacetInterface|
+	 * 			\RedBeanPHP\SimpleModelInterface|
+	 * 			\Pop\Db\Record
 	 */
-	function core(string $alias, ?array $args = null):FacetInterface{
+	function core(string $alias, ?array $args = null):FacetInterface|PopDbRecord|SimpleModelInterface{
 
 		return event("provider.core")->apply($alias, $args)->exec();
 	}
