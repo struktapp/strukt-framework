@@ -9,7 +9,7 @@ use Strukt\Console\Color;
 use Strukt\Package\Repos;
 
 /**
-* package:ls  List packages and status
+* package:ls  List packages and status (packages)
 */
 class PackageList extends \Strukt\Console\Command{
 

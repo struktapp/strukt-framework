@@ -826,8 +826,8 @@ class Logger implements ProviderInterface{
 
 	public function __construct(){
 
-		// if(negate(class_exists(Monolog)))
-		//	raise("Monolog\Logger is not installed!");
+		if(negate(class_exists(Monolog::class)))
+			raise("package[Monolog\Logger] is required!");
 	}
 
 	/**
@@ -919,6 +919,7 @@ middlewares[] = valid
 ; middlewares[] = asset
 ; middlewares[] = cors
 ; middlewares[] = jwt
+; middlewares[] = faker
 providers[] = facet
 providers[] = valid
 ; providers[] = logger
@@ -968,6 +969,7 @@ cmd[] = sys:util
 cmd[] = sys:ls
 cmd[] = cache:clear
 cmd[] = cache:make
+cmd[] = cache:reset
 [pub-pak]
 title = Package Publisher
 cmd[] = package:publish
@@ -1283,7 +1285,8 @@ class Extender extends CorePackage{
 
 		// 	\Strukt\Framework\Provider\Validator::class,
 		// 	\App\Provider\Logger::class,
-		// 	\App\Provider\Facet::class
+		// 	\App\Provider\Facet::class,
+		// 	\App\Provider\Faker::class
 		// ];
 
 		// $configIdx["middlewares"] = [
@@ -1300,7 +1303,8 @@ class Extender extends CorePackage{
 
 		// 	\Strukt\Framework\Provider\Validator::class,
 		// 	\App\Provider\Logger::class,
-		// 	\App\Provider\Facet::class
+		// 	\App\Provider\Facet::class,
+		// 	\App\Provider\Faker::class
 		// ];
 
 		// $configCli["middlewares"] = [
@@ -1319,6 +1323,7 @@ class Extender extends CorePackage{
 		// 	\Strukt\Framework\Console\Command\PackageAdd::class,
 		// 	\Strukt\Framework\Console\Command\PackageCopy::class,
 		// 	\Strukt\Framework\Console\Command\PackageExport::class
+		// 	\Strukt\Framework\Console\Command\PackageDiff::class
 		// ];
 
 		return [
@@ -1421,6 +1426,7 @@ alias("routes", "route:ls");
 alias("packages", "package:ls");
 alias("system", "sys:ls");
 alias("run", "app:exec");
+alias("cache", "cache:reset");
 $argv = arr($_SERVER["argv"])->each(function($_, $name){
 
 	$alias = alias($name);

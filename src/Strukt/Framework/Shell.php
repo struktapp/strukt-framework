@@ -17,6 +17,7 @@ use Strukt\Framework\Console\Command\SysUtil;
 use Strukt\Framework\Console\Command\SysList;
 use Strukt\Framework\Console\Command\CacheMake;
 use Strukt\Framework\Console\Command\CacheClear;
+use Strukt\Framework\Console\Command\CacheReset;
 
 /**
 * Console Loader
@@ -56,6 +57,7 @@ class Shell extends \Strukt\Console\Application{
 			if($cmds->has("cache:make") || $cmds->has("cache:clear"))$this->addCmdSect("\nCache");
 			if($cmds->has("cache:make"))$this->add(new CacheMake);
 			if($cmds->has("cache:clear"))$this->add(new CacheClear);
+			if($cmds->has("cache:reset"))$this->add(new CacheReset);
 
 			$config = new \Strukt\Framework\Configuration();
 			$cmds = $config->get("commands");

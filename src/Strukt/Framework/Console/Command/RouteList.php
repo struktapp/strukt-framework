@@ -10,7 +10,7 @@ use LucidFrame\Console\ConsoleTable;
 use Strukt\Cmd;
 
 /**
-* route:ls     Route List
+* route:ls     Route List (routes)
 *
 * Usage:
 *

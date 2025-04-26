@@ -10,7 +10,7 @@ use Strukt\Process;
 use Strukt\Templator as Tpl;
 
 /**
-* app:exec     Run application
+* app:exec     Run application (run)
 *
 * Usage:
 *

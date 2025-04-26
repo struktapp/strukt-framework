@@ -20,9 +20,7 @@
         "psy/psysh": "^v0.11.21",
         "strukt/process": "v1.1.1-alpha",
         "filp/whoops": "^2.14",
-        "nunomaduro/collision": "v7.x-dev",
-        "monolog/monolog": "^3.0@dev",
-        "ramsey/uuid": "^4.7"
+        "nunomaduro/collision": "v7.x-dev"
     },
     "suggest":{
 

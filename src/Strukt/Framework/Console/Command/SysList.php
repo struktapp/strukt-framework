@@ -8,7 +8,7 @@ use Strukt\Console\Color;
 use Strukt\Framework\Configuration;
 
 /**
-* sys:ls  List facets - providers|middlewares
+* sys:ls  List facets - providers|middlewares (system)
 * 
 * Usage:
 *	
@@ -26,49 +26,40 @@ class SysList extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
+		if(config("cache.disable"))
+			raise("Cache must be enabled!");
+
 		$type = $in->get("type");
 
 		$inputs = $in->getInputs();
 		if(is_null($inputs))
 			$inputs = [];
 
-		if(array_key_exists("idx", $inputs)){
-
-			// print_r("abc");
-			reg()->remove("config.app.type");
-			config("app.type","App:Idx");
-		}
+		$which = "app.App:Cli";
+		if(array_key_exists("idx", $inputs))
+			$which = "app.App:Idx";
 
 		$types = [];
-		if($type == "middlewares")
+		if($type == "middlewares" || empty($type))
 			$types[] = "middlewares";
 
-		if($type == "providers")
+		if($type == "providers" || empty($type))
 			$types[] = "providers";
-
-		if(empty($type))
-			$types = array(
-
-				"middlewares",
-				"providers"
-			);
-
-		// $config = new Configuration();
-		// $lsmdl = $config->get("middlewares");
-		// $lsprv = $config->get("providers");
 
 		if(in_array("middlewares", $types)){
 
 			$out->add("\nMiddlewares\n");
-			foreach(config("facet.middlewares") as $facet)
-				$out->add(Color::write("yellow", sprintf(" %s\n", $facet)));
+			$middlewares = map(cache($which))->detach("middlewares");
+			foreach($middlewares as $middleware)
+				$out->add(Color::write("yellow", sprintf(" %s\n", $middleware)));
 		}
 
 		if(in_array("providers", $types)){
 
 			$out->add("\nProviders\n");
-			foreach(config("facet.providers") as $facet)
-				$out->add(Color::write("yellow", sprintf(" %s\n", $facet)));
+			$providers = map(cache($which))->detach("providers");
+			foreach($providers as $provider)
+				$out->add(Color::write("yellow", sprintf(" %s\n", $provider)));
 		}
 	}
 }

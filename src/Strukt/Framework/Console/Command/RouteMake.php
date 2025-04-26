@@ -6,7 +6,7 @@ use Strukt\Console\Input;
 use Strukt\Console\Output;
 
 /**
-* route:make     Generate Module Router - ACCEPTS NO ARGS
+* route:make     Generate Module Router
 *
 * Usage:
 *

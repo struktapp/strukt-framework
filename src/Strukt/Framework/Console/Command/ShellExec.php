@@ -7,7 +7,7 @@ use Strukt\Console\Output;
 use Strukt\Framework\Core as Framework;
 
 /**
-* shell:exec  Shell Mode
+* shell:exec  Shell Mode (sh)
 */
 class ShellExec extends \Strukt\Console\Command{
 
