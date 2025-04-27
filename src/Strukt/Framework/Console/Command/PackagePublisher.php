@@ -32,9 +32,9 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 	public function execute(Input $in, Output $out){
 
-		$pkgname = $in->get("pkg");
+		$pkg_name = $in->get("pkg");
 
-		list($_, $short_name) = str($pkgname)->split("-");
+		list($_, $short_name) = str($pkg_name)->split("-");
 
 		$which_pkg = config(sprintf("package.%s.default", $short_name));
 		$install_path = $which_pkg?ds($which_pkg):"";
@@ -44,14 +44,14 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 		$vendorPkg = str("");
 		$vendor_pkg = "./";
-		$isDevMode = array_key_exists("dev", $in->getInputs());
+		$dev_mode = array_key_exists("dev", $in->getInputs());
 
-		if(negate($isDevMode))
+		if(negate($dev_mode))
 			$vendor_pkg = $vendorPkg
 						->concat(env("vendor_fw"))
-						->concat($pkgname)->yield();
+						->concat($pkg_name)->yield();
 
-		if($isDevMode)
+		if($dev_mode)
 			$vendor_pkg = $vendorPkg->concat(ds("/package/"))->yield();
 
 		$vendor_pkg = ds($vendor_pkg);
@@ -59,18 +59,18 @@ class PackagePublisher extends \Strukt\Console\Command{
 		if(is_null(config("app.name")))
 			raise("Unabale to find config[app.name]!");
 
-		$pkgclass = $this->packages[$pkgname]; 
-		if(!class_exists($pkgclass))
-			raise(sprintf("Package [%s] is not installed!", $pkgclass));
+		$pkg_class = $this->packages[$pkg_name]; 
+		if(!class_exists($pkg_class))
+			raise(sprintf("Package [%s] is not installed!", $pkg_class));
 
-		$pkg = Ref::create($pkgclass)->make()->getInstance();
+		$pkg = Ref::create($pkg_class)->make()->getInstance();
 
 		/**
 		 * Preinstall
 		 */
 		$pkg->preInstall();
 
-		$appname = config("app.name");
+		$app_name = config("app.name");
 
 		$requirements = $pkg->getRequirements();
 		
@@ -82,22 +82,20 @@ class PackagePublisher extends \Strukt\Console\Command{
 					raise(sprintf("Please install and publish package [%s]!", $requirement));
 		}
 
-		$bakdir = ds(sprintf(".bak/%s", today()->format("YmdHis")));
-		\Strukt\Fs::mkdir($bakdir);
-		arr($pkg->getFiles())->each(function($key, $relpath) use ($bakdir, $pkgname, 
-																	$vendor_pkg, 
-																	$appname,
-																	$vendor_appbase,
-																	$isDevMode){
+		$bak_dir = ds(sprintf(".bak/%s", today()->format("YmdHis")));
+		\Strukt\Fs::mkdir($bak_dir);
+		arr($pkg->getFiles())->each(function($key, $relpath) use ($bak_dir, $pkg_name, 
+																	$vendor_pkg, $app_name,
+																	$vendor_appbase, $dev_mode){
 
 			$qpath = str($relpath);
 			if($qpath->contains($vendor_appbase))
-				$qpath = $qpath->replace($vendor_appbase, sprintf("app/src/%s", $appname));
+				$qpath = $qpath->replace($vendor_appbase, sprintf("app/src/%s", $app_name));
 
 			$actual_path = $qpath->clone();
 
 			$vendorFilePath = str($vendor_pkg);
-			if(negate($isDevMode))
+			if(negate($dev_mode))
 				$vendorFilePath = $vendorFilePath->concat("package/");
 	
 			$vendor_file_path = $vendorFilePath->concat($relpath)->yield();
@@ -106,7 +104,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$qfilename = str($path["filename"]);
 			if($qfilename->startsWith("_")){
 
-				$filename = $qfilename->replace("_", $appname)->yield();
+				$filename = $qfilename->replace("_", $app_name)->yield();
 				$actual_path = $qpath->replace($path["filename"], $filename);
 			}
 
@@ -125,7 +123,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 				!str($vendor_file_path)->contains(".tpl/sgf"))
 					$file_content = template($file_content, array(
 
-						"app"=>$appname
+						"app"=>$app_name
 					));
 
 			/**
@@ -137,8 +135,8 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 			if($fsOut->isFile($filename)){
 
-				fs($bakdir)->mkdir($dir);
-				$fsIn = fs(ds(str($bakdir)->concat($dir)->yield()));
+				fs($bak_dir)->mkdir($dir);
+				$fsIn = fs(ds(str($bak_dir)->concat($dir)->yield()));
 				$fsIn->touchWrite($filename, $fsOut->cat($filename));
 				$fsOut->overwrite($filename, $file_content);
 			}
