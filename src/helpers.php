@@ -27,7 +27,7 @@ if(helper_add("repos")){
 	 * 
 	 * @return array
 	 */
-	function repos(string $type = null):array{
+	function repos(?string $type = null):array{
 
 		if(is_null($type))
 			return Repos::available();
@@ -413,7 +413,7 @@ if(helper_add("plural")){
 
 if(helper_add("hashfn")){
 
-	function hashfn(string $type = null){
+	function hashfn(?string $type = null){
 
 		$type = str($type??"sha1");
 		if(arr(hash_algos())->has($type->yield()))
