@@ -7,7 +7,6 @@ use Strukt\Console\Output;
 use Strukt\Ref;
 use Strukt\Package\Repos;
 
-
 /**
 * package:publish     Package Publisher
 *
@@ -33,13 +32,20 @@ class PackagePublisher extends \Strukt\Console\Command{
 	public function execute(Input $in, Output $out){
 
 		$pkg_name = $in->get("pkg");
-		list($pkg_name, $which_pkg) = str($pkg_name)->split(":");
+		list($pkg_name, $pkg_which) = str($pkg_name)->split(":");
 		list($_, $short_name) = str($pkg_name)->split("-");
 
-		if(is_null($which_pkg))
-			$which_pkg = config(sprintf("package.%s.default", $short_name));
+		$pkg_config = sprintf("package.%s.default", $short_name);
+		if(is_null($pkg_which))
+			$which = config($pkg_config);
 
-		$install_path = $which_pkg?ds($which_pkg):"";
+		if(is_null($which) && notnull($pkg_which)){
+
+			reg("config.package.db")->remove("default");
+			config($pkg_config, $pkg_which);
+		}
+
+		$install_path = $pkg_which?ds($pkg_which):"";
 		$vendor_appbase = str(fs(env("rel_appsrc"))->path("App"))
 							->prepend($install_path)
 							->yield();
@@ -85,8 +91,9 @@ class PackagePublisher extends \Strukt\Console\Command{
 		}
 
 		$bak_dir = ds(sprintf(".bak/%s", today()->format("YmdHis")));
-		\Strukt\Fs::mkdir($bak_dir);
-		arr($pkg->getFiles())->each(function($key, $relpath) use ($bak_dir, $pkg_name, 
+		fs()->mkdir($bak_dir);
+		arr($pkg->getFiles())->each(function($key, $relpath) use ($pkg_which,
+																	$bak_dir, $pkg_name,
 																	$vendor_pkg, $app_name,
 																	$vendor_appbase, $dev_mode){
 
@@ -122,7 +129,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			 */
 			$file_content = fs()->cat($vendor_file_path);
 			if(str($vendor_file_path)->endsWith(".sgf") &&
-				!str($vendor_file_path)->contains(".tpl/sgf"))
+				negate(str($vendor_file_path)->contains(".tpl/sgf")))
 					$file_content = template($file_content, array(
 
 						"app"=>$app_name
@@ -132,6 +139,10 @@ class PackagePublisher extends \Strukt\Console\Command{
 			 * Overwrite and back-up files
 			 */
 			$dir = dirname($actual_path);
+			if(notnull($pkg_which))
+				if(str($dir)->startsWith($pkg_which))
+					$dir = str($dir)->replace(ds($pkg_which),"")->yield();
+
 			$filename = basename($actual_path);
 			$fsOut = fs($dir);
 
