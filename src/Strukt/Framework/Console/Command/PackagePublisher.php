@@ -33,10 +33,12 @@ class PackagePublisher extends \Strukt\Console\Command{
 	public function execute(Input $in, Output $out){
 
 		$pkg_name = $in->get("pkg");
-
+		list($pkg_name, $which_pkg) = str($pkg_name)->split(":");
 		list($_, $short_name) = str($pkg_name)->split("-");
 
-		$which_pkg = config(sprintf("package.%s.default", $short_name));
+		if(is_null($which_pkg))
+			$which_pkg = config(sprintf("package.%s.default", $short_name));
+
 		$install_path = $which_pkg?ds($which_pkg):"";
 		$vendor_appbase = str(fs(env("rel_appsrc"))->path("App"))
 							->prepend($install_path)
