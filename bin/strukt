@@ -931,6 +931,10 @@ Strukt\Fs::touchWrite("cfg/package.ini",'[auth]
 default = pop-db
 home[] = pop-db
 home[] = red-db
+[db]
+default = pop-db
+home[] = pop-db
+home[] = red-db
 ');
 
 if($has("app", "create file cfg/module.ini"))

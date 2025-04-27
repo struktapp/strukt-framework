@@ -931,6 +931,10 @@ Strukt\Fs::touchWrite("cfg/package.ini",'[auth]
 default = pop-db
 home[] = pop-db
 home[] = red-db
+[db]
+default = pop-db
+home[] = pop-db
+home[] = red-db
 ');
 
 if($has("app", "create file cfg/module.ini"))
@@ -969,6 +973,7 @@ cmd[] = sys:util
 cmd[] = sys:ls
 cmd[] = cache:clear
 cmd[] = cache:make
+cmd[] = cache:reset
 [pub-pak]
 title = Package Publisher
 cmd[] = package:publish
@@ -1425,6 +1430,7 @@ alias("routes", "route:ls");
 alias("packages", "package:ls");
 alias("system", "sys:ls");
 alias("run", "app:exec");
+alias("cache", "cache:reset");
 $argv = arr($_SERVER["argv"])->each(function($_, $name){
 
 	$alias = alias($name);
