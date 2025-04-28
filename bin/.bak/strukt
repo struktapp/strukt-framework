@@ -20,14 +20,14 @@ $match = [
 	"tpl-cfg",
 	"tpl-pkg",
 	"app",
-	"ext",
 	"all"
 ];
 
 $optional = [
 	"jwt",
 	"cors",
-	"faker"
+	"faker",
+	"ext"
 ];
 
 $arg1 = $argv[1]??"all";
@@ -43,7 +43,7 @@ if(in_array($arg1, ["help","--help","-h"]))
  tpl-loader     - Templates for Loader
  tpl-cfg        - Templates for Configuration
  tpl-pkg        - Templates for Package
- ext            - Extender
+ ext            - Strukt Extender class
  jwt            - JWT middleware
  cors           - CORS middleware
  faker          - Faker middleware\n\n");
@@ -52,17 +52,9 @@ $which = [];
 if($arg1 == "all")
 	$which = array_merge($which, $match);
 
-// optional
-if($arg1 == "cors")
-	$which[] = "cors";
-
 //optional
-if($arg1 == "jwt")
-	$which[] = "jwt";
-
-//optional
-if($arg1 == "faker")
-	$which[] = "faker";
+if(in_array($arg1, $optional))
+	$which[] = $arg1;
 
 if(empty($which))
 	if(in_array($arg1, $match))
@@ -319,25 +311,18 @@ if($has("tpl-auth", "create file tpl|AuthModule/Tests/UserTest.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Tests/UserTest.sgf", '<?php
 namespace {{app}}\AuthModule\Tests;
 
-// use Strukt\Core\Registry;
 use PHPUnit\Framework\TestCase;
 
 class UserTest extends TestCase{
 
-	private $core;
-
 	public function setUp():void{
 	
-		// $this->core = Registry::getInstance()->get("core");
+		//
 	}
 
 	public function testDoAuth(){
 
-		$username = "admin";
-		$password = "p@55w0rd";
-
 		$isSuccess = true;
-		// $isSuccess = $this->core->get("au.ctr.User")->doAuth($username, $password);
 
 		$this->assertTrue($isSuccess);
 	}
@@ -1506,6 +1491,17 @@ repos["diff"]="sebastian/diff:^7.0@dev"
 repos["faker"]="fakerphp/faker"
 repos["phpunit"]="phpunit/phpunit:^9.4"
 
+
+if [[ $# -eq 0 || ! ${repos[@]} =~ $1 ]]
+then
+	printf "\n Only allows:\n\n"
+	for x in "${!repos[@]}" ; 
+		do printf "  %s - %s\n" "$x" "${repos[$x]}" ; 
+	done
+	printf "\n"
+	exit 1
+fi
+
 if [[ ${repos[@]} =~ $1 ]]
 then
 	if  [ "$1" = "phpunit" ] || \
@@ -1515,12 +1511,6 @@ then
 	else
 		composer require "${repos[$1]}"
 	fi
-else
-	printf "\n Only allows:\n\n"
-	for x in "${!repos[@]}" ; 
-		do printf "  %s - %s\n" "$x" "${repos[$x]}" ; 
-	done
-	printf "\n"
 fi
 ');
 
