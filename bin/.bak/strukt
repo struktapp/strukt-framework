@@ -1285,50 +1285,60 @@ class Extender extends CorePackage{
 		$configCli = parent::getSettings("App:Cli");
 		$configIdx = parent::getSettings("App:Idx");
 
-		// $configIdx["providers"] = [
+		/**
+		$configIdx["providers"] = [
 
-		// 	\Strukt\Framework\Provider\Validator::class,
-		// 	\App\Provider\Logger::class,
-		// 	\App\Provider\Facet::class,
-		// 	\App\Provider\Faker::class
-		// ];
+		 	\Strukt\Framework\Provider\Validator::class,
+		 	\App\Provider\Logger::class,
+		 	\App\Provider\Facet::class,
+		 	\App\Provider\Faker::class
+		];
+		*/
 
-		// $configIdx["middlewares"] = [
+		/**
+		$configIdx["middlewares"] = [
 
-		// 	\App\Middleware\Cors::class,
-		// 	\App\Middleware\Jwt::class,
-		// 	\Strukt\Router\Middleware\Session::class,
-		// 	\Strukt\Router\Middleware\Authorization::class,
-		// 	\Strukt\Router\Middleware\Authentication::class,
-		// 	\Strukt\Framework\Middleware\Validator::class,
-		// ];
+			\App\Middleware\Cors::class,
+			\App\Middleware\Jwt::class,
+			\Strukt\Router\Middleware\Session::class,
+			\Strukt\Router\Middleware\Authorization::class,
+			\Strukt\Router\Middleware\Authentication::class,
+			\Strukt\Framework\Middleware\Validator::class,
+		];
+		*/
 
-		// $configCli["providers"] = [
+		/**
+		$configCli["providers"] = [
 
-		// 	\Strukt\Framework\Provider\Validator::class,
-		// 	\App\Provider\Logger::class,
-		// 	\App\Provider\Facet::class,
-		// 	\App\Provider\Faker::class
-		// ];
+			\Strukt\Framework\Provider\Validator::class,
+			\App\Provider\Logger::class,
+			\App\Provider\Facet::class,
+			\App\Provider\Faker::class
+		];
+		*/
 
-		// $configCli["middlewares"] = [
+		/**
+		$configCli["middlewares"] = [
 
-		// 	\App\Middleware\XSession::class,
-		// 	\Strukt\Router\Middleware\Authentication::class,
-		// 	\Strukt\Framework\Middleware\Validator::class,
-		// ];
+			\App\Middleware\XSession::class,
+			\Strukt\Router\Middleware\Authentication::class,
+			\Strukt\Framework\Middleware\Validator::class,
+		];
+		*/
 
-		// $configCli["commands"] = [
+		/**
+		$configCli["commands"] = [
 
-		// 	\Strukt\Framework\Console\Command\PackagePublisher::class,
-		// 	\Strukt\Framework\Console\Command\PackageList::class,
-		// 	\Strukt\Framework\Console\Command\PackageInfo::class,
-		// 	\Strukt\Framework\Console\Command\PackageMake::class,
-		// 	\Strukt\Framework\Console\Command\PackageAdd::class,
-		// 	\Strukt\Framework\Console\Command\PackageCopy::class,
-		// 	\Strukt\Framework\Console\Command\PackageExport::class
-		// 	\Strukt\Framework\Console\Command\PackageDiff::class
-		// ];
+			\Strukt\Framework\Console\Command\PackagePublisher::class,
+			\Strukt\Framework\Console\Command\PackageList::class,
+			\Strukt\Framework\Console\Command\PackageInfo::class,
+			\Strukt\Framework\Console\Command\PackageMake::class,
+			\Strukt\Framework\Console\Command\PackageAdd::class,
+			\Strukt\Framework\Console\Command\PackageCopy::class,
+			\Strukt\Framework\Console\Command\PackageExport::class
+			\Strukt\Framework\Console\Command\PackageDiff::class
+		];
+		*/
 
 		return [
 
