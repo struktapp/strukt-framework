@@ -46,7 +46,7 @@ if(in_array($arg1, ["help","--help","-h"]))
  ext            - Strukt Extender class
  jwt            - JWT middleware
  cors           - CORS middleware
- faker          - Faker middleware\n\n");
+ faker          - Faker provider\n\n");
 
 $which = [];
 if($arg1 == "all")
@@ -76,23 +76,97 @@ if($has("app", "remove bin/xcli.php"))Strukt\Fs::rm('bin/xcli.php');
 if($has("app", "remove bin/xhttp.php"))Strukt\Fs::rm('bin/xhttp.php');
 if($has("app", "remove bin/install"))Strukt\Fs::rm('bin/install');
 
-if($has("app", "make directory bin"))Strukt\Fs::mkdir("bin");
-if($has("app", "make directory cfg"))Strukt\Fs::mkdir("cfg");
-if($has("tpl-cfg", "make directory tpl"))Strukt\Fs::mkdir(".tpl/sgf/cfg");
-if($has("tpl-auth", "make directory tpl|AuthModule/Controller"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Controller");
-if($has("tpl-auth", "make directory tpl|AuthModule/Form"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Form");
-if($has("tpl-auth", "make directory tpl|AuthModule/Router"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Router");
-if($has("tpl-auth", "make directory tpl|AuthModule/Tests"))Strukt\Fs::mkdir(".tpl/sgf/app/src/App/AuthModule/Tests");
-if($has("tpl-middleware", "make directory tpl|App/Middleware"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Middleware");
-if($has("tpl-provider", "make directory tpl|App/Provider"))Strukt\Fs::mkdir(".tpl/sgf/lib/App/Provider");
-if($has("tpl-pkg", "make directory tpl|Strukt/Pakcage"))Strukt\Fs::mkdir(".tpl/sgf/src/Strukt/Package");
-if($has("ext", "make directory lib/App"))Strukt\Fs::mkdir("lib/App");
-if($has("app", "make directory lib/App/Contract"))Strukt\Fs::mkdir("lib/App/Contract");
-if($has("app", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
-if($has("jwt", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
-if($has("cors", "make directory lib/App/Middleware"))Strukt\Fs::mkdir("lib/App/Middleware");
-if($has("faker", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
-if($has("app", "make directory lib/App/Provider"))Strukt\Fs::mkdir("lib/App/Provider");
+$dirs = [	
+	[
+		"arg"=>"app",
+		"message"=>"make directory bin",
+		"path"=>"bin"
+	],
+	[
+		"arg"=>"app",
+		"message"=>"make directory cfg",
+		"path"=>"cfg"
+	],
+	[
+		"arg"=>"tpl-cfg",
+		"message"=>"make directory tpl",
+		"path"=>".tpl/sgf/cfg"
+	],
+	[
+		"arg"=>"tpl-auth",
+		"message"=>"make directory tpl|AuthModule/Controller",
+		"path"=>".tpl/sgf/app/src/App/AuthModule/Controller"
+	],
+	[
+		"arg"=>"tpl-auth",
+		"message"=>"make directory tpl|AuthModule/Form",
+		"path"=>".tpl/sgf/app/src/App/AuthModule/Form"
+	],
+	[
+		"arg"=>"tpl-auth",
+		"message"=>"make directory tpl|AuthModule/Router",
+		"path"=>".tpl/sgf/app/src/App/AuthModule/Router"
+	],
+	[
+		"arg"=>"tpl-auth",
+		"message"=>"make directory tpl|AuthModule/Tests",
+		"path"=>".tpl/sgf/app/src/App/AuthModule/Tests"
+	],
+	[
+		"arg"=>"tpl-middleware",
+		"message"=>"make directory tpl|App/Middleware",
+		"path"=>".tpl/sgf/lib/App/Middleware"
+	],
+	[
+		"arg"=>"tpl-provider",
+		"message"=>"make directory tpl|App/Provider",
+		"path"=>".tpl/sgf/lib/App/Provider"
+	],
+	[
+		"arg"=>"tpl-pkg",
+		"message"=>"make directory tpl|Strukt/Pakcage",
+		"path"=>".tpl/sgf/src/Strukt/Package"
+	],
+	[
+		"arg"=>"ext",
+		"message"=>"make directory lib/App",
+		"path"=>"lib/App"
+	],
+	[
+		"arg"=>"app",
+		"message"=>"make directory lib/App/Contract",
+		"path"=>"lib/App/Contract"
+	],
+	[
+		"arg"=>"app",
+		"message"=>"make directory lib/App/Middleware",
+		"path"=>"lib/App/Middleware"
+	],
+	[
+		"arg"=>"jwt",
+		"message"=>"make directory lib/App/Middleware",
+		"path"=>"lib/App/Middleware"
+	],
+	[
+		"arg"=>"cors",
+		"message"=>"make directory lib/App/Middleware",
+		"path"=>"lib/App/Middleware"
+	],
+	[
+		"arg"=>"faker",
+		"message"=>"make directory lib/App/Provider",
+		"path"=>"lib/App/Provider"
+	],
+	[
+		"arg"=>"app",
+		"message"=>"make directory lib/App/Provider",
+		"path"=>"lib/App/Provider"
+	]
+];
+
+
+$paths = arr($dirs)->each(fn($_, $dir)=>$has($dir["arg"], $dir["message"])?$dir["path"]:null);
+$paths->filter()->each(fn($_, $path)=>Strukt\Fs::mkdir($path));
 
 if($has("tpl-auth", "create file tpl|AuthModule/Controller/User.sgf"))
 Strukt\Fs::touchWrite(".tpl/sgf/app/src/App/AuthModule/Controller/User.sgf", '<?php
@@ -1559,49 +1633,59 @@ $loader->add(sprintf("%s\\\", config("app.name")), __DIR__."/app/src/");
 return $loader;
 ');
 
+/**
+ * .env file
+ */
+$vars = ["authmod_name" => "AuthModule",
+"rel_appsrc" => Strukt\Fs::ds("app/src"),
+"rel_tplsgf_dir" => Strukt\Fs::ds(".tpl/sgf"),
+"rel_tplapp_dir" => Strukt\Fs::ds(".tpl/sgf/app"),
+"rel_tplappsrc_dir" => Strukt\Fs::ds(".tpl/sgf/app/src"),
+"rel_tplapproot_dir" => Strukt\Fs::ds(".tpl/sgf/app/src/App"),
+"rel_apptpl_ini" => Strukt\Fs::ds(".tpl/sgf/cfg/app.sgf"),
+"tpt_appcfg" => "app.sgf",
+"",//Space
+"rel_loader_sgf" => Strukt\Fs::ds(".tpl/sgf/lib/App/Loader.sgf"),
+"rel_mdl_sgf" => Strukt\Fs::ds(".tpl/sgf/lib/App/Middleware/Middleware.sgf"),
+"rel_prv_sgf" => Strukt\Fs::ds(".tpl/sgf/lib/App/Provider/Provider.sgf"),
+"rel_app_lib" => Strukt\Fs::ds("lib/App"),
+"rel_static_dir" => Strukt\Fs::ds("public/static"),
+"",//Space
+"rel_app_ini" => Strukt\Fs::ds("cfg/app.ini"),
+"rel_mod_ini" => Strukt\Fs::ds("cfg/module.ini"),
+"rel_db_ini" => Strukt\Fs::ds("cfg/db.ini"),
+"rel_repo_ini" => Strukt\Fs::ds("cfg/repo.ini"),
+"rel_cmd_ini" => Strukt\Fs::ds("cfg/cmd.ini"),
+"",//Space
+"logger_name" => "Strukt Logger",
+"logger_file" => Strukt\Fs::ds("logs/app.log"),
+"",//Space
+"cli_app_name" => "Strukt Console",
+"cli_label" => "Strukt",
+"cli_app_dir" => "app",
+"cli_file_name" => "xcli",
+"",//Space
+"is_dev" => "true",
+"vendor_fw" => Strukt\Fs::ds("/vendor/strukt/"),
+"",//Space
+"serve_host" => "127.0.0.1",
+"serve_port" => "8080",
+"serve_ctx" => ".",
+"serve_file" => "index.php",
+"",//Space
+"phar" => "false"];
+
 if($has("app", "create file .env"))
-Strukt\Fs::touchWrite(".env", 'authmod_name = AuthModule
-rel_appsrc = app'.DS.'src
-rel_tplsgf_dir = .tpl'.DS.'sgf
-rel_tplapp_dir = .tpl'.DS.'sgf'.DS.'app
-rel_tplappsrc_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src
-rel_tplapproot_dir = .tpl'.DS.'sgf'.DS.'app'.DS.'src'.DS.'App
-rel_apptpl_ini = .tpl'.DS.'sgf'.DS.'cfg'.DS.'app.sgf
-tpt_appcfg = app.sgf
-
-rel_loader_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Loader.sgf
-rel_mdl_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Middleware'.DS.'Middleware.sgf
-rel_prv_sgf = .tpl'.DS.'sgf'.DS.'lib'.DS.'App'.DS.'Provider'.DS.'Provider.sgf
-rel_app_lib = lib'.DS.'App
-rel_static_dir = public'.DS.'static
-
-rel_app_ini = cfg'.DS.'app.ini
-rel_mod_ini = cfg'.DS.'module.ini
-rel_db_ini = cfg'.DS.'db.ini
-rel_repo_ini = cfg'.DS.'repo.ini
-rel_cmd_ini = cfg'.DS.'cmd.ini
-
-logger_name = Strukt Logger
-logger_file = logs'.DS.'app.log
-
-cli_app_name = Strukt Console
-cli_label = Strukt
-cli_app_dir = app
-cli_file_name = xcli
-
-is_dev = true
-vendor_fw = '.DS.'vendor'.DS.'strukt'.DS.'
-
-serve_host = 127.0.0.1
-serve_port = 8080
-serve_ctx = .
-serve_file = index.php
-
-phar = false
-');
+Strukt\Fs::touchWrite(".env", implode("", arr($vars)
+											->each(fn($k,$v)=>negate(is_numeric($k))?
+												str($k)->concat(" = ")
+													->concat($v)
+													->concat("\n")
+													->yield():"\n")
+											->yield()));
 
 chmod('./xcli', 0755);
 chmod('./xhttp', 0755);
 chmod('./bin/install', 0755);
 
-printf("\nStrukt Booted.\n");
+printf(sprintf("\nStrukt[%s] Booted.\n", $arg1));
