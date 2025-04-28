@@ -45,6 +45,9 @@ class PackagePublisher extends \Strukt\Console\Command{
 			config($pkg_config, $pkg_which);
 		}
 
+		if(negate(is_null($which) && notnull($pkg_which)))
+			$pkg_which = $which;
+
 		$install_path = $pkg_which?ds($pkg_which):"";
 		$vendor_appbase = str(fs(env("rel_appsrc"))->path("App"))
 							->prepend($install_path)
@@ -65,11 +68,11 @@ class PackagePublisher extends \Strukt\Console\Command{
 		$vendor_pkg = ds($vendor_pkg);
 
 		if(is_null(config("app.name")))
-			raise("Unabale to find config[app.name]!");
+			raise("config[app.name] not found!");
 
 		$pkg_class = $this->packages[$pkg_name]; 
 		if(!class_exists($pkg_class))
-			raise(sprintf("Package [%s] is not installed!", $pkg_class));
+			raise(sprintf("package[%s] not installed!", $pkg_class));
 
 		$pkg = Ref::create($pkg_class)->make()->getInstance();
 
@@ -87,7 +90,7 @@ class PackagePublisher extends \Strukt\Console\Command{
 			$published = Repos::packages("published");
 			foreach($requirements as $requirement)
 				if(!in_array($requirement, $published))
-					raise(sprintf("Please install and publish package [%s]!", $requirement));
+					raise(sprintf("Install and publish package[%s]!", $requirement));
 		}
 
 		$bak_dir = ds(sprintf(".bak/%s", today()->format("YmdHis")));
