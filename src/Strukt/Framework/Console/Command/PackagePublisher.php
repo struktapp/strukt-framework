@@ -48,15 +48,23 @@ class PackagePublisher extends \Strukt\Console\Command{
 		if(negate(is_null($which) && notnull($pkg_which)))
 			$pkg_which = $which;
 
+		/**
+		 * Install path
+		 * Example: app/src/App
+		 */
 		$install_path = $pkg_which?ds($pkg_which):"";
 		$vendor_appbase = str(fs(env("rel_appsrc"))->path("App"))
 							->prepend($install_path)
 							->yield();
 
-		$vendorPkg = str("");
-		$vendor_pkg = "./";
+		/**
+		 * Check if is in dev-mode
+		 * Uses switch --dev
+		 */
 		$dev_mode = array_key_exists("dev", $in->getInputs());
 
+		$vendorPkg = str("");
+		$vendor_pkg = "./";
 		if(negate($dev_mode))
 			$vendor_pkg = $vendorPkg
 						->concat(env("vendor_fw"))
@@ -67,9 +75,17 @@ class PackagePublisher extends \Strukt\Console\Command{
 
 		$vendor_pkg = ds($vendor_pkg);
 
+		/**
+		 * Get application name from configuration
+		 */
 		if(is_null(config("app.name")))
 			raise("config[app.name] not found!");
 
+		$app_name = config("app.name");
+
+		/**
+		 * Check if package is installed
+		 */
 		$pkg_class = $this->packages[$pkg_name]; 
 		if(!class_exists($pkg_class))
 			raise(sprintf("package[%s] not installed!", $pkg_class));
@@ -81,8 +97,9 @@ class PackagePublisher extends \Strukt\Console\Command{
 		 */
 		$pkg->preInstall();
 
-		$app_name = config("app.name");
-
+		/**
+		 * Check for requirements
+		 */
 		$requirements = $pkg->getRequirements();
 		
 		if(!is_null($requirements)){
@@ -93,8 +110,16 @@ class PackagePublisher extends \Strukt\Console\Command{
 					raise(sprintf("Install and publish package[%s]!", $requirement));
 		}
 
+		/**
+		 * Create path for backup of overwritten files
+		 * Example: .bak/{timestamp}
+		 */
 		$bak_dir = ds(sprintf(".bak/%s", today()->format("YmdHis")));
 		fs()->mkdir($bak_dir);
+
+		/**
+		 * Loop over package files and install them
+		 */
 		arr($pkg->getFiles())->each(function($key, $relpath) use ($pkg_which,
 																	$bak_dir, $pkg_name,
 																	$vendor_pkg, $app_name,
@@ -139,13 +164,17 @@ class PackagePublisher extends \Strukt\Console\Command{
 					));
 
 			/**
-			 * Overwrite and back-up files
+			 * Remove any prefix from path
+			 * Example prefix pop-db|red-db
 			 */
 			$dir = dirname($actual_path);
 			if(notnull($pkg_which))
 				if(str($dir)->startsWith($pkg_which))
 					$dir = str($dir)->replace(ds($pkg_which),"")->yield();
 
+			/**
+			 * Overwrite and back-up files
+			 */
 			$filename = basename($actual_path);
 			$fsOut = fs($dir);
 
