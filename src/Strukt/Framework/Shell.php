@@ -29,15 +29,15 @@ class Shell extends \Strukt\Console\Application{
 	/**
 	* Constructor loads Strukt Framework in-build applications
 	* 
-	* @param bool $load_native_cmds
+	* @param bool $base_commands
 	*/
-	public function __construct(bool $load_native_cmds = true){
+	public function __construct(bool $base_commands = true){
 
 		parent::__construct(env("cli_app_name"), env("cli_file_name"));
 
 		$this->addCmdSect(env("cli_label"));
 
-		if($load_native_cmds){
+		if($base_commands){
 
 			$cmds = config("cmd.main.cmd");
 			$cmds = arr($cmds);
