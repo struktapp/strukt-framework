@@ -99,10 +99,16 @@ class PackageDiff extends \Strukt\Console\Command{
 			$ncontents = $fs->cat($nfile);
 			$ocontents = str($fs->cat($ofile))->replace("{{app}}", $app_name)->yield();
 
-			$unsyced = $fs->cat($nfile) == false || $fs->cat($ofile) == false;
+			$nsync = $fs->cat($nfile) == false;
+			$osync = $fs->cat($ofile) == false;
+			$unsyced = $nsync || $osync;
 
-			if($unsyced)
-				$out->add(color("red:bold", sprintf("Unsynced:\n---%s\n+++%s\n\n", $ofile, $nfile)));
+			if($unsyced){
+
+				$out->add(color("red:bold", "Unsynced:\n"));
+				$out->add(color($nsync?"white":"red:bold", sprintf("---%s\n", $ofile)));
+				$out->add(color($osync?"white":"red:bold", sprintf("+++%s\n\n", $nfile)));
+			}
 
 			if(negate($unsyced)){
 
