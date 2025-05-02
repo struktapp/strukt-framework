@@ -99,18 +99,26 @@ class PackageDiff extends \Strukt\Console\Command{
 			$ncontents = $fs->cat($nfile);
 			$ocontents = str($fs->cat($ofile))->replace("{{app}}", $app_name)->yield();
 
-			$ohash = md5($ocontents);
-			$nhash = md5($ncontents);
-			if(negate(str($ohash)->equals($nhash))){
+			$unsyced = $fs->cat($nfile) == false || $fs->cat($ofile) == false;
 
-				if($type->equals("min"))
-					$out->add(sprintf("%s\n", $nfile));
-				
-				if(in_array($type->yield(), ["full", "short"])){
+			if($unsyced)
+				$out->add(color("red", $out->add(sprintf("Unsynced:\n---%s\n+++%s\n\n", $ofile, $nfile))));
 
-					$out->add(sprintf("---%s\n+++%s\n\n", $ofile, $nfile));
-					if(notnull($differ))
-						$out->add($differ->diff($ocontents, $ncontents));
+			if(negate($unsyced)){
+
+				$ohash = md5($ocontents);
+				$nhash = md5($ncontents);
+				if(negate(str($ohash)->equals($nhash))){
+
+					if($type->equals("min"))
+						$out->add(sprintf("%s\n", $nfile));
+					
+					if(in_array($type->yield(), ["full", "short"])){
+
+						$out->add(sprintf("---%s\n+++%s\n\n", $ofile, $nfile));
+						if(notnull($differ))
+							$out->add($differ->diff($ocontents, $ncontents));
+					}
 				}
 			}
 		});
