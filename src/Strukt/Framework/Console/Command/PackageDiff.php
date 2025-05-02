@@ -102,7 +102,7 @@ class PackageDiff extends \Strukt\Console\Command{
 			$unsyced = $fs->cat($nfile) == false || $fs->cat($ofile) == false;
 
 			if($unsyced)
-				$out->add(color("red", $out->add(sprintf("Unsynced:\n---%s\n+++%s\n\n", $ofile, $nfile))));
+				$out->add(color("red:bold", sprintf("Unsynced:\n---%s\n+++%s\n\n", $ofile, $nfile)));
 
 			if(negate($unsyced)){
 
