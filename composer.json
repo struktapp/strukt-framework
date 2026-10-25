@@ -34,82 +34,104 @@
             "Tests\\": "tests/"
         }
     },
-"repositories": [
+    "repositories": [
         {
             "type": "path",
             "url": "../base",
             "options": {
-                "versions": { "strukt/base": "dev-main" }
+                "versions": {
+                    "strukt/base": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../commons",
             "options": {
-                "versions": { "strukt/commons": "dev-main" }
+                "versions": {
+                    "strukt/commons": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../contract",
             "options": {
-                "versions": { "strukt/contract": "dev-main" }
+                "versions": {
+                    "strukt/contract": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../router",
             "options": {
-                "versions": { "strukt/router": "dev-main" }
+                "versions": {
+                    "strukt/router": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../cache",
             "options": {
-                "versions": { "strukt/cache": "dev-main" }
+                "versions": {
+                    "strukt/cache": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../event",
             "options": {
-                "versions": { "strukt/event": "dev-main" }
+                "versions": {
+                    "strukt/event": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../form",
             "options": {
-                "versions": { "strukt/form": "dev-main" }
+                "versions": {
+                    "strukt/form": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../fs",
             "options": {
-                "versions": { "strukt/fs": "dev-main" }
+                "versions": {
+                    "strukt/fs": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../generator",
             "options": {
-                "versions": { "strukt/generator": "dev-main" }
+                "versions": {
+                    "strukt/generator": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../console",
             "options": {
-                "versions": { "strukt/console": "dev-main" }
+                "versions": {
+                    "strukt/console": "dev-main"
+                }
             }
         },
         {
             "type": "path",
             "url": "../rules",
             "options": {
-                "versions": { "strukt/rules": "dev-main" }
+                "versions": {
+                    "strukt/rules": "dev-main"
+                }
             }
         }
     ],
@@ -135,5 +157,6 @@
             "name": "pitsolu",
             "email": "pitsolu@gmail.com"
         }
-    ]
+    ],
+    "version": "1.7.0"
 }
