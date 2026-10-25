@@ -1,0 +1,21 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{app}}\AuthModule\Form;
+
+use Strukt\Framework\Contract\Form;
+
+final class User extends Form
+{
+    /**
+     * @IsNotEmpty()
+     * @IsAlpha()
+     */
+    protected string $username = '';
+
+    /**
+     * @IsNotEmpty()
+     */
+    protected string $password = '';
+}

@@ -1,0 +1,19 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{app}}\AuthModule\Tests;
+
+use PHPUnit\Framework\TestCase;
+use {{app}}\User;
+
+final class UserTest extends TestCase
+{
+    public function testEntityMapsConstructorArguments(): void
+    {
+        $user = new User('admin', sha1('p@55w0rd'));
+
+        $this->assertSame('admin', $user->getUsername());
+        $this->assertSame(sha1('p@55w0rd'), $user->getPassword());
+    }
+}

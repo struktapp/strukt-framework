@@ -1,0 +1,23 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{app}}\AuthModule\Controller;
+
+use Strukt\Framework\Contract\Controller;
+
+final class User extends Controller
+{
+    public function find(int $id): string
+    {
+        return sprintf('User[%d] is not implemented yet.', $id);
+    }
+
+    /**
+     * @return list<array<string, mixed>>
+     */
+    public function all(): array
+    {
+        return [];
+    }
+}

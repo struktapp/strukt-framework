@@ -1,0 +1,139 @@
+{
+    "name": "strukt/framework",
+    "description": "Annotation-driven application kernel, facades, and console for Strukt.",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": ">=8.2",
+        "psr/container": "^1.1 || ^2.0",
+        "strukt/base": "*",
+        "strukt/commons": "*",
+        "strukt/contract": "*",
+        "strukt/router": "*",
+        "strukt/cache": "*",
+        "strukt/event": "*",
+        "strukt/form": "*",
+        "strukt/fs": "*",
+        "strukt/generator": "*",
+        "strukt/console": "*"
+    },
+    "require-dev": {
+        "pestphp/pest": "^4.0",
+        "psy/psysh": "^0.12.24"
+    },
+    "autoload": {
+        "psr-4": {
+            "Strukt\\": "src/Strukt/"
+        },
+        "files": [
+            "src/helpers.php"
+        ]
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Tests\\": "tests/"
+        }
+    },
+"repositories": [
+        {
+            "type": "path",
+            "url": "../base",
+            "options": {
+                "versions": { "strukt/base": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../commons",
+            "options": {
+                "versions": { "strukt/commons": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../contract",
+            "options": {
+                "versions": { "strukt/contract": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../router",
+            "options": {
+                "versions": { "strukt/router": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../cache",
+            "options": {
+                "versions": { "strukt/cache": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../event",
+            "options": {
+                "versions": { "strukt/event": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../form",
+            "options": {
+                "versions": { "strukt/form": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../fs",
+            "options": {
+                "versions": { "strukt/fs": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../generator",
+            "options": {
+                "versions": { "strukt/generator": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../console",
+            "options": {
+                "versions": { "strukt/console": "dev-main" }
+            }
+        },
+        {
+            "type": "path",
+            "url": "../rules",
+            "options": {
+                "versions": { "strukt/rules": "dev-main" }
+            }
+        }
+    ],
+    "bin": [
+        "bin/strukt",
+        "bin/xhttp",
+        "bin/link"
+    ],
+    "scripts": {
+        "test": "pest",
+        "lint": "find src tests bin -type f -name '*.php' -print0 | xargs -0 -n1 php -l"
+    },
+    "config": {
+        "allow-plugins": {
+            "pestphp/pest-plugin": true
+        },
+        "sort-packages": true
+    },
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "authors": [
+        {
+            "name": "pitsolu",
+            "email": "pitsolu@gmail.com"
+        }
+    ]
+}

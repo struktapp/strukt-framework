@@ -1,0 +1,37 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$autoload = getcwd() . '/vendor/autoload.php';
+if (!is_file($autoload)) {
+    fwrite(STDERR, "Composer autoloader not found. Run 'composer install' in your project.\n");
+    exit(1);
+}
+
+require $autoload;
+
+use Strukt\Env;
+use Strukt\Framework\Autoload;
+use Strukt\Framework\Shell;
+
+Env::withFile(getcwd() . '/.env', false);
+
+foreach ([
+    'root_dir' => getcwd(),
+    'rel_appsrc' => 'app/src',
+    'rel_app_lib' => 'lib/App',
+    'rel_mod_ini' => 'cfg/module.ini',
+    'serve_host' => '127.0.0.1',
+    'serve_port' => '8080',
+    'serve_ctx' => '.',
+    'is_dev' => true,
+] as $key => $value) {
+    if (!Env::has($key)) {
+        Env::set($key, $value);
+    }
+}
+
+Autoload::register();
+
+exit((new Shell())->run($argv));

@@ -1,0 +1,5 @@
+#!/bin/bash
+
+DIR=$(dirname $BASH_SOURCE)
+ln -s $DIR/strukt strukt
+ln -s $DIR/xhttp xhttp

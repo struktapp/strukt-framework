@@ -1,0 +1,4 @@
+; Framework bundles available to an application.
+; A value of `Extender` resolves to `App\<Name>`; anything else resolves to
+; `Strukt\Bundle\<Name>`.
+core = Core

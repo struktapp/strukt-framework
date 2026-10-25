@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Middleware;
+
+use Strukt\Contract\Http\RequestInterface;
+use Strukt\Contract\Http\ResponseInterface;
+use Strukt\Contract\MiddlewareInterface;
+
+/**
+ * @Name({{name}})
+ */
+final class {{class_name}} implements MiddlewareInterface
+{
+    /**
+     * Handles a request as one link in the middleware pipeline.
+     *
+     * @param RequestInterface $request Incoming request.
+     * @param ResponseInterface $response Response under construction.
+     * @param callable $next Invokes the remaining pipeline.
+     * @return ResponseInterface Response for the caller.
+     */
+    public function process(RequestInterface $request, ResponseInterface $response, callable $next): ResponseInterface
+    {
+        return $next($request, $response);
+    }
+}

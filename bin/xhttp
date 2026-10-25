@@ -1,0 +1,164 @@
+#!/usr/bin/env php
+<?php
+
+declare(strict_types=1);
+
+$autoload = getcwd() . '/vendor/autoload.php';
+if (!is_file($autoload)) {
+    fwrite(STDERR, "Composer autoloader not found. Run 'composer install' in your project.\n");
+    exit(1);
+}
+
+require $autoload;
+
+use Strukt\Env;
+use Strukt\Framework\Autoload;
+use Strukt\Framework\Console\Xhttp;
+
+Env::withFile(getcwd() . '/.env', false);
+
+foreach ([
+    'root_dir' => getcwd(),
+    'rel_appsrc' => 'app/src',
+    'rel_app_lib' => 'lib/App',
+    'rel_mod_ini' => 'cfg/module.ini',
+] as $key => $value) {
+    if (!Env::has($key)) {
+        Env::set($key, $value);
+    }
+}
+
+$tokens = array_slice($argv, 1);
+
+if (array_intersect($tokens, ['--help', '-h', 'help']) !== []) {
+    fwrite(STDOUT, Xhttp::help() . "\n");
+    exit(0);
+}
+
+if (!filter_var(Env::get('is_dev') ?? false, FILTER_VALIDATE_BOOL)) {
+    fwrite(STDERR, "xhttp is a development tool and is only available when is_dev is true.\n");
+    exit(1);
+}
+
+$split = static function (string $haystack, string $needle): ?array {
+    $position = strpos($haystack, $needle);
+    if ($position === false) {
+        return null;
+    }
+
+    return [substr($haystack, 0, $position), substr($haystack, $position + strlen($needle))];
+};
+
+$method = null;
+$path = null;
+$params = [];
+$headers = [];
+$session = [];
+$profileArg = null;
+$pretty = false;
+$methods = ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS', 'HEAD', 'ANY'];
+$secrets = ['password', 'passwd', 'pwd', 'pass', 'secret'];
+
+for ($index = 0; $index < count($tokens); $index++) {
+    $token = $tokens[$index];
+
+    if (in_array($token, ['--help', '-h', 'help'], true)) {
+        fwrite(STDOUT, Xhttp::help() . "\n");
+        exit(0);
+    }
+
+    if ($token === '--json') {
+        $pretty = true;
+        continue;
+    }
+
+    if ($token === '--header' || str_starts_with($token, '--header=')) {
+        $value = str_contains($token, '=')
+            ? substr($token, strpos($token, '=') + 1)
+            : ($tokens[++$index] ?? '');
+
+        $pair = $split($value, ':');
+        if ($pair === null || trim($pair[0]) === '') {
+            fwrite(STDERR, sprintf("Ignoring malformed header [%s].\n", $value));
+            continue;
+        }
+
+        $headers[trim($pair[0])] = trim($pair[1]);
+        continue;
+    }
+
+    if ($token === '--as' || str_starts_with($token, '--as=')) {
+        $value = str_contains($token, '=')
+            ? substr($token, strpos($token, '=') + 1)
+            : ($tokens[++$index] ?? '');
+
+        if (trim($value) === '') {
+            fwrite(STDERR, "Missing profile name for --as.\n");
+            exit(1);
+        }
+
+        $profileArg = trim($value);
+        continue;
+    }
+
+    if ($method === null && in_array(strtoupper($token), $methods, true)) {
+        $method = strtoupper($token);
+        continue;
+    }
+
+    if ($path === null) {
+        $path = $token;
+        continue;
+    }
+
+    $param = $split($token, '=');
+    if ($param === null) {
+        fwrite(STDERR, sprintf("Ignoring unrecognised argument [%s].\n", $token));
+        continue;
+    }
+
+    $key = trim($param[0]);
+    if (in_array(strtolower($key), $secrets, true)) {
+        fwrite(STDERR, sprintf("Refusing to read [%s] from the command line. Store it in a profile under cfg/xhttp.json and pass --as.\n", $key));
+        exit(1);
+    }
+
+    $params[$key] = $param[1];
+}
+
+$method ??= 'GET';
+$path ??= '/';
+
+$root = (string) Env::get('root_dir');
+
+if ($profileArg !== null) {
+    try {
+        $profile = Xhttp::profile($profileArg, rtrim($root, '/') . '/cfg/xhttp.json');
+    } catch (\Throwable $error) {
+        fwrite(STDERR, sprintf("xhttp error: %s\n", $error->getMessage()));
+        exit(1);
+    }
+
+    $session = $profile['session'];
+    $params = array_merge($profile['data'], $params);
+}
+
+if (!is_file(sprintf('%s/cfg/app.ini', rtrim($root, '/')))) {
+    fwrite(STDERR, "Application is not ready. Run 'vendor/bin/strukt app:make <name>' and 'vendor/bin/strukt app:reload'.\n");
+    exit(1);
+}
+
+Autoload::register();
+
+$xhttp = new Xhttp($method, $path, $params, $headers, $session);
+
+try {
+    $response = $xhttp->run();
+} catch (\Throwable $error) {
+    fwrite(STDERR, sprintf("xhttp error: %s\n", $error->getMessage()));
+    exit(1);
+}
+
+fwrite(STDOUT, $xhttp->render($response, $pretty) . "\n");
+
+exit($response->status() >= 400 ? 1 : 0);

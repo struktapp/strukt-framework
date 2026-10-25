@@ -1,0 +1,30 @@
+[main]
+title = Strukt
+cmd[] = app:make
+cmd[] = app:reload
+cmd[] = app:exec
+cmd[] = middleware:make
+cmd[] = provider:make
+cmd[] = validator:make
+cmd[] = route:make
+cmd[] = route:ls
+cmd[] = module:make
+cmd[] = shell:exec
+cmd[] = sys:ls
+[cache]
+title = Cache
+cmd[] = cache:clear
+cmd[] = cache:make
+cmd[] = cache:reset
+[pub-bundle]
+title = Bundle Publisher
+cmd[] = bundle:make
+cmd[] = bundle:add
+cmd[] = bundle:export
+cmd[] = bundle:ls
+cmd[] = bundle:info
+{if bundle_db}[bundle-db]
+title = Database
+cmd[] = model:generate
+cmd[] = db:create
+{/if}

@@ -1,0 +1,28 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{app}}\AuthModule\Router;
+
+use Strukt\Framework\Contract\Router;
+
+final class Index extends Router
+{
+    /**
+     * @Route(/)
+     * @Method(GET)
+     */
+    public function welcome(): string
+    {
+        return 'Strukt works!';
+    }
+
+    /**
+     * @Route(/hello/{name:alpha})
+     * @Method(GET)
+     */
+    public function hello(string $name): string
+    {
+        return sprintf('Hello %s!', $name);
+    }
+}

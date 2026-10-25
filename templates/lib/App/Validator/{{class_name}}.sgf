@@ -1,0 +1,56 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Validator;
+
+use Strukt\Framework\Contract\Validator;
+use Strukt\Rules\Contract\FieldSource;
+
+/**
+ * @Name({{name}})
+ */
+final class {{class_name}} implements Validator
+{
+    /**
+     * @param string $field Field under validation.
+     * @param list<string> $params Parsed rule parameters.
+     */
+    public function __construct(
+        private readonly string $field,
+        private readonly array $params = [],
+    ) {
+    }
+
+    /**
+     * Checks the field value.
+     *
+     * @param mixed $value Submitted value.
+     * @param FieldSource $fields Sibling field values.
+     * @return bool True when the value passes.
+     */
+    public function passes(mixed $value, FieldSource $fields): bool
+    {
+        return true;
+    }
+
+    /**
+     * Describes the failure for the user.
+     *
+     * @return string Failure message.
+     */
+    public function message(): string
+    {
+        return sprintf('%s failed validation.', ucfirst(str_replace('_', ' ', $this->field)));
+    }
+
+    /**
+     * Reports whether a failure should end validation of the field.
+     *
+     * @return bool True when later rules should be skipped.
+     */
+    public function bails(): bool
+    {
+        return false;
+    }
+}

@@ -1,0 +1,77 @@
+<?php
+
+declare(strict_types=1);
+
+namespace Strukt\Bundle;
+
+use Strukt\Framework\Contract\Bundle as BundleInterface;
+
+/**
+ * {{name}} bundle descriptor.
+ *
+ * WARNING: THIS FILE IS AUTO-GENERATED. DO NOT ADD ANYTHING
+ * BECAUSE IT WILL BE OVERWRITTEN.
+ */
+class Bundle{{name}} implements BundleInterface
+{
+    private array $manifest = [
+        'cmd_name' => '{{name}}',
+        'bundle' => 'bundle-{{lower_name}}',
+        'files' => [],
+    ];
+
+    public function getSettings(string $type): array
+    {
+        $settings = [
+            'App:Cli' => [
+                'providers' => [],
+                'middlewares' => [],
+                'commands' => [],
+            ],
+            'App:Idx' => [
+                'providers' => [],
+                'middlewares' => [],
+            ],
+        ];
+
+        return $settings[$type];
+    }
+
+    public function getName(): string
+    {
+        return $this->manifest['bundle'];
+    }
+
+    public function getCmdName(): string
+    {
+        return $this->manifest['cmd_name'];
+    }
+
+    public function getFiles(): ?array
+    {
+        return $this->manifest['files'];
+    }
+
+    public function getModules(): ?array
+    {
+        return null;
+    }
+
+    public function isPublished(): bool
+    {
+        return class_exists(\SomeClass::class);
+    }
+
+    public function getRequirements(): ?array
+    {
+        return null;
+    }
+
+    public function postInstall(): void
+    {
+    }
+
+    public function preInstall(): void
+    {
+    }
+}

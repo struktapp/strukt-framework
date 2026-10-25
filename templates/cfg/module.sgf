@@ -1,0 +1,5 @@
+[folders]
+ctr = Controller
+rtr = Router
+frm = Form
+tes = Tests

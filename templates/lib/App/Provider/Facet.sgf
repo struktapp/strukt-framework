@@ -1,0 +1,55 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App\Provider;
+
+use Strukt\Contract\ProviderInterface;
+use Strukt\Framework\Traits\FacetHelper;
+
+/**
+ * Resolves application facets by module alias.
+ *
+ * Registers the `provider.core` event so that `core('au.ctr.User')` and
+ * `Core::get()` can reach an aliased facet without importing its namespace.
+ * The alias map is populated by the registrar as `nr.<alias>.<facet>.<name>`.
+ *
+ * @Name(facet)
+ */
+final class Facet implements ProviderInterface
+{
+    use FacetHelper;
+
+    /**
+     * Registers the `provider.core` event handler.
+     *
+     * @return void
+     */
+    public function register(): void
+    {
+        $self = $this;
+
+        event('provider.core', static function (string $alias_ns, ?array $args = null) use ($self): object {
+            return container()->make($self->getNamespace($alias_ns), $args ?? []);
+        });
+    }
+
+    /**
+     * Nothing to boot after registration.
+     *
+     * @return void
+     */
+    public function boot(): void
+    {
+    }
+
+    /**
+     * Lists the identifiers this provider binds.
+     *
+     * @return list<string> Container identifiers.
+     */
+    public function provides(): array
+    {
+        return [];
+    }
+}

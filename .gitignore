@@ -1,0 +1,17 @@
+/vendor/
+/.phpunit.result.cache
+/.phpunit.cache/
+
+# Composer lock (library).
+/composer.lock
+
+# Generated when the framework is exercised as an application from its own
+# root (app:make, app:reload, app:exec, route:make, validator:make, cache:*).
+/app/
+/lib/
+/index.php
+/.env
+/.cache/
+/php_errors.log
+/cfg/app.ini
+/cfg

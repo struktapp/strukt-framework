@@ -1,0 +1,30 @@
+<?php
+
+declare(strict_types=1);
+
+namespace App;
+
+use Strukt\Framework\Application;
+use Strukt\Router\Router;
+
+/**
+ * Application Loader Class
+ *
+ * WARNING: THIS FILE IS AUTO-GENERATED. DO NOT ADD ANYTHING
+ * BECAUSE IT WILL BE OVERWRITTEN.
+ */
+final class Loader
+{
+    private Application $app;
+
+    public function __construct(?Router $router = null)
+    {
+        $this->app = Application::make($router);
+        {{bundles}}
+    }
+
+    public function getApp(): Application
+    {
+        return $this->app;
+    }
+}

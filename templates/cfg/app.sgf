@@ -1,0 +1,7 @@
+app-name = {{app}}
+middlewares[] = sess
+middlewares[] = auth
+middlewares[] = authz
+middlewares[] = valid
+providers[] = valid
+providers[] = facet

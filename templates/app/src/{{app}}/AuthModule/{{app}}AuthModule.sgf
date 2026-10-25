@@ -1,0 +1,12 @@
+<?php
+
+declare(strict_types=1);
+
+namespace {{app}}\AuthModule;
+
+use Strukt\Framework\Contract\Module;
+
+final class {{app}}AuthModule extends Module
+{
+    protected string $alias = 'au';
+}
