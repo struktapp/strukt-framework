@@ -6,16 +6,16 @@
     "require": {
         "php": ">=8.2",
         "psr/container": "^1.1 || ^2.0",
-        "strukt/base": "*",
-        "strukt/commons": "*",
-        "strukt/contract": "*",
-        "strukt/router": "*",
-        "strukt/cache": "*",
-        "strukt/event": "*",
-        "strukt/form": "*",
-        "strukt/fs": "*",
-        "strukt/generator": "*",
-        "strukt/console": "*"
+        "strukt/base": "v1.0.0",
+        "strukt/commons": "v1.1.0",
+        "strukt/contract": "v1.0.0",
+        "strukt/router": "v1.0.0",
+        "strukt/cache": "v1.0.0",
+        "strukt/event": "v1.0.1",
+        "strukt/form": "v1.0.0",
+        "strukt/fs": "v2.0.0",
+        "strukt/generator": "v3.1.0",
+        "strukt/console": "v2.0.0"
     },
     "require-dev": {
         "pestphp/pest": "^4.0",
@@ -34,107 +34,6 @@
             "Tests\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "path",
-            "url": "../base",
-            "options": {
-                "versions": {
-                    "strukt/base": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../commons",
-            "options": {
-                "versions": {
-                    "strukt/commons": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../contract",
-            "options": {
-                "versions": {
-                    "strukt/contract": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../router",
-            "options": {
-                "versions": {
-                    "strukt/router": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../cache",
-            "options": {
-                "versions": {
-                    "strukt/cache": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../event",
-            "options": {
-                "versions": {
-                    "strukt/event": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../form",
-            "options": {
-                "versions": {
-                    "strukt/form": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../fs",
-            "options": {
-                "versions": {
-                    "strukt/fs": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../generator",
-            "options": {
-                "versions": {
-                    "strukt/generator": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../console",
-            "options": {
-                "versions": {
-                    "strukt/console": "dev-main"
-                }
-            }
-        },
-        {
-            "type": "path",
-            "url": "../rules",
-            "options": {
-                "versions": {
-                    "strukt/rules": "dev-main"
-                }
-            }
-        }
-    ],
     "bin": [
         "bin/strukt",
         "bin/xhttp",
