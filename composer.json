@@ -6,15 +6,15 @@
     "require": {
         "php": ">=8.2",
         "psr/container": "^1.1 || ^2.0",
-        "strukt/base": "v1.0.0",
-        "strukt/commons": "v1.1.0",
-        "strukt/contract": "v1.0.0",
-        "strukt/router": "v1.0.0",
+        "strukt/base": "v1.1.0",
+        "strukt/commons": "v1.2.0",
+        "strukt/contract": "v1.2.0",
+        "strukt/router": "v1.2.0",
         "strukt/cache": "v1.0.0",
-        "strukt/event": "v1.0.1",
+        "strukt/event": "v1.2.0",
         "strukt/form": "v1.0.0",
         "strukt/fs": "v2.0.0",
-        "strukt/generator": "v3.1.0",
+        "strukt/generator": "v1.2.0",
         "strukt/console": "v2.0.0"
     },
     "require-dev": {
@@ -57,5 +57,5 @@
             "email": "pitsolu@gmail.com"
         }
     ],
-    "version": "1.7.0"
+    "version": "1.2.0"
 }
